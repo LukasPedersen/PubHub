@@ -1,15 +1,22 @@
 using System.Data;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PubHubAPI;
 using PubHubAPI.Data;
 using PubHubAPI.Data.Models;
+using PubHubAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+#region Builder Config
+
+// Dependency injection
+builder.Services.AddScoped<IPubHubServices>();
 
 // Establish cookie authentication
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
@@ -63,6 +70,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument();
 builder.Services.AddSwaggerGen();
 
+#endregion
+
+#region App Config
 
 var app = builder.Build();
 
@@ -105,6 +115,17 @@ app.MapPost("/logout", async (SignInManager<PubHubUser> signInManager, [FromBody
 
 app.UseHttpsRedirection();
 
+#endregion
+
+//Endpoints
+#region Generic EndPoints
+
+
+
+#endregion
+
+#region User Endpoints
+
 app.MapGet("/roles", (ClaimsPrincipal user) =>
 {
     if (user.Identity is not null && user.Identity.IsAuthenticated)
@@ -126,5 +147,55 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 
     return Results.Unauthorized();
 }).RequireAuthorization();
+
+#endregion
+
+#region Publisher Endpoints
+
+
+
+#endregion
+
+#region Reader Endpoints
+
+
+
+#endregion
+
+#region Subscription Endpoints
+
+
+
+#endregion
+
+#region Ebook Endpoints
+
+
+
+#endregion
+
+#region Logs Endpoints
+
+
+
+#endregion
+
+#region Receipt Endpoints
+
+
+//Test to see how Dependency injection works with minimal api
+app.MapGet("/test", (ClaimsPrincipal user) =>
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var pubHubServices = scope.ServiceProvider.GetRequiredService<IPubHubServices>();
+        (HttpStatusCode, PubHubReceipt) result = pubHubServices.GetSingleReceipt(Guid.NewGuid()).Result;
+    }
+    //return TypedResults.Json(roles);
+
+    //return Results.Unauthorized();
+}).RequireAuthorization();
+
+#endregion
 
 app.Run();
