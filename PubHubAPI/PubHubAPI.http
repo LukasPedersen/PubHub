@@ -1,4 +1,4 @@
-@PubHubAPI_HostAddress = http://localhost:5128
+@PubHubAPI_HostAddress = https://n0gl8cjp-7174.euw.devtunnels.ms
 
 GET {{PubHubAPI_HostAddress}}/weatherforecast/
 Accept: application/json

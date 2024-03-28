@@ -28,12 +28,12 @@ namespace PubHubWeb
 
             // set base address for default host
             builder.Services.AddScoped(sp =>
-                new HttpClient { BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:7016") });
+                new HttpClient { BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://tbskfv4n-7016.euw.devtunnels.ms") });
 
             // configure client for auth interactions
             builder.Services.AddHttpClient(
                 "Auth",
-                opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:7174"))
+                opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://n0gl8cjp-7174.euw.devtunnels.ms"))
                 .AddHttpMessageHandler<CookieHandler>();
 
             await builder.Build().RunAsync();

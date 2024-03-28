@@ -50,8 +50,10 @@ builder.Services.AddIdentityCore<PubHubUser>()
 builder.Services.AddCors(
     options => options.AddPolicy(
         "wasm",
-        policy => policy.WithOrigins([builder.Configuration["BackendUrl"] ?? "https://localhost:7174",
-            builder.Configuration["FrontendUrl"] ?? "https://localhost:7016"])
+        policy => policy.WithOrigins(
+            [builder.Configuration["BackendUrl"] ?? "https://n0gl8cjp-7174.euw.devtunnels.ms",
+            builder.Configuration["FrontendUrl"] ?? "https://tbskfv4n-7016.euw.devtunnels.ms",
+            ""])
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()));
