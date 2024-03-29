@@ -189,7 +189,7 @@ app.MapGet("/test", (ClaimsPrincipal user) =>
     using (var scope = app.Services.CreateScope())
     {
         var pubHubServices = scope.ServiceProvider.GetRequiredService<IPubHubServices>();
-        (HttpStatusCode, PubHubReceipt) result = pubHubServices.GetSingleReceipt(Guid.NewGuid()).Result;
+        PubHubReceipt result = pubHubServices.GetEntityByID<PubHubReceipt>(Guid.NewGuid()).Result.Data;
     }
     //return TypedResults.Json(roles);
 
