@@ -79,8 +79,6 @@ namespace PubHubAPI.Services
 
         #region Logs Endpoints
 
-        public Task<ApiResponse<PubHubLog>> GetLogByID(Guid _logID);
-
         public Task<ApiResponse<List<PubHubLog>>> GetAllLogs();
 
         public Task<ApiResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(Guid _EntityID);
