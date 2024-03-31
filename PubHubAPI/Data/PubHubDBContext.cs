@@ -6,13 +6,13 @@ namespace PubHubAPI.Data
 {
     public class PubHubDBContext : IdentityDbContext
     {
-        DbSet<PubHubUser> Users {  get; set; }
-        DbSet<PubHubReader> Readers {  get; set; }
-        DbSet<PubHubPublisher> Publishers { get; set; }
-        DbSet<PubHubSubscription> Subscriptions { get; set; }
-        DbSet<PubHubEBook> EBooks { get; set; }
-        DbSet<PubHubLog> Logs { get; set; }
-        DbSet<PubHubReceipt> Receipts { get; set; }
+        public DbSet<PubHubUser> Users {  get; set; }
+        public DbSet<PubHubReader> Readers {  get; set; }
+        public DbSet<PubHubPublisher> Publishers { get; set; }
+        public DbSet<PubHubSubscription> Subscriptions { get; set; }
+        public DbSet<PubHubEBook> EBooks { get; set; }
+        public DbSet<PubHubLog> Logs { get; set; }
+        public DbSet<PubHubReceipt> Receipts { get; set; }
         public PubHubDBContext(DbContextOptions<PubHubDBContext> options) : base(options)
         {
 
