@@ -75,10 +75,10 @@ builder.Services.AddSwaggerGen();
 #region App Config
 
 var app = builder.Build();
-
+var scope = app.Services.CreateScope();
+var pubHubServices = scope.ServiceProvider.GetRequiredService<IPubHubServices>();
 if (builder.Environment.IsDevelopment())
 {
-
     // Add OpenAPI/Swagger generator and the Swagger UI
     app.UseOpenApi();
     app.UseSwagger();
@@ -148,6 +148,8 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
     return Results.Unauthorized();
 }).RequireAuthorization();
 
+
+
 #endregion
 
 #region Publisher Endpoints
@@ -186,14 +188,14 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 //Test to see how Dependency injection works with minimal api
 app.MapGet("/test", (ClaimsPrincipal user) =>
 {
-    using (var scope = app.Services.CreateScope())
+    if (user.Identity is not null && user.Identity.IsAuthenticated)
     {
-        var pubHubServices = scope.ServiceProvider.GetRequiredService<IPubHubServices>();
         PubHubReceipt result = pubHubServices.GetEntityByID<PubHubReceipt>(Guid.NewGuid()).Result.Data;
-    }
-    //return TypedResults.Json(roles);
+        return TypedResults.Json(result);
 
-    //return Results.Unauthorized();
+    }
+
+    return Results.Unauthorized();
 }).RequireAuthorization();
 
 #endregion
