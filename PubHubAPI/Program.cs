@@ -158,7 +158,6 @@ app.MapGet("user/deactivateUser/{userID}", async (ClaimsPrincipal user, IPubHubS
     return Results.Unauthorized();
 }).WithTags("users").RequireAuthorization();
 
-
 #endregion
 
 #region Publisher Endpoints
