@@ -1,22 +1,37 @@
 ﻿@page "/BookList/Book"
+@using PubHubWebServer.Data.Models
 
-<div class="row" style="height:1vh">
-    <div class="col-6" style="background-color:green; height:500px;">
-        <h5>Book title</h5>
-        <p>Authors</p>
-        <p>Genres</p>
-        <p>Download Count</p>
+<div class="row" style="height:100%">
+    <div class="col-6" style="background-color:green;">
+        <div class="h-25">Book title</div>
+        <div class="h-25">
+            <div>Authors</div>
+            <div>Genres</div>
+            <div>Download Count</div>
+        </div>
+        <div class="h-50">
+            <div>Text description</div>
+
+        </div>
     </div>
-    <div class="col-6" style="background-color:blue; height:500px;">
+    <div class="col-6" style="background-color:blue;">
 
     </div>
 </div>
-<div class="row">
-    <button></button>
-    <button></button>
-    <button></button>
+<div class="row align-bottom justify-content-end">
+    <button class="col-3">Test</button>
+    <button class="col-3">Test2</button>
+    <button class="col-3">Test3</button>
 </div>
 
 @code {
-
+    PubHubEBook TheBook;
+    int BookID = 0;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        //TODO: 1. Get ID from URl 
+        //TODO: 2. get book from API with ID
+        //TODO: 3. display book
+    }
 }
