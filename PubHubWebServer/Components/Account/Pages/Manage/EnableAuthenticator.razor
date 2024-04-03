@@ -5,15 +5,13 @@
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
-@using PubHubWeb.Data
+@using PubHubWebServer.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IdentityUserAccessor UserAccessor
 @inject UrlEncoder UrlEncoder
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<EnableAuthenticator> Logger
-@inject IJSRuntime JS
-
 
 <PageTitle>Configure authenticator app</PageTitle>
 
@@ -39,9 +37,6 @@ else
                 </p>
             </li>
             <li>
-                <p role="status">Current count: @currentCount</p>
-                <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-                <QrCode CanvasId="AnyId" Text="@authenticatorUri"/>
                 <p>Scan the QR Code or enter this key <kbd>@sharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
                 <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
                 <div></div>
@@ -73,7 +68,7 @@ else
 
 @code {
     private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
-    private int currentCount = 0;
+
     private string? message;
     private ApplicationUser user = default!;
     private string? sharedKey;
@@ -174,15 +169,4 @@ else
         [Display(Name = "Verification Code")]
         public string Code { get; set; } = "";
     }
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
 }
-
-<script>
-  window.displayTickerAlert1 = (symbol, price) => {
-    alert(`${symbol}: $${price}!`);
-  };
-</script>
