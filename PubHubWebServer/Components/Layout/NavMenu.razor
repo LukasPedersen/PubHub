@@ -2,17 +2,13 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">PubHubWebServer</a>
-    </div>
-</div>
+
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
+       @*  <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
@@ -27,6 +23,12 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="weather">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            </NavLink>
+        </div> *@
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="booklist">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BookList
             </NavLink>
         </div>
 
@@ -65,7 +67,7 @@
                 </div>
             </NotAuthorized>
         </AuthorizeView>
-        <div class="nav-item px-3 fixed-bottom">
+      <div class="nav-item px-3 fixed-bottom">
             <NavLink class="nav-link align-content-md-start" href="info">
                 <img src="/lib/bootstrapIcons/info-circle.svg" class="m-2" alt="Bootstrap" width="28" height="28"> Info
             </NavLink>
