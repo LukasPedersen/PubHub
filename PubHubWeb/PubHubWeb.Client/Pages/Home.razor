@@ -1,0 +1,57 @@
+﻿@page "/"
+@inject HttpClient client
+
+@using PubHubWeb.Data.Models;
+@using System.Text.Json.Serialization
+@using System.Text.Json
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+<div class="row">
+    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:blue">
+    
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img" alt="...">@*Image *@
+            <div class="card-img-overlay">
+                <h5 class="card-title">Card title</h5>@*Title*@
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
+                <div class="row">
+                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>
+                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:green">
+    </div>
+</div>
+
+
+@code {
+// The list of books
+public List<PubHubEBook> _TopBooks { get; set; }
+
+protected override async Task OnInitializedAsync()
+{
+    //_TopBooks = await GettingData();
+}
+
+// private async Task<List<PubHubEBook>> GettingData()
+// {
+//     List<PubHubEBook> eBooks = new();
+//     // Getting the response from the API
+//     using HttpResponseMessage response = await client.GetAsync("/ebook/GetEBookTop");
+
+//     // data as a Json string
+//     string Jsonstring = await response.Content.ReadAsStringAsync();
+
+//     // Getting the object's
+//     eBooks = JsonSerializer.Deserialize<List<PubHubEBook>>(Jsonstring);
+
+//     return eBooks;
+// }
+}
