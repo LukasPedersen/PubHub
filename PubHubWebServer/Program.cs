@@ -54,6 +54,8 @@ namespace PubHubWebServer
             builder.Services.AddOpenApiDocument();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddHttpClient();//Added HttpClient as a service
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
