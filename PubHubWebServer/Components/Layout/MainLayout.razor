@@ -1,24 +1,23 @@
-﻿@inherits LayoutComponentBase
-
+@inherits LayoutComponentBase
 
 <div class="page">
-
     <div class="sidebar">
         <NavMenu />
     </div>
-    <main>
-
+    <main class="bg-dark overflow-hidden">
         <Header />
-        <article class="content px-4 h-75">
+        <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
-<footer class="align-bottom" style="height:50px; width:100%; background-color:pink;">
-    @* <Footer/> *@
-</footer>
 
-
+<style>
+    .sidebar {
+        background-color: #F2613F !important;
+        box-shadow: 2px 0px 1px #F2613F;
+    }
+</style>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
