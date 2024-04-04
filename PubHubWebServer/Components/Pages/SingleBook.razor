@@ -2,26 +2,41 @@
 @using PubHubWebServer.Data.Models
 
 <div class="row" style="height:100%">
-    <div class="col-6" style="background-color:green;">
+    <div class="col-auto col-md-6" style="background-color:green;">
         <div class="h-25">Book title</div>
         <div class="h-25">
             <div>Authors</div>
             <div>Genres</div>
             <div>Download Count</div>
+            <div>Rent Price</div>
+            <div>Buy Price</div>
         </div>
         <div class="h-50">
             <div>Text description</div>
 
         </div>
     </div>
-    <div class="col-6" style="background-color:blue;">
-
+    <div class="col-auto col-md-6" style="background-color:blue;">
+        <div class="h-50">
+            Here goes an image
+        </div>
+        <div class="h-50 d-flex flex-column" style="background-color:yellow">
+            <div class="text-center p-1">
+                Subscriptions denne bog er en del af
+            </div>
+            <div class="row m-1">
+                <div class="col-6">
+                    Subscription name
+                </div>
+                <button class="col-6">Til subscription</button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row align-bottom justify-content-end">
-    <button class="col-3">Test</button>
-    <button class="col-3">Test2</button>
-    <button class="col-3">Test3</button>
+    <button class="col-3">Save changes</button>
+    <button class="col-3">Rent book</button>
+    <button class="col-3">Buy book</button>
 </div>
 
 @code {
