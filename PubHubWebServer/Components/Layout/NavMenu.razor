@@ -4,42 +4,75 @@
 
 
 
-<div class="nav-scrollable h-100 d-" onclick="document.querySelector('.navbar-toggler').click()">
-    <div class="position-relative w-100" style="height:100%">
-        <div class="position-absolute top-0 start-0 w-100">
-            <nav class="flex-column">
-                <a class="icon-link px-5" href="#">
-                    <img class="navLogo" src="/images/Logo.png" sizes="width: 153px;" />
-                </a>
-            </nav>
-            <nav class="flex-column">
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="booklist">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-bookshelf" viewBox="0 0 16 16">
-                            <path d="M2.5 0a.5.5 0 0 1 .5.5V2h10V.5a.5.5 0 0 1 1 0v15a.5.5 0 0 1-1 0V15H3v.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 .5-.5M3 14h10v-3H3zm0-4h10V7H3zm0-4h10V3H3z" />
-                        </svg> Find bøger
-                    </NavLink>
-                </div>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+       @*  <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="weather">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            </NavLink>
+        </div> *@
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="booklist">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BookList
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="auth">
+                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
+            </NavLink>
+        </div>
+        <AuthorizeView>
+            <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="auth">
-                        <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
                     </NavLink>
                 </div>
-            </nav>
-        </div>
-        <div class="position-absolute bottom-0 start-0 w-100">
-            <nav class="flex-column-reverse">
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link align-content-md-start" href="info">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
-                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2" />
-                        </svg> Info
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Register">
+                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
                     </NavLink>
                 </div>
-            </nav>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Login">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+      <div class="nav-item px-3 fixed-bottom">
+            <NavLink class="nav-link align-content-md-start" href="info">
+                <img src="/lib/bootstrapIcons/info-circle.svg" class="m-2" alt="Bootstrap" width="28" height="28"> Info
+            </NavLink>
         </div>
-    </div>
+    </nav>
 </div>
 
 @code {

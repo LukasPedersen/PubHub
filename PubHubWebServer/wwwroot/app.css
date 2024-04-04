@@ -2,23 +2,6 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.header {
-    background-color: #F2613F;
-    box-shadow: 0px 2px 2px #F2613F;
-}
-
-.content{
-    height:100vh;
-}
-
-.title {
-    margin-top: -8px;
-}
-
-body {
-    overflow: hidden
-}
-
 a, .btn-link {
     color: #006bb7;
 }
@@ -65,40 +48,4 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
-}
-
-.headerDropDownMenue {
-    box-shadow: 1px 1px 2px #212529;
-}
-
-.headerDropDownContainer {
-    margin: 15px 0px auto -4px;
-}
-.headerDropDownBtn {
-    background-color: #F2613F;
-    border: none;
-    color: white;
-}
-
-@media only screen and (max-width: 640px) {
-    .headerLogoContainer {
-        display: block;
-    }
-}
-@media only screen and (min-width: 641px) {
-    .headerLogoContainer {
-        display: none;
-    }
-}
-
-.headerLogoContainer {
-    margin-left: -50px;
-}
-
-.headerLogo {
-    width: 128px;
-}
-
-.navLogo {
-    width: 153px;
 }
