@@ -1,9 +1,9 @@
 ﻿@page "/BookList"
 
 <div class="row pb-3">
-    <Input id="inputTitle" class="col-3" placeholder="Title" />
-    <input id="inputAuthor" class="col-3" placeholder="Author" />
-    <Input id="inputGenre" class="col-3" placeholder="Genre" />
+    <input type="text" name="inputTitle" value="" class="col-3" placeholder="Title" />
+    <input type="text" name="InputAuthor" value="" class="col-3" placeholder="Author" />
+    <input type="text" name="InputGenre" value="" class="col-3" placeholder="Genre" />
     <a @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</a>
 </div>
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-4">
