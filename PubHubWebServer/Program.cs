@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using PubHubWebServer.Components;
 using PubHubWebServer.Components.Account;
 using PubHubWebServer.Data;
@@ -42,6 +41,7 @@ namespace PubHubWebServer
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<PubHubDBContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders()
