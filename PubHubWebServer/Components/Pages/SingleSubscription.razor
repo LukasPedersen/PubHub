@@ -1,5 +1,132 @@
-﻿<h3>SingleSubscription</h3>
+﻿@page "/Subscription"
+@using PubHubWebServer.Data.Models
+
+<div class="row">
+    @* Left Side side *@
+    <div class="col-auto col-md-6 d-flex flex-column">
+        <input type="text" name="inputName" placeholder="Subscription Name" />
+        <input type="number" name="inputPrice" placeholder="Subscription Price" />
+        <input type="datetime" name="inputStateDate" placeholder="Subscription StartDate" />
+        <input type="datetime" name="inputEndData" placeholder="Subscription EndDate" />
+        <input type="text" style="height: 150px" name="Message" placeholder="Subscription message" />
+        @* Subscription book List *@
+        <div class="row" style="color:white">
+            <div class="col-3">Book name</div>
+            <div class="col-3">Book Authors</div>
+            <div class="col-3">Book Genres</div>
+            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
+        </div>
+        <div class="row" style="color:white">
+            <div class="col-3">Book name</div>
+            <div class="col-3">Book Authors</div>
+            <div class="col-3">Book Genres</div>
+            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
+        </div>
+        <div class="row" style="color:white">
+            <div class="col-3">Book name</div>
+            <div class="col-3">Book Authors</div>
+            <div class="col-3">Book Genres</div>
+            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
+        </div>
+        <div class="row" style="color:white">
+            <div class="col-3">Book name</div>
+            <div class="col-3">Book Authors</div>
+            <div class="col-3">Book Genres</div>
+            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
+        </div>
+    </div>
+    @* Right side *@
+    <div class="col-auto col-md-6">
+        @* find books *@
+        <div class="row pb-3">
+            <input type="text" name="inputTitle" value="" class="col-3" placeholder="Title" />
+            <input type="text" name="InputAuthor" value="" class="col-3" placeholder="Author" />
+            <input type="text" name="InputGenre" value="" class="col-3" placeholder="Genre" />
+            <a @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</a>
+        </div>
+        <div class="imhidden">
+        @* Book List*@
+            <div class="imhidden">
+                <div class="row" style="color:white">
+                    <div class="col-3">Book Name</div>
+                    <div class="col-3">Book Authors</div>
+                    <div class="col-3">Book Genres</div>
+                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
+                </div>
+                <div class="row" style="color:white">
+                    <div class="col-3">Book Name</div>
+                    <div class="col-3">Book Authors</div>
+                    <div class="col-3">Book Genres</div>
+                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
+                </div>
+                <div class="row" style="color:white">
+                    <div class="col-3">Book Name</div>
+                    <div class="col-3">Book Authors</div>
+                    <div class="col-3">Book Genres</div>
+                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
+                </div>
+                <div class="row" style="color:white">
+                    <div class="col-3">Book Name</div>
+                    <div class="col-3">Book Authors</div>
+                    <div class="col-3">Book Genres</div>
+                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <button @onclick="SaveChanges">Save changes</button>
+    <button @onclick="CreateSubscription">Create Subsdription</button>
+</div>
 
 @code {
+    PubHubSubscription TheSubscription;//TODO: get the subscription onload
 
+    /// <summary>
+    /// Sets the filter for the Searching
+    /// </summary>
+    /// <returns></returns>
+    private async Task SetFilter()
+    {
+
+    }
+
+    /// <summary>
+    /// Removes a book from the subscription currently in
+    /// </summary>
+    /// <param name="_BookID">The Guid of the book to be removed</param>
+    /// <returns></returns>
+    private async Task RemoveBook(Guid _BookID)
+    {
+
+    }
+
+    /// <summary>
+    /// Adds a book to the Subscription
+    /// </summary>
+    /// <param name="_Book">The book that is to be added to the subscription</param>
+    /// <returns></returns>
+    private async Task AddBook(PubHubEBook _Book)
+    {
+
+    }
+
+    /// <summary>
+    /// Saves the changes for the subscription
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveChanges()
+    {
+
+    }
+
+    /// <summary>
+    /// Creates a new subscription
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateSubscription()
+    {
+        
+    }
 }
