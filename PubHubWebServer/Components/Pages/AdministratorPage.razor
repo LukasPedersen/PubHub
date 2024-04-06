@@ -47,33 +47,69 @@
                         <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
                     </div>
                     <div class="form-floating mb-3">
-                        <InputCheckbox @bind-Value="IsAdmin" class="form-control"/>
-                        <label> Is user an Admin?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" bind-Value="@IsAdmin" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Is user an Admin?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="text" @bind-Value="Input.PublisherName" class="form-control" placeholder="publisher name" />
+                        @*TODO: add information*@
                     </div>
                     <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
                 </EditForm>
             </div>
-            <div class="col-md-6 col-md-offset-2">
-                <section>
-                    <h3>Use another service to register.</h3>
-                    <hr />
-                    <ExternalLoginPicker />
-                </section>
-            </div>
         </div>
         @*finding user to disable*@
-        <div>
-            <input type="text" name="FinderEmail" value="" />
+        <div class="row">
+            <input type="text" name="FinderEmail" placeholder="Email@Email.dk eller dele af emailen" value="" />
+            <input type="text" name="FinderName" placeholder="" value="" />
+            <button onclick="@FindUser">Find person</button>
+        </div>
+        <div class="row">
+            @foreach (ApplicationUser user in _UserToDiable)
+            {
+                <div class="col">
+                    <div>@user.Email</div>
+                    <div>@user.UserName</div>
+                    <button @onclick="() => DisableUser(user)">Disable User</button>
+                    <button @onclick="() => ActivateUser(user)">Activate User</button>
+
+                </div>
+
+            }
+            <div class="row d-flex flex">
+                <div>Email</div>
+                <div>User name</div>
+                <button>Disable User</button>
+                <button>Activate User</button>
+
+            </div>
         </div>
     </div>
 
     @*Right side*@
     <div class="col-6">
+        <div class="row">
+            <div>
+                <LogsPage />
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <ReceiptPage />
+            </div>
+        </div>
     </div>
 </div>
 
 
 @code {
+    //Ths list of users that should match the search filter for when wanting to disable a user
+    private List<ApplicationUser> _UserToDiable = new();
+
     private IEnumerable<IdentityError>? identityErrors;
 
     [SupplyParameterFromForm]
@@ -99,6 +135,9 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+
+        public string PublisherName { get; set; } = "";
     }
     public async Task RegisterUser(EditContext editContext)
     {
@@ -135,13 +174,28 @@
             }
 
             await UserManager.AddToRoleAsync(user, "Admin");
-        }
-        if (_roleManager.RoleExistsAsync("Publisher").Result == false)
-        {
-            await _roleManager.CreateAsync(new IdentityRole("Publisher"));
+
         }
 
-        await UserManager.AddToRoleAsync(user, "Publisher");
+        if (_roleManager.RoleExistsAsync("Publisher").Result == false)
+        {
+            Guid publisherID = Guid.NewGuid();
+            await Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
+                {
+                    PublisherID = publisherID,
+                    Name = Input.PublisherName,
+                    MyUser = user
+                });
+
+            user.MyPubHubAccount = publisherID;
+            user.EmailConfirmed = true;
+
+
+            await Services.UpdateEntity<ApplicationUser>(user);
+            await _roleManager.CreateAsync(new IdentityRole("Publisher"));
+            await UserManager.AddToRoleAsync(user, "Publisher");
+        }
+
     }
     private ApplicationUser CreateUser()
     {
@@ -162,5 +216,35 @@
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
         return (IUserEmailStore<ApplicationUser>)UserStore;
+    }
+
+    /// <summary>
+    /// Finds the user(s) that match the search filter
+    /// </summary>
+    /// <returns></returns>
+    private async Task FindUser()
+    {
+
+    }
+
+    /// <summary>
+    /// Disable a user
+    /// </summary>
+    /// <param name="_user">The user that should be disabled</param>
+    /// <returns></returns>
+    private async Task DisableUser(ApplicationUser _user)
+    {
+
+
+    }
+
+    /// <summary>
+    /// Activates a user
+    /// </summary>
+    /// <param name="_user">The user that should be activated</param>
+    /// <returns></returns>
+    private async Task ActivateUser(ApplicationUser _user)
+    {
+
     }
 }
