@@ -1,5 +1,27 @@
-﻿<h3>LogsPage</h3>
+﻿@using PubHubWebServer.Data.Models
+@*Search*@
+<div class="m-1">
+
+    <div class="row">
+        <input class="col-auto col-md-4" type="datetime" name="LogsFrom" placeholder="DD-MM-YYYY:HH-MM" value="" />
+        <input class="col-auto col-md-4" type="datetime" name="LogsTo" placeholder="DD-MM-YYYY:HH-MM" value="" />
+        <input class="col-auto col-md-3" type="text" name="LogsLevel" placeholder="Info, Warning, Crit" value="" />
+        <button class="col-1" @onclick="FindLogs">Find logs</button>
+    </div>
+    @*List of Logs*@
+    <div class="row border border-info" style="color:white;">
+        <div class="col-auto col-md-2">LogID: 1234</div>
+        <div class="col-auto col-md-2">EntityID: 1234</div>
+        <div class="col-auto col-md-2">Timestamp @DateTime.Now</div>
+        <div class="col-auto col-md-1">Level: info </div>
+        <div class="col-auto col-md-7">Message: this isthe message of the item that should be something about it.</div>
+    </div>
+</div>
 
 @code {
+    List<PubHubLog> PubHubLogs = new();
 
+    private async Task FindLogs()
+    {
+    }
 }
