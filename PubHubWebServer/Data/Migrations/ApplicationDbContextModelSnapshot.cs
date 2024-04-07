@@ -247,6 +247,10 @@ namespace PubHubWebServer.Migrations
                     b.Property<double>("BorrowPrice")
                         .HasColumnType("float");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("DownloadCount")
                         .HasColumnType("bigint");
 
@@ -412,78 +416,6 @@ namespace PubHubWebServer.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubAdminRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MyUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MyUserId");
-
-                    b.ToTable("AdminRoles");
-                });
-
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubPublisherRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MyUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MyUserId");
-
-                    b.ToTable("PublisherRoles");
-                });
-
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubReaderRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MyUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MyUserId");
-
-                    b.ToTable("ReaderRoles");
-                });
-
             modelBuilder.Entity("PubHubWebServer.Data.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -597,33 +529,6 @@ namespace PubHubWebServer.Migrations
                     b.HasOne("PubHubWebServer.Data.Models.PubHubReader", null)
                         .WithMany("Subscriptions")
                         .HasForeignKey("PubHubReaderReaderID");
-                });
-
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubAdminRole", b =>
-                {
-                    b.HasOne("PubHubWebServer.Data.ApplicationUser", "MyUser")
-                        .WithMany()
-                        .HasForeignKey("MyUserId");
-
-                    b.Navigation("MyUser");
-                });
-
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubPublisherRole", b =>
-                {
-                    b.HasOne("PubHubWebServer.Data.ApplicationUser", "MyUser")
-                        .WithMany()
-                        .HasForeignKey("MyUserId");
-
-                    b.Navigation("MyUser");
-                });
-
-            modelBuilder.Entity("PubHubWebServer.Data.Roles.PubHubReaderRole", b =>
-                {
-                    b.HasOne("PubHubWebServer.Data.ApplicationUser", "MyUser")
-                        .WithMany()
-                        .HasForeignKey("MyUserId");
-
-                    b.Navigation("MyUser");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.PubHubPublisher", b =>

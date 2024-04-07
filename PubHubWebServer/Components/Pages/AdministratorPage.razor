@@ -154,17 +154,7 @@
             return;
         }
 
-        Guid readerID = Guid.NewGuid();
-        await Services.AddSingleEntity<PubHubReader>(new PubHubReader
-            {
-                ReaderID = readerID,
-                MyUser = user
-            });
-
-        user.MyPubHubAccount = readerID;
         user.EmailConfirmed = true;
-
-        await Services.UpdateEntity<ApplicationUser>(user);
 
         if (IsAdmin)
         {
@@ -172,30 +162,29 @@
             {
                 await _roleManager.CreateAsync(new IdentityRole("Admin"));
             }
-
             await UserManager.AddToRoleAsync(user, "Admin");
-
         }
-
-        if (_roleManager.RoleExistsAsync("Publisher").Result == false)
+        else
         {
+            if (_roleManager.RoleExistsAsync("Publisher").Result == false)
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Publisher"));
+            }
+            await UserManager.AddToRoleAsync(user, "Publisher");
             Guid publisherID = Guid.NewGuid();
             await Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
-                {
-                    PublisherID = publisherID,
-                    Name = Input.PublisherName,
-                    MyUser = user
-                });
+            {
+                PublisherID = publisherID,
+                Name = Input.PublisherName,
+                MyUser = user
+            });
 
             user.MyPubHubAccount = publisherID;
             user.EmailConfirmed = true;
 
 
-            await Services.UpdateEntity<ApplicationUser>(user);
-            await _roleManager.CreateAsync(new IdentityRole("Publisher"));
-            await UserManager.AddToRoleAsync(user, "Publisher");
         }
-
+        await Services.UpdateEntity<ApplicationUser>(user);
     }
     private ApplicationUser CreateUser()
     {
