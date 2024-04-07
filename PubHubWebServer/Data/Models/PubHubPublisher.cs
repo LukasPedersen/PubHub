@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using PubHubWebServer.Data.Models.Relationships;
 
 namespace PubHubWebServer.Data.Models
 {
@@ -11,11 +13,11 @@ namespace PubHubWebServer.Data.Models
         [Required]
         public string Name { get; set; }
 
-        public ApplicationUser MyUser { get; set; }
+        public string ApplicationUserId { get; set; }
 
         //Relationships
-        public List<PubHubSubscription> Subscriptions { get; set; } = new();
-
-        public List<PubHubEBook> EBooks { get; set; } = new();
+        public ApplicationUser ApplicationUser { get; set; }
+        public List<PubHubSupscriptionPubHubPublisher> Subscriptions { get; set; } = null!;
+        public List<PubHubEBookPubHubPublisher> EBooks { get; set; } = null!;
     }
 }

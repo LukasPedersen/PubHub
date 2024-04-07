@@ -21,8 +21,6 @@
 @inject RoleManager<IdentityRole> _roleManager
 @inject IPubHubServices Services
 
-@attribute [Authorize(Roles = "Admin")]
-
 <PageTitle>Register</PageTitle>
 
 <h1>Register</h1>
@@ -94,7 +92,7 @@
         await Services.AddSingleEntity<PubHubReader>(new PubHubReader
             {
                 ReaderID = readerID,
-                MyUser = user
+                ApplicationUser = user
             });
 
         user.MyPubHubAccount = readerID;

@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PubHubWebServer.Data.Models.Relationships;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Principal;
 
 namespace PubHubWebServer.Data.Models
 {
@@ -31,5 +34,12 @@ namespace PubHubWebServer.Data.Models
 
         [Required]
         public string FilePath { get; set; }
+
+        //Relationships
+        public List<PubHubEBookPubHubSubscription> Subscriptions { get; set; } = null!;
+
+        public List<PubHubEBookPubHubReader> Readers { get; set; } = null!;
+
+        public List<PubHubEBookPubHubPublisher> Publishers { get; set; }
     }
 }
