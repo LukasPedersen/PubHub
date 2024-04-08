@@ -254,6 +254,22 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## DB Diagram documentation
+<details>
+  <summary>Full DB Diagram</summary>
+  ![image](https://github.com/LukasPedersen/PubHub/assets/61869988/2c05efc5-3bcb-43bb-be7a-7568a9c13ace)
+
+</details>
+
+<details>
+  <summary>System DB Diagram</summary>
+  ![image](https://github.com/LukasPedersen/PubHub/assets/61869988/8a57bd8b-651b-475c-aa6b-451643c2d984)
+
+
+</details>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- CONTRIBUTING -->
 ## Contributing
 
@@ -269,9 +285,6 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- LICENSE -->
 ## License
 
