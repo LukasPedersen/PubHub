@@ -363,8 +363,8 @@ namespace PubHubWebServer.Services
             }
             catch (Exception ex)
             {
-                string message = $"Failed to get all subscriptions on publisherID: {_readerID}, with the following Error message: " + ex.Message;
-                SaveLog(message, LogType.Error, _readerID);//Save log
+                string message = $"Failed to get all subscriptions on publisherID: {_publisherID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, _publisherID);//Save log
                 return new ApiResponse<List<PubHubSubscription>>
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -377,33 +377,33 @@ namespace PubHubWebServer.Services
         public async Task<ApiResponse<List<PubHubEBook>>> GetAllPublishersBooks(Guid _PublisherID)
         {
             throw new NotImplementedException();
-            try
-            {
-                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _publisherID);
-                if (publisher == null)
-                {
-                    return new ApiResponse<List<PubHubEBook>>
-                    {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        ErrorMessage = "Publisher not found"
-                    };
-                }
-                return new ApiResponse<List<PubHubEBook>>
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    //Data = publisher.EBooks.Select(p => p.EBook).ToList(),
-                };
-            }
-            catch (Exception ex)
-            {
-                string message = $"Failed to get Publisher books on publisherID: {_PublisherID}, with the following Error message: " + ex.Message;
-                SaveLog(message, LogType.Error, _PublisherID);//Save log
-                return new ApiResponse<List<PubHubEBook>>
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error getting publishers books"
-                };
-            }
+            //try
+            //{
+            //    PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _publisherID);
+            //    if (publisher == null)
+            //    {
+            //        return new ApiResponse<List<PubHubEBook>>
+            //        {
+            //            StatusCode = HttpStatusCode.BadRequest,
+            //            ErrorMessage = "Publisher not found"
+            //        };
+            //    }
+            //    return new ApiResponse<List<PubHubEBook>>
+            //    {
+            //        StatusCode = HttpStatusCode.OK,
+            //        //Data = publisher.EBooks.Select(p => p.EBook).ToList(),
+            //    };
+            //}
+            //catch (Exception ex)
+            //{
+            //    string message = $"Failed to get Publisher books on publisherID: {_PublisherID}, with the following Error message: " + ex.Message;
+            //    SaveLog(message, LogType.Error, _PublisherID);//Save log
+            //    return new ApiResponse<List<PubHubEBook>>
+            //    {
+            //        StatusCode = HttpStatusCode.InternalServerError,
+            //        ErrorMessage = "Error getting publishers books"
+            //    };
+            //}
         }
 
         public async Task<ApiResponse<double>> GetTotalEarnings(Guid _userID)
@@ -744,14 +744,15 @@ namespace PubHubWebServer.Services
 
         public async Task<ApiResponse<List<PubHubEBook>>> GetAllBooksFromUserByID(string _userID)
         {
+            throw new NotImplementedException();
             try
             {
-                return new ApiResponse<List<PubHubEBook>> 
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    //TOOD: not sure if this will work
-                    Data = (List<PubHubEBook>)pubHubDBContext.Readers.Where(x => x.MyUser.Id == _userID).Select(x => x.EBooks)
-                };
+                //return new ApiResponse<List<PubHubEBook>> 
+                //{
+                //    StatusCode = HttpStatusCode.OK,
+                //    //TOOD: not sure if this will work
+                //    Data = (List<PubHubEBook>)pubHubDBContext.Readers.Where(x => x.MyUser.Id == _userID).Select(x => x.EBooks)
+                //};
             }
             catch (Exception ex)
             {
