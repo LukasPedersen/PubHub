@@ -1,0 +1,113 @@
+﻿@page "/PublisherAdministration"
+
+<div class="row h-100">
+    @* Left side*@
+    <div class="col-auto col-md-6" style="background-color:blue">
+        <div class="d-flex">
+            <input class="col-2" placeholder="Title" />
+            <input class="col-2" placeholder="stateDate" />
+            <input class="col-2" placeholder="endDate" />
+            <input class="col-1" placeholder="state" />
+            <input class="col-2" placeholder="other" />
+            <input class="col-2" placeholder="last" />
+            <button class="col-1">Filter</button>
+        </div>
+
+        @*foreach item in the subscription list*@
+        <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
+            <div class="pe-1 col-3"> This is the name of the subscription</div>
+            <div class="pe-1 col-2"> State: active </div>
+            <div class="pe-1 col-3"> Subscribers: 1234</div>
+            <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
+            <button class="col-1">Edit</button>@*This should go to the subscription page so that the publisher can edit the subscription*@
+        </div>
+        <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
+            <div class="pe-1 col-3"> This is the name of the subscription</div>
+            <div class="pe-1 col-2"> State: active </div>
+            <div class="pe-1 col-3"> Subscribers: 1234</div>
+            <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
+            <button class="col-1">Edit</button>@*This should go to the subscription page so that the publisher can edit the subscription*@
+        </div>
+        <div class="pull-right bottom-right">
+            <a class="btn border" href="#">
+                New Subscription
+            </a>
+        </div>
+    </div>
+
+    @*Right side*@
+    <div class="col-auto col-md-6" style="background-color:yellow">
+        <div class="mb-1">
+
+            <a href="#" class="row text-decoration-none" style="background-color:green;">
+                @*This should go to the books page*@
+                <div class="col-4">This is the books name</div>
+                <div class="col-3">Here the names of the authors will be</div>
+                <div class="col-2">Downloads: 1234</div>
+                <button class="col-3"></button>
+            </a>
+            <a href="#" class="row text-decoration-none" style="background-color:green;">
+                @*This should go to the books page*@
+                <div class="col-4">This is the books name</div>
+                <div class="col-3">Here the names of the authors will be</div>
+                <div class="col-2">Downloads: 1234</div>
+                <button class="col-3"></button>
+            </a>
+            <a href="#" class="row text-decoration-none" style="background-color:green;">
+                @*This should go to the books page*@
+                <div class="col-4">This is the books name</div>
+                <div class="col-3">Here the names of the authors will be</div>
+                <div class="col-2">Downloads: 1234</div>
+                <button class="col-3"></button>
+            </a>
+            <a href="#" class="row text-decoration-none" style="background-color:green;">
+                @*This should go to the books page*@
+                <div class="col-4">This is the books name</div>
+                <div class="col-3">Here the names of the authors will be</div>
+                <div class="col-2">Downloads: 1234</div>
+                <button class="col-3"></button>
+            </a>
+            <a href="#" class="row text-decoration-none" style="background-color:green;">
+                @*This should go to the books page*@
+                <div class="col-4">This is the books name</div>
+                <div class="col-3">Here the names of the authors will be</div>
+                <div class="col-2">Downloads: 1234</div>
+                <button class="col-3"></button>
+            </a>
+
+        </div>
+        <div class="mt-1 mb-1">
+            <div class="row" style="background-color:lime;">
+                <div class="col-4">Subscription Name</div>
+                <div class="col-4">Income: 1234.56 DKK</div>
+                <div class="col-4">Subscriber antal: 12345</div>
+
+            </div>
+            <div class="row" style="background-color:deepskyblue;">
+                <div class="col-4">Alle subscriptions</div>
+                <div class="col-4">Total Income: 12345.67 DKK</div>
+                <div class="col-4">Total subs: 123456</div>
+            </div>
+        </div>
+        <div class="mt-1 mb-1">
+            <div class="row" style="background-color:deeppink;">
+                <div class="col-4">Top Book: This is the book name</div>
+                <div class="col-4">Income: 1234.56 DKK</div>
+                <div class="col-4">Subscriber antal: 123</div>
+            </div>
+            <div class="row" style="background-color:pink;">
+                <div class="col-4">All books</div>
+                <div class="col-4">Total Income: 1234.56 DKK</div>
+                <div class="col-4">Total Subs: 123567</div>
+            </div>
+        </div>
+        <div>
+            <a class="btn border" href="#">See all books</a>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+}
