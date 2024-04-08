@@ -67,6 +67,8 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<double>> GetTotalErningsFromSubscription(Guid _subscriptionID);
 
+        public Task<ApiResponse<List<PubHubSubscription>>> GetTopSubscriptions();
+
         #endregion
 
         #region Ebook Endpoints
@@ -74,6 +76,8 @@ namespace PubHubWebServer.Services
         public Task<ApiResponse<List<PubHubEBook>>> GetAllBooksFromUserByID(string _userID);
 
         public Task<ApiResponse<double>> GetAllEarningsFromBookByID(Guid _bookID);
+
+        public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks();
 
         #endregion
 
