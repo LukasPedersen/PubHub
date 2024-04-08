@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PubHubWebServer.Data.Models
 {
@@ -6,9 +7,9 @@ namespace PubHubWebServer.Data.Models
     {
         [Key]
         public Guid LogID { get; set; }
-
-        [Required]
-        public Guid EntityID { get; set; }
+        
+        [AllowNull]
+        public Guid? EntityID { get; set; }
 
         [Required]
         public LogType LogType { get; set; }
