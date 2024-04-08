@@ -257,15 +257,12 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 ## DB Diagram documentation
 <details>
   <summary>Full DB Diagram</summary>
-  ![image](https://github.com/LukasPedersen/PubHub/assets/61869988/2c05efc5-3bcb-43bb-be7a-7568a9c13ace)
-
+  <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/4c603078-a103-42f9-9d34-9d019f62164a"></img>
 </details>
 
 <details>
   <summary>System DB Diagram</summary>
-  ![image](https://github.com/LukasPedersen/PubHub/assets/61869988/8a57bd8b-651b-475c-aa6b-451643c2d984)
-
-
+  <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/36946620-69b9-4899-b44b-c0a52b45b999"></img>
 </details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
