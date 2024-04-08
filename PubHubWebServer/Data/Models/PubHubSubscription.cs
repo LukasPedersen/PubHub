@@ -26,7 +26,7 @@ namespace PubHubWebServer.Data.Models
         public bool Active { get; set; } = true;
 
         //Relationships
-        public List<PubHubEBookPubHubSubscription> EBooks { get; set; } = null!;
+        public List<PubHubEBookPubHubSubscription> EBooks { get; set; }
 
         public List<PubHubSupscriptionPubHubPublisher> Publisher { get; set; }
 

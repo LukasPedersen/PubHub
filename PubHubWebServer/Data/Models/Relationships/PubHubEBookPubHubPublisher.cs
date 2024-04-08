@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PubHubWebServer.Data.Models.Relationships
 {
@@ -6,7 +7,11 @@ namespace PubHubWebServer.Data.Models.Relationships
     {
         [Key]
         public Guid ID { get; set; }
-        public PubHubEBook EBook { get; set; }
-        public PubHubPublisher Publisher { get; set; }
+
+        [ForeignKey("EBookID")]
+        public Guid PubHubEBookEBookID { get; set; }
+
+        [ForeignKey("PublisherID")]
+        public Guid PubHubPublisherPublisherID { get; set; }
     }
 }

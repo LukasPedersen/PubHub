@@ -170,6 +170,33 @@ namespace PubHubWebServer.Services
             }
         }
 
+        public async Task<ApiResponse<List<T>>> GetMultipleEntitiesByIDs<T>(List<Guid> _entities)
+        {
+            try
+            {
+                List<T> entities = new();
+                foreach (Guid entity in _entities)
+                {
+                    entities.Add((T)await pubHubDBContext.FindAsync(entity.GetType(), entity));
+                }
+
+                return new ApiResponse<List<T>>
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Data = entities,
+                };
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add logger
+                return new ApiResponse<List<T>>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Error while getting entity"
+                };
+            }
+        }
+
         public async Task<ApiResponse<string>> DeleteEntity<T>(T _entity)
         {
             try
@@ -302,7 +329,7 @@ namespace PubHubWebServer.Services
         {
             try
             {
-                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.Subscription).FirstAsync(p => p.PublisherID == _publisherID);
+                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.PublisherID == _publisherID);
                 if (publisher == null)
                 {
                     return new ApiResponse<List<PubHubSubscription>>
@@ -311,10 +338,17 @@ namespace PubHubWebServer.Services
                         ErrorMessage = "Publisher not found"
                     };
                 }
+                List<PubHubSupscriptionPubHubPublisher> subscriptionPublishers = publisher.Subscriptions;
+                List<PubHubSubscription> subscriptions = new();
+                foreach (PubHubSupscriptionPubHubPublisher subscription in subscriptionPublishers)
+                {
+                    //subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.ID).FirstAsync());
+                }
+                
                 return new ApiResponse<List<PubHubSubscription>>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = publisher.Subscriptions.Select(p => p.Subscription).ToList(),
+                    Data = subscriptions,
                 };
             }
             catch (Exception ex)
@@ -330,9 +364,10 @@ namespace PubHubWebServer.Services
 
         public async Task<ApiResponse<List<PubHubEBook>>> GetAllPublishersBooks(Guid _publisherID)
         {
+            throw new NotImplementedException();
             try
             {
-                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.EBook).FirstAsync(p => p.PublisherID == _publisherID);
+                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _publisherID);
                 if (publisher == null)
                 {
                     return new ApiResponse<List<PubHubEBook>>
@@ -344,7 +379,7 @@ namespace PubHubWebServer.Services
                 return new ApiResponse<List<PubHubEBook>>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = publisher.EBooks.Select(p => p.EBook).ToList(),
+                    //Data = publisher.EBooks.Select(p => p.EBook).ToList(),
                 };
             }
             catch (Exception ex)
@@ -381,7 +416,7 @@ namespace PubHubWebServer.Services
         {
             try
             {
-                PubHubPublisher reader = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.Subscription).FirstAsync(p => p.PublisherID == _readerID);
+                PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.ReaderID == _readerID);
                 if (reader == null)
                 {
                     return new ApiResponse<List<PubHubSubscription>>
@@ -390,10 +425,11 @@ namespace PubHubWebServer.Services
                         ErrorMessage = "Reader not found"
                     };
                 }
+                List<Guid> subscriptionReaders = reader.Subscriptions.Where(sr => sr.PubHubReaderReaderID == _readerID).Select(s => s.PubHubSubscriptionSubscriptionID).ToList();
                 return new ApiResponse<List<PubHubSubscription>>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = reader.Subscriptions.Select(s => s.Subscription).ToList()
+                    Data = GetMultipleEntitiesByIDs<PubHubSubscription>(subscriptionReaders).Result.Data,
                 };
             }
             catch (Exception ex)
@@ -409,9 +445,10 @@ namespace PubHubWebServer.Services
 
         public async Task<ApiResponse<List<PubHubEBook>>> GetAllReadersBooks(Guid _readerID)
         {
+            throw new NotImplementedException();
             try
             {
-                PubHubPublisher reader = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.Subscription).FirstAsync(p => p.PublisherID == _readerID);
+                PubHubPublisher reader = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.PublisherID == _readerID);
                 if (reader == null)
                 {
                     return new ApiResponse<List<PubHubEBook>>
@@ -423,7 +460,7 @@ namespace PubHubWebServer.Services
                 return new ApiResponse<List<PubHubEBook>>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = reader.EBooks.Select(e => e.EBook).ToList()
+                    //Data = reader.EBooks.Select(e => e.EBook).ToList()
                 };
             }
             catch (Exception ex)
@@ -485,8 +522,8 @@ namespace PubHubWebServer.Services
                 // Create a new entry in the join table
                 var joinEntry = new PubHubEBookPubHubSubscription
                 {
-                    EBook = book,
-                    Subscription = subscription
+                    PubHubEBookEBookID = book.EBookID,
+                    PubHubSubscriptionSubscriptionID = subscription.SubscriptionID
                 };
 
                 // Add the join entry to the context
@@ -539,7 +576,7 @@ namespace PubHubWebServer.Services
 
                 // Find the corresponding entry in the join table
                 var joinEntry = await pubHubDBContext.EBookSubscriptions
-                    .FirstOrDefaultAsync(es => es.EBook.EBookID == _bookID && es.Subscription.SubscriptionID == _subscriptionID);
+                    .FirstOrDefaultAsync(es => es.PubHubEBookEBookID == _bookID && es.PubHubSubscriptionSubscriptionID == _subscriptionID);
 
                 if (joinEntry != null)
                 {
@@ -582,15 +619,15 @@ namespace PubHubWebServer.Services
                 }
 
                 // Query the join table to get all books associated with the subscription
-                var books = await pubHubDBContext.EBookSubscriptions
-                    .Where(es => es.Subscription.SubscriptionID == _subscriptionID)
-                    .Select(es => es.EBook)
+                var bookIDs = await pubHubDBContext.EBookSubscriptions
+                    .Where(es => es.PubHubSubscriptionSubscriptionID == _subscriptionID)
+                    .Select(es => es.PubHubEBookEBookID)
                     .ToListAsync();
 
                 return new ApiResponse<List<PubHubEBook>>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = books
+                    Data = GetMultipleEntitiesByIDs<PubHubEBook>(bookIDs).Result.Data
                 };
             }
             catch (Exception ex)

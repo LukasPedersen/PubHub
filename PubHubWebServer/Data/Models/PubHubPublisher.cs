@@ -17,7 +17,7 @@ namespace PubHubWebServer.Data.Models
 
         //Relationships
         public ApplicationUser ApplicationUser { get; set; }
-        public List<PubHubSupscriptionPubHubPublisher> Subscriptions { get; set; } = null!;
-        public List<PubHubEBookPubHubPublisher> EBooks { get; set; } = null!;
+        public List<PubHubSupscriptionPubHubPublisher> Subscriptions { get; set; }
+        public List<PubHubEBookPubHubPublisher> EBooks { get; set; }
     }
 }

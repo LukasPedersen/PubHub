@@ -12,8 +12,8 @@ using PubHubWebServer.Data;
 namespace PubHubWebServer.Migrations
 {
     [DbContext(typeof(PubHubDBContext))]
-    [Migration("20240407154919_UserPublisherReaderBooksDataSeeding")]
-    partial class UserPublisherReaderBooksDataSeeding
+    [Migration("20240408123555_AddDataSeedingAndDBUpdate")]
+    partial class AddDataSeedingAndDBUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -282,33 +282,7 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            EBookID = new Guid("66666e12-98aa-40d9-b1cd-5977e40e6002"),
-                            AuthorNames = "Charlotte M. Yonge",
-                            BorrowPrice = 65.950000000000003,
-                            Description = "Richard I (28 August 933 – 20 November 996), also known as Richard the Fearless (French, Richard Sans-Peur), was the Count of Rouen from 942 to 996. Dudo of Saint-Quentin, whom Richard commissioned to write the \"De moribus et actis primorum Normanniae ducum\" (Latin, \"On the Customs and Deeds of the First Dukes of Normandy\"), called him a Dux.",
-                            DownloadCount = 0L,
-                            FilePath = "The-Little-Duke-Richard-the-Fearless",
-                            Genre = "History",
-                            PageCount = 145,
-                            Price = 130.94999999999999,
-                            Title = "The Little Duke: Richard the Fearless"
-                        },
-                        new
-                        {
-                            EBookID = new Guid("7b6bb5f6-0238-4304-8508-6e9b130a6bc6"),
-                            AuthorNames = "Charlotte M. Yonge",
-                            BorrowPrice = 34.0,
-                            Description = "First published in 1853, The Heir of Redclyffe was the most successful novel of the century. Adopted by William Morris and Burne-Jones \"as a pattern for life,\" the protagonist, Guy, was a popular role model of noble virtue, while another character, Amy, was seen as the ideal Victorian wife--redeemer and inspirer, supporter and guide. This novel is a virtual paradigm of the trends of thought which marked the middle decades of the nineteenth-century. It is also deeply marked by the influence of the Oxford Movement, an aspect explored in Barbara Dennis's Introduction to this unique critical edition.",
-                            DownloadCount = 0L,
-                            FilePath = "The-Heir-of-Redclyffe",
-                            Genre = "Romance novel",
-                            PageCount = 637,
-                            Price = 170.0,
-                            Title = "The Heir of Redclyffe"
-                        },
-                        new
-                        {
-                            EBookID = new Guid("13bc304c-5e54-47e0-9f6e-a4bfd4f14412"),
+                            EBookID = new Guid("19c64e6d-427b-4932-a59d-33cc2a16a31d"),
                             AuthorNames = "Charlotte M. Yonge",
                             BorrowPrice = 21.949999999999999,
                             Description = "This book has been considered by academicians and scholars of great significance and value to literature. This forms a part of the knowledge base for future generations. We havent used any OCR or photocopy to produce this book. The whole book has been typeset again to produce it without any errors or poor pictures and errant marks.",
@@ -321,7 +295,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("a6a236ed-7b6b-4159-9e1e-10572be599ef"),
+                            EBookID = new Guid("56a12b8e-bcc9-465d-84e0-087bb4d1e0f3"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 45.0,
                             Description = "The Pearl of the Andes A Tale of Love and Adventure, a classical book, has been considered important throughout the human history, and so that this work is never forgotten we at Alpha Editions have made efforts in its preservation by republishing this book in a modern format for present and future generations. This whole book has been reformatted, retyped and designed. These books are not made of scanned copies of their original work and hence the text is clear and readable.",
@@ -334,7 +308,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("485b92db-4fc2-49e6-bb0e-dde12042dd35"),
+                            EBookID = new Guid("a4e7f328-bc06-4f8e-8e8d-0f1a5b1b2884"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 27.0,
                             Description = "This work has been selected by scholars as being culturally important, and is part of the knowledge base of civilization as we know it. This work was reproduced from the original artifact, and remains as true to the original work as possible. Therefore, you will see the original copyright references, library stamps (as most of these works have been housed in our most important libraries around the world), and other notations in the work.This work is in the public domain in the United States of America, and possibly other nations. Within the United States, you may freely copy and distribute this work, as no entity (individual or corporate) has a copyright on the body of the work.As a reproduction of a historical artifact, this work may contain missing or blurred pages, poor pictures, errant marks, etc. Scholars believe, and we concur, that this work is important enough to be preserved, reproduced, and made generally available to the public. We appreciate your support of the preservation process, and thank you for being an important part of keeping this knowledge alive and relevant.",
@@ -347,7 +321,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("d5f45ec5-110e-4be6-9f85-70d864307cf3"),
+                            EBookID = new Guid("5ac87ad1-97ae-4fca-be7c-5c055feb028d"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 55.0,
                             Description = "The action and adventure genre in fiction depicts events or a series of events that happen outside the ordinary course of the protagonist's daily life, generally accompanied by dangerous episodes and physical action. Adventure stories are quick moving, with the pace of the plot being a critical component of mood setting. Action and adventure have been common book themes since the earliest days of fiction writing. In fact, the plots of Medieval romances were comprised of a series of adventures. Action / adventure fiction often overlaps with other genres, such as: war novels, crime novels, sea stories, Robinsonades, and spy stories.",
@@ -360,7 +334,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("cafd2842-51d6-4bd5-9a6c-08c4aa665cc9"),
+                            EBookID = new Guid("5064fa5d-f6b7-4cc8-9c69-cba0f86ede99"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 51.0,
                             Description = "\"The Smuggler Chief\" is a thrilling adventure story penned by French writer Gustave Aimard and translated by Lascelles Sir Wraxall. Set against a backdrop of danger and intrigue, the novel follows the lives of smugglers, exploring themes of loyalty, betrayal, and the quest for freedom. Aimard's vivid storytelling and rich characterization make this a must-read for fans of classic adventure tales.",
@@ -373,7 +347,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("c2571b34-63d0-4faf-ac49-1d177a4a22c8"),
+                            EBookID = new Guid("4e44afc3-ac55-4dcf-8982-f0f6381d47c7"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 45.0,
                             Description = "Gustave Aimard, seudónimo de Olivier Groux (1818-1883), fue un novelista francés. Abandonado al nacer por sus padres, de espíritu rebelde, no aceptó a la pareja que lo adoptó y a los nueve años escapó de la casa y marchó a América del Sur. Posteriormente se trasladó a Estados Unidos, donde convivió con los cheyennes. De vuelta la Europa en 1847 viajó por España, Turquía y el Cáucaso. En 1852 volvió a América, pero en 1854 regresó definitivamente a Francia y comenzó a escribir a partir de 1856. Sus experiencias le sirvieron para escribir numerosas novelas del oeste que se hicieron muy populares en Francia y Estados Unidos.",
@@ -386,7 +360,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("6ccbb8a7-1472-4395-8834-4179c3ec13e4"),
+                            EBookID = new Guid("9a295882-ea44-40e8-93bd-0e5aa28de707"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 89.950000000000003,
                             Description = "\"The Flying Horseman\" is a thrilling tale penned by the French writer Gustave Aimard. Set in a world of adventure and danger, the story follows the journey of its titular character as he navigates challenges and confronts adversaries. With its gripping narrative and rich character development, this classic work is a testament to Aimard's literary genius.",
@@ -399,7 +373,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("9dfe7001-ff62-49c2-a119-20a8551aca67"),
+                            EBookID = new Guid("a5ed762d-75fd-4692-a23c-e74053bbe11c"),
                             AuthorNames = "Gustave Aimard",
                             BorrowPrice = 43.0,
                             Description = "Opening with loading a ship in Cape Horn, Chile, the book takes readers on an adventure throughout South America. Encounters with indigenous populations and learning to find common ground with others are at the heart of this tale, in many ways mirroring the author's own experiences.",
@@ -418,7 +392,7 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EntityID")
+                    b.Property<Guid?>("EntityID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("LogType")
@@ -459,14 +433,14 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            PublisherID = new Guid("01e6a853-9ed8-4616-8866-1e5244ff240f"),
-                            ApplicationUserId = "1921f6ae-86bf-4581-b6b7-cccfd94157b1",
+                            PublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82"),
+                            ApplicationUserId = "01ff729e-ded4-4d3b-a7c4-5c548fa3e990",
                             Name = "Forlaget Mellemgaard"
                         },
                         new
                         {
-                            PublisherID = new Guid("f07370a6-780f-426f-833f-182a1ede9304"),
-                            ApplicationUserId = "74fd6a7a-0b9b-4540-bd86-3f2f59ecdbfa",
+                            PublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53"),
+                            ApplicationUserId = "986bd8a5-0db6-4d89-8f23-7ead94377515",
                             Name = "Buster Nordic"
                         });
                 });
@@ -490,13 +464,13 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ReaderID = new Guid("d3f64447-bed3-44fb-879e-c989eb81ede0"),
-                            ApplicationUserId = "2932e86c-ddf9-4403-a664-7729a9c8b865"
+                            ReaderID = new Guid("6dbbafaf-5ec7-413d-b03e-fc7b40fc7e79"),
+                            ApplicationUserId = "ccc1a851-144d-488f-9a1b-2005aec95e36"
                         },
                         new
                         {
-                            ReaderID = new Guid("094e390b-2c8f-4e71-9660-e491993d2b14"),
-                            ApplicationUserId = "3fcb39c1-5da6-4a09-8383-a7850ecfd6b2"
+                            ReaderID = new Guid("55404489-9476-4b98-8311-2903bc4d79ab"),
+                            ApplicationUserId = "0f129464-655f-42c9-95bd-2f81a49f61d8"
                         });
                 });
 
@@ -552,6 +526,48 @@ namespace PubHubWebServer.Migrations
                     b.HasKey("SubscriptionID");
 
                     b.ToTable("Subscriptions");
+
+                    b.HasData(
+                        new
+                        {
+                            SubscriptionID = new Guid("994a9994-e3bd-4c5d-9b1a-ed669595f6e8"),
+                            Active = true,
+                            EndDate = new DateTime(2024, 5, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9042),
+                            Message = "This mounth we are running a campain to spread the love. so subscripe today to get all thoes juicy details",
+                            Price = 119.95,
+                            StartDate = new DateTime(2024, 4, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(8977),
+                            Title = "Romance Mounth"
+                        },
+                        new
+                        {
+                            SubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e"),
+                            Active = true,
+                            EndDate = new DateTime(2024, 5, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9064),
+                            Message = "Bored? Well do we have some excitement for you, right now we are running a special campain to get that excitement back into peoples lifes",
+                            Price = 100.0,
+                            StartDate = new DateTime(2024, 4, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9060),
+                            Title = "Fantasy Hype"
+                        },
+                        new
+                        {
+                            SubscriptionID = new Guid("045155fe-a280-4f26-a4d3-724714dfd8df"),
+                            Active = true,
+                            EndDate = new DateTime(2024, 5, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9073),
+                            Message = "Want to learn? Well read some of our History books",
+                            Price = 45.0,
+                            StartDate = new DateTime(2024, 4, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9070),
+                            Title = "Book worm"
+                        },
+                        new
+                        {
+                            SubscriptionID = new Guid("500b04f5-8690-4c14-9324-7617fac74e7d"),
+                            Active = true,
+                            EndDate = new DateTime(2024, 6, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9083),
+                            Message = "My colliction of books i need for school",
+                            Price = 49.950000000000003,
+                            StartDate = new DateTime(2024, 4, 8, 14, 35, 54, 670, DateTimeKind.Local).AddTicks(9080),
+                            Title = "School books"
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubPublisher", b =>
@@ -560,19 +576,63 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EBookID")
+                    b.Property<Guid>("PubHubEBookEBookID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PublisherID")
+                    b.Property<Guid>("PubHubPublisherPublisherID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("EBookID");
+                    b.HasIndex("PubHubEBookEBookID");
 
-                    b.HasIndex("PublisherID");
+                    b.HasIndex("PubHubPublisherPublisherID");
 
                     b.ToTable("EBookPublishers");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("6206ce0f-4862-4c3c-9a6c-73bbf245e11a"),
+                            PubHubEBookEBookID = new Guid("19c64e6d-427b-4932-a59d-33cc2a16a31d"),
+                            PubHubPublisherPublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82")
+                        },
+                        new
+                        {
+                            ID = new Guid("1b962b7f-20f3-4d5d-8166-0a62b4c22c93"),
+                            PubHubEBookEBookID = new Guid("56a12b8e-bcc9-465d-84e0-087bb4d1e0f3"),
+                            PubHubPublisherPublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82")
+                        },
+                        new
+                        {
+                            ID = new Guid("a3abc129-5d22-4db4-ae61-a2d32ccb3181"),
+                            PubHubEBookEBookID = new Guid("5ac87ad1-97ae-4fca-be7c-5c055feb028d"),
+                            PubHubPublisherPublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82")
+                        },
+                        new
+                        {
+                            ID = new Guid("fa1dd5af-82e2-4991-88d2-506fb24b67f5"),
+                            PubHubEBookEBookID = new Guid("5064fa5d-f6b7-4cc8-9c69-cba0f86ede99"),
+                            PubHubPublisherPublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53")
+                        },
+                        new
+                        {
+                            ID = new Guid("6eb07056-2846-4b8b-a4e9-599c41afba3d"),
+                            PubHubEBookEBookID = new Guid("4e44afc3-ac55-4dcf-8982-f0f6381d47c7"),
+                            PubHubPublisherPublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53")
+                        },
+                        new
+                        {
+                            ID = new Guid("2f6eaf43-3a95-44ae-8b39-baa72cee24d4"),
+                            PubHubEBookEBookID = new Guid("9a295882-ea44-40e8-93bd-0e5aa28de707"),
+                            PubHubPublisherPublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53")
+                        },
+                        new
+                        {
+                            ID = new Guid("af337148-7fcc-470c-8e74-0d40cd3e3e7d"),
+                            PubHubEBookEBookID = new Guid("a5ed762d-75fd-4692-a23c-e74053bbe11c"),
+                            PubHubPublisherPublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53")
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubReader", b =>
@@ -581,19 +641,51 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EBookID")
+                    b.Property<Guid>("PubHubEBookEBookID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ReaderID")
+                    b.Property<Guid>("PubHubReaderReaderID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("EBookID");
+                    b.HasIndex("PubHubEBookEBookID");
 
-                    b.HasIndex("ReaderID");
+                    b.HasIndex("PubHubReaderReaderID");
 
                     b.ToTable("EBookReaders");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("26468ed1-4e25-4b18-8fa2-118eb17836b6"),
+                            PubHubEBookEBookID = new Guid("5064fa5d-f6b7-4cc8-9c69-cba0f86ede99"),
+                            PubHubReaderReaderID = new Guid("6dbbafaf-5ec7-413d-b03e-fc7b40fc7e79")
+                        },
+                        new
+                        {
+                            ID = new Guid("b51f8ff0-c7b6-4e67-bd29-13de66e3eefb"),
+                            PubHubEBookEBookID = new Guid("4e44afc3-ac55-4dcf-8982-f0f6381d47c7"),
+                            PubHubReaderReaderID = new Guid("6dbbafaf-5ec7-413d-b03e-fc7b40fc7e79")
+                        },
+                        new
+                        {
+                            ID = new Guid("219e7589-a189-4561-9894-0a89d5b430e5"),
+                            PubHubEBookEBookID = new Guid("9a295882-ea44-40e8-93bd-0e5aa28de707"),
+                            PubHubReaderReaderID = new Guid("55404489-9476-4b98-8311-2903bc4d79ab")
+                        },
+                        new
+                        {
+                            ID = new Guid("802a153c-977a-4667-a321-343f7e89cf1e"),
+                            PubHubEBookEBookID = new Guid("4e44afc3-ac55-4dcf-8982-f0f6381d47c7"),
+                            PubHubReaderReaderID = new Guid("55404489-9476-4b98-8311-2903bc4d79ab")
+                        },
+                        new
+                        {
+                            ID = new Guid("81666f2e-65a1-4790-adf4-19a9f0953e70"),
+                            PubHubEBookEBookID = new Guid("a4e7f328-bc06-4f8e-8e8d-0f1a5b1b2884"),
+                            PubHubReaderReaderID = new Guid("55404489-9476-4b98-8311-2903bc4d79ab")
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubSubscription", b =>
@@ -602,19 +694,69 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EBookID")
+                    b.Property<Guid>("PubHubEBookEBookID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SubscriptionID")
+                    b.Property<Guid>("PubHubSubscriptionSubscriptionID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("EBookID");
+                    b.HasIndex("PubHubEBookEBookID");
 
-                    b.HasIndex("SubscriptionID");
+                    b.HasIndex("PubHubSubscriptionSubscriptionID");
 
                     b.ToTable("EBookSubscriptions");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("e176bee1-097d-4089-9c2f-f2d004d12a1a"),
+                            PubHubEBookEBookID = new Guid("56a12b8e-bcc9-465d-84e0-087bb4d1e0f3"),
+                            PubHubSubscriptionSubscriptionID = new Guid("994a9994-e3bd-4c5d-9b1a-ed669595f6e8")
+                        },
+                        new
+                        {
+                            ID = new Guid("8ab8b522-e980-4984-8fbd-40ce9c4766b8"),
+                            PubHubEBookEBookID = new Guid("a4e7f328-bc06-4f8e-8e8d-0f1a5b1b2884"),
+                            PubHubSubscriptionSubscriptionID = new Guid("045155fe-a280-4f26-a4d3-724714dfd8df")
+                        },
+                        new
+                        {
+                            ID = new Guid("1fe178da-54fd-4b46-aaed-9be69e0b27df"),
+                            PubHubEBookEBookID = new Guid("19c64e6d-427b-4932-a59d-33cc2a16a31d"),
+                            PubHubSubscriptionSubscriptionID = new Guid("045155fe-a280-4f26-a4d3-724714dfd8df")
+                        },
+                        new
+                        {
+                            ID = new Guid("516f581e-2827-469d-a7a7-7f846a5a6bb8"),
+                            PubHubEBookEBookID = new Guid("5ac87ad1-97ae-4fca-be7c-5c055feb028d"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        },
+                        new
+                        {
+                            ID = new Guid("450092b0-3e9f-4359-8027-4c67b2f4565d"),
+                            PubHubEBookEBookID = new Guid("5064fa5d-f6b7-4cc8-9c69-cba0f86ede99"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        },
+                        new
+                        {
+                            ID = new Guid("3dcbbf87-3feb-4078-834f-46899eb2cc69"),
+                            PubHubEBookEBookID = new Guid("4e44afc3-ac55-4dcf-8982-f0f6381d47c7"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        },
+                        new
+                        {
+                            ID = new Guid("72ea3309-5831-44ac-9b38-8a6f47460286"),
+                            PubHubEBookEBookID = new Guid("9a295882-ea44-40e8-93bd-0e5aa28de707"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        },
+                        new
+                        {
+                            ID = new Guid("1b1985ee-d677-4059-b540-16a63f0c457c"),
+                            PubHubEBookEBookID = new Guid("a5ed762d-75fd-4692-a23c-e74053bbe11c"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubSubscriptionPubHubReader", b =>
@@ -623,19 +765,27 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ReaderID")
+                    b.Property<Guid>("PubHubReaderReaderID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SubscriptionID")
+                    b.Property<Guid>("PubHubSubscriptionSubscriptionID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ReaderID");
+                    b.HasIndex("PubHubReaderReaderID");
 
-                    b.HasIndex("SubscriptionID");
+                    b.HasIndex("PubHubSubscriptionSubscriptionID");
 
                     b.ToTable("PubHubSubscriptionPubHubReader");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("4c534f9c-b048-484e-b7df-2a022e1ce597"),
+                            PubHubReaderReaderID = new Guid("55404489-9476-4b98-8311-2903bc4d79ab"),
+                            PubHubSubscriptionSubscriptionID = new Guid("500b04f5-8690-4c14-9324-7617fac74e7d")
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubSupscriptionPubHubPublisher", b =>
@@ -644,19 +794,39 @@ namespace PubHubWebServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PublisherID")
+                    b.Property<Guid>("PubHubPublisherPublisherID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SubscriptionID")
+                    b.Property<Guid>("PubHubSubscriptionSubscriptionID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("PublisherID");
+                    b.HasIndex("PubHubPublisherPublisherID");
 
-                    b.HasIndex("SubscriptionID");
+                    b.HasIndex("PubHubSubscriptionSubscriptionID");
 
                     b.ToTable("PubHubSupscriptionPubHubPublisher");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("89dddb71-cf7e-459e-8090-32bedb807491"),
+                            PubHubPublisherPublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82"),
+                            PubHubSubscriptionSubscriptionID = new Guid("994a9994-e3bd-4c5d-9b1a-ed669595f6e8")
+                        },
+                        new
+                        {
+                            ID = new Guid("279cb752-18a2-4c7c-b82a-6876c25a853a"),
+                            PubHubPublisherPublisherID = new Guid("052eb16b-a255-44d7-b420-febe6518bf82"),
+                            PubHubSubscriptionSubscriptionID = new Guid("045155fe-a280-4f26-a4d3-724714dfd8df")
+                        },
+                        new
+                        {
+                            ID = new Guid("25a96496-0974-42c9-8fba-ec24591288e1"),
+                            PubHubPublisherPublisherID = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53"),
+                            PubHubSubscriptionSubscriptionID = new Guid("c657c3e9-041b-4c87-b431-d06c7415448e")
+                        });
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.ApplicationUser", b =>
@@ -674,7 +844,7 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1921f6ae-86bf-4581-b6b7-cccfd94157b1",
+                            Id = "01ff729e-ded4-4d3b-a7c4-5c548fa3e990",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "9b8fdbf6-ed5a-4b82-aaf4-dd4d5e080d52",
                             Email = "Mellemgaard@hotmail.com",
@@ -688,11 +858,11 @@ namespace PubHubWebServer.Migrations
                             TwoFactorEnabled = false,
                             UserName = "Forlaget Mellemgaard",
                             Active = true,
-                            MyPubHubAccount = new Guid("01e6a853-9ed8-4616-8866-1e5244ff240f")
+                            MyPubHubAccount = new Guid("052eb16b-a255-44d7-b420-febe6518bf82")
                         },
                         new
                         {
-                            Id = "74fd6a7a-0b9b-4540-bd86-3f2f59ecdbfa",
+                            Id = "986bd8a5-0db6-4d89-8f23-7ead94377515",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "653cb2db-6f92-4eda-8288-ec972843ad9d",
                             Email = "Nordic@hotmail.com",
@@ -706,11 +876,11 @@ namespace PubHubWebServer.Migrations
                             TwoFactorEnabled = false,
                             UserName = "Buster Nordic",
                             Active = true,
-                            MyPubHubAccount = new Guid("f07370a6-780f-426f-833f-182a1ede9304")
+                            MyPubHubAccount = new Guid("c2f97cb5-e702-41a1-a1cd-92e2f9decf53")
                         },
                         new
                         {
-                            Id = "2932e86c-ddf9-4403-a664-7729a9c8b865",
+                            Id = "ccc1a851-144d-488f-9a1b-2005aec95e36",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "e82c37ba-22be-4f0a-ac8b-23a62c11476a",
                             Email = "lukas3302@hotmail.com",
@@ -724,11 +894,11 @@ namespace PubHubWebServer.Migrations
                             TwoFactorEnabled = false,
                             UserName = "Lukas Pedersen",
                             Active = true,
-                            MyPubHubAccount = new Guid("d3f64447-bed3-44fb-879e-c989eb81ede0")
+                            MyPubHubAccount = new Guid("6dbbafaf-5ec7-413d-b03e-fc7b40fc7e79")
                         },
                         new
                         {
-                            Id = "3fcb39c1-5da6-4a09-8383-a7850ecfd6b2",
+                            Id = "0f129464-655f-42c9-95bd-2f81a49f61d8",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "d317d42c-6ab7-4ece-b9c4-4210d3c2f009",
                             Email = "Jens2837@hotmail.com",
@@ -742,11 +912,11 @@ namespace PubHubWebServer.Migrations
                             TwoFactorEnabled = false,
                             UserName = "Jens Anker",
                             Active = true,
-                            MyPubHubAccount = new Guid("094e390b-2c8f-4e71-9660-e491993d2b14")
+                            MyPubHubAccount = new Guid("55404489-9476-4b98-8311-2903bc4d79ab")
                         },
                         new
                         {
-                            Id = "8c50d7e9-0cef-4b33-a2e3-002375b85dc2",
+                            Id = "109af2b7-2e0b-4149-9473-9795a2f97c2f",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "a4d4b000-df14-4c3e-9f89-73a90c4a8584",
                             Email = "Admin@hotmail.com",
@@ -847,97 +1017,77 @@ namespace PubHubWebServer.Migrations
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubPublisher", b =>
                 {
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", "EBook")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", null)
                         .WithMany("Publishers")
-                        .HasForeignKey("EBookID")
+                        .HasForeignKey("PubHubEBookEBookID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubPublisher", "Publisher")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubPublisher", null)
                         .WithMany("EBooks")
-                        .HasForeignKey("PublisherID")
+                        .HasForeignKey("PubHubPublisherPublisherID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("EBook");
-
-                    b.Navigation("Publisher");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubReader", b =>
                 {
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", "EBook")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", null)
                         .WithMany("Readers")
-                        .HasForeignKey("EBookID")
+                        .HasForeignKey("PubHubEBookEBookID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubReader", "Reader")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubReader", null)
                         .WithMany("EBooks")
-                        .HasForeignKey("ReaderID")
+                        .HasForeignKey("PubHubReaderReaderID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("EBook");
-
-                    b.Navigation("Reader");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubEBookPubHubSubscription", b =>
                 {
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", "EBook")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubEBook", null)
                         .WithMany("Subscriptions")
-                        .HasForeignKey("EBookID")
+                        .HasForeignKey("PubHubEBookEBookID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", "Subscription")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", null)
                         .WithMany("EBooks")
-                        .HasForeignKey("SubscriptionID")
+                        .HasForeignKey("PubHubSubscriptionSubscriptionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("EBook");
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubSubscriptionPubHubReader", b =>
                 {
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubReader", "Reader")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubReader", null)
                         .WithMany("Subscriptions")
-                        .HasForeignKey("ReaderID")
+                        .HasForeignKey("PubHubReaderReaderID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", "Subscription")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", null)
                         .WithMany("Reader")
-                        .HasForeignKey("SubscriptionID")
+                        .HasForeignKey("PubHubSubscriptionSubscriptionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Reader");
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.Relationships.PubHubSupscriptionPubHubPublisher", b =>
                 {
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubPublisher", "Publisher")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubPublisher", null)
                         .WithMany("Subscriptions")
-                        .HasForeignKey("PublisherID")
+                        .HasForeignKey("PubHubPublisherPublisherID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", "Subscription")
+                    b.HasOne("PubHubWebServer.Data.Models.PubHubSubscription", null)
                         .WithMany("Publisher")
-                        .HasForeignKey("SubscriptionID")
+                        .HasForeignKey("PubHubSubscriptionSubscriptionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Publisher");
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("PubHubWebServer.Data.Models.PubHubEBook", b =>
