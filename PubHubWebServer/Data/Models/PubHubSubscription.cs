@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PubHubWebServer.Data.Models.Relationships;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
@@ -25,6 +26,10 @@ namespace PubHubWebServer.Data.Models
         public bool Active { get; set; } = true;
 
         //Relationships
-        public List<PubHubEBook> EBooks { get; set; } = new();
+        public List<PubHubEBookPubHubSubscription> EBooks { get; set; }
+
+        public List<PubHubSupscriptionPubHubPublisher> Publisher { get; set; }
+
+        public List<PubHubSubscriptionPubHubReader> Reader { get; set; }
     }
 }

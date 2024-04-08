@@ -7,7 +7,7 @@ namespace PubHubWebServer.Data.Models
     {
         [Key]
         public Guid LogID { get; set; }
-        
+      
         [AllowNull]
         public Guid? EntityID { get; set; }
 

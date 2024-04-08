@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PubHubWebServer.Data
 {
@@ -11,6 +12,7 @@ namespace PubHubWebServer.Data
         [Required]
         public bool Active { get; set; } = true;
 
+        [AllowNull]
         public Guid MyPubHubAccount { get; set; }
     }
 
