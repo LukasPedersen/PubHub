@@ -46,6 +46,7 @@ namespace PubHubWebServer.Data
             List<Guid> readerIDs = GetRandomGuids(2);
             List<Guid> subscriptionIDs = GetRandomGuids(4);
             List<Guid> bookIDs = GetRandomGuids(8);
+            List<Guid> roleIDs = GetRandomGuids(3);
 
             List<ApplicationUser> applicationUsers = new();
             List<PubHubPublisher> publishers = new();
@@ -53,22 +54,44 @@ namespace PubHubWebServer.Data
             List<PubHubSubscription> subscriptions = new();
             List<PubHubEBook> books = new();
 
+            #region Roles
+            
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Publisher",
+                NormalizedName = "PUBLISHER",
+                Id = roleIDs[0].ToString(),
+                ConcurrencyStamp = roleIDs[0].ToString()
+            });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Reader",
+                NormalizedName = "READER",
+                Id = roleIDs[1].ToString(),
+                ConcurrencyStamp = roleIDs[1].ToString()
+            });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Admin",
+                NormalizedName = "ADMIN",
+                Id = roleIDs[2].ToString(),
+                ConcurrencyStamp = roleIDs[2].ToString()
+            });
 
+            #endregion
 
             #region ApplicationUser Creation
 
             applicationUsers.Add(new ApplicationUser{
                 Id = applicationUserIDs[0].ToString(),
-                UserName = "Forlaget Mellemgaard",
-                NormalizedUserName = "FORLAGET MELLEMGAARD",
+                UserName = "Mellemgaard@hotmail.com",
+                NormalizedUserName = "MELLEMGAARD@HOTMAIL.COM",
                 Email = "Mellemgaard@hotmail.com",
                 NormalizedEmail = "MELLEMGAARD@HOTMAIL.COM",
-                PasswordHash = "AQAAAAIAAYagAAAAEEmqQe/vndhXqRlDxRsxGHAX1kuWQ117TY6XF/XEO905889tcX+x5AeDq4eyXySWEQ==",
-                SecurityStamp = "TBBRBHXVDKL4JYRX5YZLFTX56P76CYKO",
-                ConcurrencyStamp = "9b8fdbf6-ed5a-4b82-aaf4-dd4d5e080d52",
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
-                LockoutEnabled = false,
+                EmailConfirmed = true,
+                LockoutEnabled = true,
                 AccessFailedCount = 0,
                 Active = true,
                 MyPubHubAccount = publisherIDs[0]
@@ -76,16 +99,14 @@ namespace PubHubWebServer.Data
             applicationUsers.Add(new ApplicationUser
             {
                 Id = applicationUserIDs[1].ToString(),
-                UserName = "Buster Nordic",
-                NormalizedUserName = "BUSTER NORDIC",
+                UserName = "Nordic@hotmail.com",
+                NormalizedUserName = "NORDIC@HOTMAIL.COM",
                 Email = "Nordic@hotmail.com",
                 NormalizedEmail = "NORDIC@HOTMAIL.COM",
-                PasswordHash = "AQAAAAIAAYagAAAAEKpF63VYci9tx6jT7M6RwfqLpgvmA5W8iFFOyOVJZsXZ+5ozXHv+vVhSZ4iBWDHRDA==",
-                SecurityStamp = "NQUEGF4VUUD7QGUA4XP5YNMDMLT5US6H",
-                ConcurrencyStamp = "653cb2db-6f92-4eda-8288-ec972843ad9d",
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
-                LockoutEnabled = false,
+                EmailConfirmed = true,
+                LockoutEnabled = true,
                 AccessFailedCount = 0,
                 Active = true,
                 MyPubHubAccount = publisherIDs[1]
@@ -93,16 +114,14 @@ namespace PubHubWebServer.Data
             applicationUsers.Add(new ApplicationUser
             {
                 Id = applicationUserIDs[2].ToString(),
-                UserName = "Lukas Pedersen",
-                NormalizedUserName = "LUKAS",
+                UserName = "lukas3302@hotmail.com",
+                NormalizedUserName = "LUKAS3302@HOTMAIL.COM",
                 Email = "lukas3302@hotmail.com",
                 NormalizedEmail = "LUKAS3302@HOTMAIL.COM",
-                PasswordHash = "AQAAAAIAAYagAAAAEPsl/YnmLOop8Q3eHEXfKy0CTTI7Vpm2pWEn64idVqozxtLVvtcr4Uf1iyRbshmsIw==",
-                SecurityStamp = "GLY234PA27LVMGEQEBJERG7KGRXQSRDU",
-                ConcurrencyStamp = "e82c37ba-22be-4f0a-ac8b-23a62c11476a",
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
-                LockoutEnabled = false,
+                EmailConfirmed = true,
+                LockoutEnabled = true,
                 AccessFailedCount = 0,
                 Active = true,
                 MyPubHubAccount = readerIDs[0]
@@ -110,16 +129,14 @@ namespace PubHubWebServer.Data
             applicationUsers.Add(new ApplicationUser
             {
                 Id = applicationUserIDs[3].ToString(),
-                UserName = "Jens Anker",
-                NormalizedUserName = "JENS ANKER",
+                UserName = "ens2837@hotmail.com",
+                NormalizedUserName = "JENS2837@HOTMAIL.COM",
                 Email = "Jens2837@hotmail.com",
                 NormalizedEmail = "JENS2837@HOTMAIL.COM",
-                PasswordHash = "AQAAAAIAAYagAAAAEH5hcJHlyO7YeqMGmZqDju46u5EHka/NiKKqqJHKpbq3jEiI5UT1tsVlUp4ziDa+5Q==",
-                SecurityStamp = "FT4UX4Y6TUBDTMWYUAIVE622QJ6GHBOG",
-                ConcurrencyStamp = "d317d42c-6ab7-4ece-b9c4-4210d3c2f009",
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
-                LockoutEnabled = false,
+                EmailConfirmed = true,
+                LockoutEnabled = true,
                 AccessFailedCount = 0,
                 Active = true,
                 MyPubHubAccount = readerIDs[1]
@@ -127,24 +144,62 @@ namespace PubHubWebServer.Data
             applicationUsers.Add(new ApplicationUser
             {
                 Id = applicationUserIDs[4].ToString(),
-                UserName = "Admin",
-                NormalizedUserName = "ADMIN",
+                UserName = "Admin@hotmail.com",
+                NormalizedUserName = "ADMIN@HOTMAIL.COM",
                 Email = "Admin@hotmail.com",
                 NormalizedEmail = "ADMIN@HOTMAIL.COM",
-                PasswordHash = "AQAAAAIAAYagAAAAEI7YCzKIQOnqgMycVwCJ/45d4njC5tjma1AFeC1Z/YuJ2ZD91x+B90FvXluwB3qZvw==",
-                SecurityStamp = "GP4QLQ2ZVJJBYBHBQLLGP4G22UJJFH4U",
-                ConcurrencyStamp = "a4d4b000-df14-4c3e-9f89-73a90c4a8584",
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
-                LockoutEnabled = false,
+                EmailConfirmed = true,
+                LockoutEnabled = true,
                 AccessFailedCount = 0,
                 Active = true,
             });
 
-            foreach (ApplicationUser user in applicationUsers)
+            PasswordHasher<ApplicationUser> ph1 = new PasswordHasher<ApplicationUser>();
+            applicationUsers[0].PasswordHash = ph1.HashPassword(applicationUsers[0], "@Bob123");
+            builder.Entity<ApplicationUser>().HasData(applicationUsers[0]);
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
             {
-                builder.Entity<ApplicationUser>().HasData(user);
-            }
+                RoleId = roleIDs[0].ToString(),
+                UserId = applicationUsers[0].Id
+            });
+
+            PasswordHasher<ApplicationUser> ph2 = new PasswordHasher<ApplicationUser>();
+            applicationUsers[1].PasswordHash = ph2.HashPassword(applicationUsers[1], "@Bob123");
+            builder.Entity<ApplicationUser>().HasData(applicationUsers[1]);
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                RoleId = roleIDs[0].ToString(),
+                UserId = applicationUsers[1].Id
+            });
+
+            PasswordHasher<ApplicationUser> ph3 = new PasswordHasher<ApplicationUser>();
+            applicationUsers[2].PasswordHash = ph2.HashPassword(applicationUsers[2], "@Bob123");
+            builder.Entity<ApplicationUser>().HasData(applicationUsers[2]);
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                RoleId = roleIDs[1].ToString(),
+                UserId = applicationUsers[2].Id
+            });
+
+            PasswordHasher<ApplicationUser> ph4 = new PasswordHasher<ApplicationUser>();
+            applicationUsers[3].PasswordHash = ph2.HashPassword(applicationUsers[3], "@Bob123");
+            builder.Entity<ApplicationUser>().HasData(applicationUsers[3]);
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                RoleId = roleIDs[1].ToString(),
+                UserId = applicationUsers[3].Id
+            });
+
+            PasswordHasher<ApplicationUser> ph5 = new PasswordHasher<ApplicationUser>();
+            applicationUsers[4].PasswordHash = ph2.HashPassword(applicationUsers[4], "@Bob123");
+            builder.Entity<ApplicationUser>().HasData(applicationUsers[4]);
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                RoleId = roleIDs[2].ToString(),
+                UserId = applicationUsers[4].Id
+            });
 
             #endregion
 

@@ -11,7 +11,7 @@ namespace PubHubWebServer.Data.Models
         [Key]
         public Guid ReaderID { get; set; }
 
-        public string ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; } = Guid.NewGuid().ToString();
 
         //Relationships
         public ApplicationUser ApplicationUser { get; set; }
