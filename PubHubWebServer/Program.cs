@@ -641,7 +641,18 @@ namespace PubHubWebServer
 
             #endregion
 
+            #region Other
+
+            app.MapPost("other/anyUsersInDB", async (IPubHubServices pubHubServices) =>
+            {
+                return Results.Json(await pubHubServices.AnyUsersInDB());
+            }).WithTags("other");
+
+            #endregion
+
             app.Run();
+
+
         }
     }
 }

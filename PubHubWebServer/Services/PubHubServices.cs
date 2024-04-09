@@ -1194,13 +1194,15 @@ namespace PubHubWebServer.Services
                 SaveLog (message, LogType.Error, _userID);//Save the log
                 return new ApiResponse<double>
                 {
-                    StatusCode = HttpStatusCode.InsufficientStorage,
+                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get total from acquired"
                 };
             }
         }
 
         #endregion
+
+        #region Other
 
         /// <summary>
         /// Saves a log to the database
@@ -1240,5 +1242,37 @@ namespace PubHubWebServer.Services
             AddSingleEntity<PubHubReceipt>(receipt);
 
         }
+
+        public async Task<ApiResponse<bool>> AnyUsersInDB()
+        {
+            try
+            {
+                if (await pubHubDBContext.Users.CountAsync() > 0)
+                {
+                    return new ApiResponse<bool>
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Data = true,
+                    };
+                }
+
+                return new ApiResponse<bool>
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Data = false,
+                    ErrorMessage = "No users in DB"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<bool>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Internal server error while trying to check for users in DB"
+                };
+            }
+        }
+
+        #endregion
     }
 }

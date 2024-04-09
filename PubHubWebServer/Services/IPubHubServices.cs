@@ -98,5 +98,11 @@ namespace PubHubWebServer.Services
         public Task<ApiResponse<double>> GetTotalFromAcquired(Guid _userID);
 
         #endregion
+
+        #region Other
+
+        public Task<ApiResponse<bool>> AnyUsersInDB();
+
+        #endregion
     }
 }
