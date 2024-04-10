@@ -55,7 +55,7 @@ namespace PubHubWebServer
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddHttpClient();//Added HttpClient as a service
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -313,6 +313,15 @@ namespace PubHubWebServer
             //    var response = await pubHubServices.GetBookImage(path);
             //    return Results.Json(response);
             //}).WithTags("ebooks");
+
+            app.MapGet("bookList/GetBooksFilter/",
+                async (ClaimsPrincipal user, IPubHubServices pubHubServices,
+                 int skip, int take, string title = "", string author = "", string genre = "") =>
+                {
+                    var response = await pubHubServices.GetBooksByFilter(title, author, genre, skip, take);
+                    return Results.Json(response);
+
+                }).WithTags("ebooks");
 
             #endregion
 
