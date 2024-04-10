@@ -67,7 +67,7 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<double>> GetTotalErningsFromSubscription(Guid _subscriptionID);
 
-        public Task<ApiResponse<List<PubHubSubscription>>> GetTopSubscriptions();
+        public Task<ApiResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser);
 
         #endregion
 
@@ -77,7 +77,15 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<double>> GetAllEarningsFromBookByID(Guid _bookID);
 
-        public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks();
+        public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks(int _amount, Guid? _publisher);
+
+        public Task<ApiResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
+
+        public Task<ApiResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10);
+
+        public Task<ApiResponse<string>> ReaderRentBook(Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks);
+
+        public Task<ApiResponse<string>> ReaderBuyBook(Guid _readerID, Guid _bookID);
 
         #endregion
 
