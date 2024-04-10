@@ -1,67 +1,91 @@
 ﻿@page "/"
 @inject HttpClient client
+@inject NavigationManager navigationManager
 
 @using PubHubWebServer.Data.Models
 @using System.Text.Json.Serialization
 @using System.Text.Json
+@using PubHubWebServer.Services;
 
 <PageTitle>Home</PageTitle>
+<div class="row flex-wrap">
+    <div class="col-auto">
+        <div class="card-group">
+            @foreach (PubHubEBook book in _topBooks)
+            {
+                <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1" style="min-width:235px; margin:15px">
+                    <div class="card" style="min-height:100%;">
+                        <img src="images/BookCovers/@(book.FilePath + "-Cover.jpg")" class="card-img-top img-thumbnail" alt="..." style="max-width: 100%;">
+                        <div class="card-body">
+                            <h5 class="card-title text-dark">@book.Title</h5>
+                            <p class="card-text text-dark">@(book.Description.Substring(0, 100) + "...")</p>
+                        </div>
+                        <div class="card-footer text-dark">
+                            <div class="row">
+                                <div class="col-10">
+                                     <p class="m-auto" style="font-size:11px;">Author's: @book.AuthorNames</p>
+                                </div>
+                                <div class="col-2">
+                                    <NavLink class="nav-link p-0 m-auto" href="@($"/BookDetail/{book.EBookID}")">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="text-dark" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                        </svg>
+                                    </NavLink>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Dropdown button
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-    </ul>
+<div class="row">
+    <div class="col-6 p-1 w-100">
+        
+    </div>
+    
 </div>
 <div class="row">
-    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:blue">
-    
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>
+    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:green">
+        @foreach (PubHubSubscription subscription in _topSubscriptions)
+        {
+            <div class="card" style="width: 18rem;">
+                <img src="@client.GetAsync("{subscription.SubscriptionID}")" class="card-img" alt="...">@*Image *@
+                <div class="card-img-overlay">
+                    <h5 class="card-title">@subscription.Title</h5>@*Title*@
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
+                    <div class="row">
+                        <a href="#" class="btn btn-primary col-6">Go somewhere</a>
+                        <a href="#" class="btn btn-primary col-6">Go somewhere</a>
+                    </div>
                 </div>
             </div>
-        </div>
-
-    </div>
-    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:green">
+        }
     </div>
 </div>
 
 
 @code {
-// The list of books
-public List<PubHubEBook> _TopBooks { get; set; }
+    // The list of books
+    public List<PubHubEBook> _topBooks { get; set; } = new List<PubHubEBook>();
+    public List<PubHubSubscription> _topSubscriptions { get; set; } = new List<PubHubSubscription>();
 
-protected override async Task OnInitializedAsync()
-{
-    //_TopBooks = await GettingData();
-}
+    protected override async Task OnInitializedAsync()
+    {
 
-// private async Task<List<PubHubEBook>> GettingData()
-// {
-//     List<PubHubEBook> eBooks = new();
-//     // Getting the response from the API
-//     using HttpResponseMessage response = await client.GetAsync("/ebook/GetEBookTop");
+        ApiResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks")) ?? new ApiResponse<List<PubHubEBook>>();
+        _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
 
-//     // data as a Json string
-//     string Jsonstring = await response.Content.ReadAsStringAsync();
+        ApiResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions") ?? new ApiResponse<List<PubHubSubscription>>();
+        _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
+    }
 
-//     // Getting the object's
-//     eBooks = JsonSerializer.Deserialize<List<PubHubEBook>>(Jsonstring);
-
-//     return eBooks;
-// }
+    protected async Task<List<byte[]>> GetBookImage(string _path)
+    {
+        ApiResponse<List<byte[]>> apiResult = await client.GetFromJsonAsync<ApiResponse<List<byte[]>>>((navigationManager.BaseUri + $"ebook/getBookImage/{_path}")) ?? new ApiResponse<List<byte[]>>();
+        return apiResult.Data ?? new List<byte[]>();
+    }
 }

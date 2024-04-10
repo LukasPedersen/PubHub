@@ -322,26 +322,26 @@ namespace PubHubWebServer.Data
             books.Add(new PubHubEBook
             {
                 EBookID = bookIDs[6],
-                Title = "The Flying Horseman",
-                Description = "\"The Flying Horseman\" is a thrilling tale penned by the French writer Gustave Aimard. Set in a world of adventure and danger, the story follows the journey of its titular character as he navigates challenges and confronts adversaries. With its gripping narrative and rich character development, this classic work is a testament to Aimard's literary genius.",
+                Title = "The Heir of Redclyffe",
+                Description = "The Heir of Redclyffe tells the story of Guy Morville, heir to the Redclyffe estate and baronetcy, and his cousin Philip Morville, a conceited hypocrite who enjoys an unwarrantedly high reputation, and of the two sisters whom they love, Amabel and Laura. When Guy raises money to secretly pay off the debts of his blackguard uncle, Philip spreads the rumour that Guy is a reckless gambler. As a result Guy's proposed marriage to Amabel (Amy), who is his guardian's daughter, is called off and he is disowned by his guardian. Guy bears the situation with a new-found Christian fortitude until the uncle clears his character, enabling him to marry Amy after all. They honeymoon in Italy, finding Philip there suffering from a life-threatening fever. Guy nurses him back to health, but catches the fever himself and dies. Philip, transformed by contrition, inherits Redclyffe and marries Laura. Amy has a daughter after her husband's death and says she is happy in her Christian faith and with her daughter.",
                 AuthorNames = "Gustave Aimard",
-                PageCount = 166,
+                PageCount = 574,
                 Genre = "Thriller French Adventure",
-                Price = 299.95,
-                BorrowPrice = 89.95,
-                FilePath = "",
+                Price = 19.95,
+                BorrowPrice = 9,
+                FilePath = "The-Heir-of-Redclyffe",
             });
             books.Add(new PubHubEBook
             {
                 EBookID = bookIDs[7],
-                Title = "The Guide of the Desert",
-                Description = "Opening with loading a ship in Cape Horn, Chile, the book takes readers on an adventure throughout South America. Encounters with indigenous populations and learning to find common ground with others are at the heart of this tale, in many ways mirroring the author's own experiences.",
+                Title = "The Bee Hunters: A Tale of Adventure",
+                Description = "The action and adventure genre in fiction depicts events or a series of events that happen outside the ordinary course of the protagonist's daily life, generally accompanied by dangerous episodes and physical action. Adventure stories are quick moving, with the pace of the plot being a critical component of mood setting. Action and adventure have been common book themes since the earliest days of fiction writing. In fact, the plots of Medieval romances were comprised of a series of adventures. Action / adventure fiction often overlaps with other genres, such as: war novels, crime novels, sea stories, Robinsonades, and spy stories.",
                 AuthorNames = "Gustave Aimard",
-                PageCount = 190,
-                Genre = "Fiction Adventure",
-                Price = 206.95,
-                BorrowPrice = 43,
-                FilePath = "",
+                PageCount = 240,
+                Genre = "Adventure",
+                Price = 66.95,
+                BorrowPrice = 23,
+                FilePath = "The-Bee-Hunters-A-Tale-of-Adventure",
             });
 
             foreach (PubHubEBook book in books)

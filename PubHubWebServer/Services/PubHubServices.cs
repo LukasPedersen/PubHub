@@ -13,6 +13,8 @@ using Mono.TextTemplating;
 using PubHubWebServer.Data;
 using PubHubWebServer.Data.Models;
 using PubHubWebServer.Data.Models.Relationships;
+using IronPdf;
+using IronSoftware.Drawing;
 
 
 //using YamlDotNet.Core.Tokens;
@@ -995,7 +997,29 @@ namespace PubHubWebServer.Services
                 };
             }
         }
-
+        public async Task<ApiResponse<PubHubEBook>> GetBookByID(Guid ID)
+        {
+            try
+            {
+                return new ApiResponse<PubHubEBook>
+                  {
+                      StatusCode = HttpStatusCode.OK,
+                      //Finds the books
+                      Data = await pubHubDBContext.EBooks.Where(b => b.EBookID == ID).FirstAsync()
+                  };
+                catch (Exception ex)
+                {
+                  string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                  SaveLog(message, LogType.Error);//Save log
+                  return new ApiResponse<PubHubEBook>
+                  {
+                      StatusCode = HttpStatusCode.InternalServerError,
+                      ErrorMessage = "Error while getting top books"
+                  };
+                }
+            }
+        }
+        
         /// <summary>
         /// Selects all Books that match the parametors
         /// </summary>

@@ -220,61 +220,6 @@ namespace PubHubWebServer
                 return Results.Unauthorized();
             }).WithTags("subscriptions").RequireAuthorization();
 
-            app.MapPut("subscription/updateSubscription", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] PubHubSubscription subscription) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.UpdateEntity(subscription);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("subscriptions").RequireAuthorization();
-
-            app.MapPut("subscription/updateSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] List<PubHubSubscription> subscriptions) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.UpdateMultipleEntities(subscriptions);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("subscriptions").RequireAuthorization();
-
-            app.MapGet("subscription/getSubscription/{entityID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid entityID) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.GetEntityByID<PubHubSubscription>(entityID);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("subscriptions").RequireAuthorization();
-
-            app.MapDelete("subscription/deleteSubscription", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] PubHubSubscription subscription) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.DeleteEntity(subscription);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("subscriptions").RequireAuthorization();
-
-            app.MapDelete("subscription/deleteSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] List<PubHubSubscription> subscriptions) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.DeleteMultipleEntities(subscriptions);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("subscriptions").RequireAuthorization();
-
             app.MapPost("subscription/addBookToSubscription", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid bookId, Guid subscriptionId) =>
             {
                 if (user.Identity is not null && user.Identity.IsAuthenticated)
@@ -319,88 +264,23 @@ namespace PubHubWebServer
                 return Results.Unauthorized();
             }).WithTags("subscriptions").RequireAuthorization();
 
+            app.MapGet("subscription/getTopSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices) =>
+            {
+                var response = await pubHubServices.GetTopSubscriptions();
+                return Results.Json(response);
+            }).WithTags("subscriptions");
+
             #endregion
 
             #region Ebook Endpoints
 
-            app.MapPost("ebook/createEbook", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] PubHubEBook ebook) =>
+            app.MapGet("ebook/getBookByID", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid ID) =>
             {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.AddSingleEntity(ebook);
-                    return Results.Json(response);
-                }
+                var response = await pubHubServices.GetBookByID(ID);
+                return Results.Json(response);
+            }).WithTags("ebooks");
 
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapPost("ebook/createEbooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] List<PubHubEBook> ebooks) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.AddMultipleEntities(ebooks);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapPut("ebook/updateEbook", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] PubHubEBook ebook) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.UpdateEntity(ebook);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapPut("ebook/updateEbooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] List<PubHubEBook> ebooks) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.UpdateMultipleEntities(ebooks);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapGet("ebook/getEbook/{entityID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid entityID) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.GetEntityByID<PubHubEBook>(entityID);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapDelete("ebook/deleteEbook", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] PubHubEBook ebook) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.DeleteEntity(ebook);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapDelete("ebook/deleteEbooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, [FromBody] List<PubHubEBook> ebooks) =>
-            {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.DeleteMultipleEntities(ebooks);
-                    return Results.Json(response);
-                }
-
-                return Results.Unauthorized();
-            }).WithTags("ebooks").RequireAuthorization();
-
-            app.MapGet("user/getAllBooksFromUser/{userID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, string userId) =>
+            app.MapGet("ebook/getAllBooksFromUser/{userID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, string userId) =>
             {
                 if (user.Identity is not null && user.Identity.IsAuthenticated)
                 {
@@ -411,7 +291,7 @@ namespace PubHubWebServer
                 return Results.Unauthorized();
             }).WithTags("ebooks").RequireAuthorization();
 
-            app.MapGet("book/getAllEarnings/{bookID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid bookId) =>
+            app.MapGet("ebook/getAllEarnings/{bookID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid bookId) =>
             {
                 if (user.Identity is not null && user.Identity.IsAuthenticated)
                 {
@@ -421,6 +301,18 @@ namespace PubHubWebServer
 
                 return Results.Unauthorized();
             }).WithTags("ebooks").RequireAuthorization();
+
+            app.MapGet("ebook/getTopBooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices) =>
+            {
+                var response = await pubHubServices.GetTopBooks();
+                return Results.Json(response);
+            }).WithTags("ebooks");
+
+            //app.MapGet("ebook/getBookImage/{path}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, string path) =>
+            //{
+            //    var response = await pubHubServices.GetBookImage(path);
+            //    return Results.Json(response);
+            //}).WithTags("ebooks");
 
             app.MapGet("bookList/GetBooksFilter/",
                 async (ClaimsPrincipal user, IPubHubServices pubHubServices,
