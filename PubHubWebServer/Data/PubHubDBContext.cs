@@ -20,7 +20,7 @@ namespace PubHubWebServer.Data
         public DbSet<PubHubEBookPubHubSubscription> EBookSubscriptions { get; set; }
         public DbSet<PubHubEBookPubHubReader> EBookReaders { get; set; }
         public DbSet<PubHubEBookPubHubPublisher> EBookPublishers { get; set; }
-        public DbSet<PubHubSubscriptionPubHubReader> SubscriptionPublishers { get; set; }
+        public DbSet<PubHubSupscriptionPubHubPublisher> SubscriptionPublishers { get; set; }
         public DbSet<PubHubSubscriptionPubHubReader> SubscriptionReaders { get; set; }
 
         public PubHubDBContext(DbContextOptions<PubHubDBContext> options) : base(options)
