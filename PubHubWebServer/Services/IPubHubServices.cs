@@ -79,6 +79,10 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks();
 
+        public Task<ApiResponse<PubHubEBook>> GetBookByID(Guid ID);
+
+        //public Task<ApiResponse<List<byte[]>>> GetBookImage(string _path);
+
         #endregion
 
         #region Logs Endpoints

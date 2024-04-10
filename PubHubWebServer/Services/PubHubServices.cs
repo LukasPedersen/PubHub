@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using PubHubWebServer.Data;
 using PubHubWebServer.Data.Models;
 using PubHubWebServer.Data.Models.Relationships;
+using IronPdf;
+using IronSoftware.Drawing;
 
 
 //using YamlDotNet.Core.Tokens;
@@ -978,6 +980,55 @@ namespace PubHubWebServer.Services
                 };
             }
         }
+
+        public async Task<ApiResponse<PubHubEBook>> GetBookByID(Guid ID)
+        {
+            try
+            {
+                return new ApiResponse<PubHubEBook>
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    //Finds the books
+                    Data = await pubHubDBContext.EBooks.Where(b => b.EBookID == ID).FirstAsync()
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ApiResponse<PubHubEBook>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Error while getting top books"
+                };
+            }
+        }
+
+        //public async Task<ApiResponse<List<byte[]>>> GetBookImage(string _fileName)
+        //{
+        //    try
+        //    {
+        //        var pdf = PdfDocument.FromFile(_fileName);
+        //        var frontPage = pdf.Pages[0];
+
+        //        return new ApiResponse<List<byte[]>>
+        //        {
+        //            StatusCode = HttpStatusCode.OK,
+        //            //Finds the books
+        //            Data = image
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string message = "Failed to get image from book, with the following Error message: " + ex.Message;
+        //        await SaveLog(message, LogType.Error);//Save log
+        //        return new ApiResponse<List<byte[]>>
+        //        {
+        //            StatusCode = HttpStatusCode.InternalServerError,
+        //            ErrorMessage = "Error while getting front page image of book"
+        //        };
+        //    }
+        //}
 
         #endregion
 

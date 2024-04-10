@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PubHubWebServer.Migrations
 {
     /// <inheritdoc />
-    public partial class DataSeedingAndDBUpdate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -323,7 +323,7 @@ namespace PubHubWebServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PubHubSupscriptionPubHubPublisher",
+                name: "SubscriptionPublishers",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -332,15 +332,15 @@ namespace PubHubWebServer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PubHubSupscriptionPubHubPublisher", x => x.ID);
+                    table.PrimaryKey("PK_SubscriptionPublishers", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_PubHubSupscriptionPubHubPublisher_Publishers_PubHubPublisherPublisherID",
+                        name: "FK_SubscriptionPublishers_Publishers_PubHubPublisherPublisherID",
                         column: x => x.PubHubPublisherPublisherID,
                         principalTable: "Publishers",
                         principalColumn: "PublisherID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PubHubSupscriptionPubHubPublisher_Subscriptions_PubHubSubscriptionSubscriptionID",
+                        name: "FK_SubscriptionPublishers_Subscriptions_PubHubSubscriptionSubscriptionID",
                         column: x => x.PubHubSubscriptionSubscriptionID,
                         principalTable: "Subscriptions",
                         principalColumn: "SubscriptionID",
@@ -373,7 +373,7 @@ namespace PubHubWebServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PubHubSubscriptionPubHubReader",
+                name: "SubscriptionReaders",
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -382,15 +382,15 @@ namespace PubHubWebServer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PubHubSubscriptionPubHubReader", x => x.ID);
+                    table.PrimaryKey("PK_SubscriptionReaders", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_PubHubSubscriptionPubHubReader_Readers_PubHubReaderReaderID",
+                        name: "FK_SubscriptionReaders_Readers_PubHubReaderReaderID",
                         column: x => x.PubHubReaderReaderID,
                         principalTable: "Readers",
                         principalColumn: "ReaderID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PubHubSubscriptionPubHubReader_Subscriptions_PubHubSubscriptionSubscriptionID",
+                        name: "FK_SubscriptionReaders_Subscriptions_PubHubSubscriptionSubscriptionID",
                         column: x => x.PubHubSubscriptionSubscriptionID,
                         principalTable: "Subscriptions",
                         principalColumn: "SubscriptionID",
@@ -402,9 +402,9 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "Id", "ApplicationUserId", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "13a960dc-e6b1-4d16-ae95-8ba69138d534", null, "13a960dc-e6b1-4d16-ae95-8ba69138d534", "Admin", "ADMIN" },
-                    { "3408f804-1ec4-4ae4-aa7d-2eafa6aec4f3", null, "3408f804-1ec4-4ae4-aa7d-2eafa6aec4f3", "Publisher", "PUBLISHER" },
-                    { "dd36f81d-39d6-4111-a03f-f4b7a4b88221", null, "dd36f81d-39d6-4111-a03f-f4b7a4b88221", "Reader", "READER" }
+                    { "5fae5ef2-2cc8-4b81-99c9-6b3c480682ad", null, "5fae5ef2-2cc8-4b81-99c9-6b3c480682ad", "Reader", "READER" },
+                    { "9442baa8-756a-4c8c-bff2-122126d10ea9", null, "9442baa8-756a-4c8c-bff2-122126d10ea9", "Admin", "ADMIN" },
+                    { "9bee65b2-7f7c-42b2-8051-b2e4bf57e556", null, "9bee65b2-7f7c-42b2-8051-b2e4bf57e556", "Publisher", "PUBLISHER" }
                 });
 
             migrationBuilder.InsertData(
@@ -412,11 +412,11 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Active", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MyPubHubAccount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "04e27f18-08ac-41be-b6c8-8be2218036cc", 0, true, "fe6d4840-b83a-426f-b26d-0cd5f5140966", "ApplicationUser", "lukas3302@hotmail.com", true, true, null, new Guid("1a1d626a-3a33-46c9-9597-5519ed44a8eb"), "LUKAS3302@HOTMAIL.COM", "LUKAS3302@HOTMAIL.COM", "AQAAAAIAAYagAAAAENMDg7Ian38TDD0bPZnrmip3vTHYc7c4K+qOWmdo1pJVEKAjwhKtiDBnaMlWZKpybw==", null, false, "06aefc96-e0ce-4fe6-b7a8-2ee1bd0e145b", false, "lukas3302@hotmail.com" },
-                    { "65399a4e-3334-40d6-95e5-eafcc89f280e", 0, true, "9960f6ed-a83e-495b-ab3a-6a2b0ba73c40", "ApplicationUser", "Mellemgaard@hotmail.com", true, true, null, new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0"), "MELLEMGAARD@HOTMAIL.COM", "MELLEMGAARD@HOTMAIL.COM", "AQAAAAIAAYagAAAAEP2NQem7wZRHW5YA1P6gRlmyT4n1Uhcg4UfNp9K/qgrzUSRUI8zhUheHNkBLqp7NlQ==", null, false, "7ea4c94d-51b9-4258-b6a0-463ff2ba07ea", false, "Mellemgaard@hotmail.com" },
-                    { "a90b0379-0b57-41b4-8ac1-2e7afe156243", 0, true, "f84e7f36-d045-4083-ad3a-8e1caea33cd6", "ApplicationUser", "Admin@hotmail.com", true, true, null, new Guid("00000000-0000-0000-0000-000000000000"), "ADMIN@HOTMAIL.COM", "ADMIN@HOTMAIL.COM", "AQAAAAIAAYagAAAAEMEMAlvxqjEFo7/9wLw2yG7vH/KY6v16fhY/qT28+XmhSWBd9HkcKpO0ZMDpwSaZng==", null, false, "09bb9379-1ba9-42e7-8326-b5b9a2ba5b83", false, "Admin@hotmail.com" },
-                    { "c53c25b8-a604-4bcd-a2fb-86ed379ed124", 0, true, "4c744d18-3d91-483a-93e1-cdd1a5afb53f", "ApplicationUser", "Nordic@hotmail.com", true, true, null, new Guid("81909497-ac47-4b00-855f-63af580fa33e"), "NORDIC@HOTMAIL.COM", "NORDIC@HOTMAIL.COM", "AQAAAAIAAYagAAAAEFweEK8IRJU38M0KPUsIKnENR2tCu/wW0gwbQ+TwrmccoA64iZt2tilCvt1wf3jXWw==", null, false, "2d5374b7-4d86-4b09-a340-def1d917270d", false, "Nordic@hotmail.com" },
-                    { "f0bc89f5-bad1-456d-a14b-a116b6fd4e4f", 0, true, "5e616355-7994-4184-a19d-008a0ed6a87a", "ApplicationUser", "Jens2837@hotmail.com", true, true, null, new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5"), "JENS2837@HOTMAIL.COM", "JENS2837@HOTMAIL.COM", "AQAAAAIAAYagAAAAECfUDbvVVBHk9kvki+Yr/vcrZSkhzTPXzBP+fHsM6lL6KeEtqVr3XOKC6Oeaeb/SQQ==", null, false, "211051f6-f6af-4f65-ad59-068aea1f12df", false, "ens2837@hotmail.com" }
+                    { "063a2e71-c5c3-490a-8731-d08e25ca43c9", 0, true, "f079f3a8-00ea-4351-b24e-ffe2d4f315b8", "ApplicationUser", "lukas3302@hotmail.com", true, true, null, new Guid("ce3e6fa0-d2d3-48b8-82bc-7847f0198959"), "LUKAS3302@HOTMAIL.COM", "LUKAS3302@HOTMAIL.COM", "AQAAAAIAAYagAAAAEAd709Z+VYZr3+d3NWWaPqF7vjbXj139nJdUu1jeKaJ9jmzTHf0jVqLD1dVtaUyoIg==", null, false, "2f3519cb-fce4-47e4-91eb-dd9241c3306f", false, "lukas3302@hotmail.com" },
+                    { "1edb2bf3-4c3d-4b94-8d0c-3a18dc159fcd", 0, true, "5bc25488-20dd-4f21-a2dc-5e24319d3266", "ApplicationUser", "Mellemgaard@hotmail.com", true, true, null, new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe"), "MELLEMGAARD@HOTMAIL.COM", "MELLEMGAARD@HOTMAIL.COM", "AQAAAAIAAYagAAAAEFAKxjeJt980YAMDs8pKC8z5ZrWCK7X+dRey0nI9GTRIwaBTSVBa/3QpilehhT5o9w==", null, false, "9017b4b7-ef7b-4ff0-8fce-0a59eb756a8a", false, "Mellemgaard@hotmail.com" },
+                    { "29edea6b-5e1a-48d9-bf42-d52572e49ef4", 0, true, "31a4be4d-9cc6-43a1-85d8-bae33227db3a", "ApplicationUser", "Jens2837@hotmail.com", true, true, null, new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14"), "JENS2837@HOTMAIL.COM", "JENS2837@HOTMAIL.COM", "AQAAAAIAAYagAAAAENdgMf6tClaHchik0977A2wobpMT76B8DM0Mr/n2CkbUS0V8Hka3rVW2XeZCmPbPtQ==", null, false, "99b505d5-aafb-42c1-8d90-9ff7e82dfc88", false, "ens2837@hotmail.com" },
+                    { "84f5ddc8-55dc-4d4e-9b06-b263bde5305c", 0, true, "a9012ec0-71ee-40c5-896f-d8268ec120ae", "ApplicationUser", "Nordic@hotmail.com", true, true, null, new Guid("8848bded-4306-4443-9962-d8e84ae802ef"), "NORDIC@HOTMAIL.COM", "NORDIC@HOTMAIL.COM", "AQAAAAIAAYagAAAAEIHDKHy+OeVi4sTeMkYQvfW5iyEpz7UjQ4fQHhMLJAf/r1CJ20HqluTbJFhxTe5xUg==", null, false, "3417b1cb-4637-4ff8-a7d7-fd94d1b76289", false, "Nordic@hotmail.com" },
+                    { "f9121407-b145-4cfe-a970-3f23e946e292", 0, true, "805de01b-4323-4a91-9e20-0438e6f3ec85", "ApplicationUser", "Admin@hotmail.com", true, true, null, new Guid("00000000-0000-0000-0000-000000000000"), "ADMIN@HOTMAIL.COM", "ADMIN@HOTMAIL.COM", "AQAAAAIAAYagAAAAEJyiSv1/Y+jQXtyqvtsruXmvxA7qlXkW7kxXekNR4Jc2nVwZdzeMjcJbhB+o6uwGOw==", null, false, "50bbf76b-4a07-450b-bc0d-d12c10560b0b", false, "Admin@hotmail.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -424,14 +424,14 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "EBookID", "AuthorNames", "BorrowPrice", "Description", "DownloadCount", "FilePath", "Genre", "PageCount", "Price", "Title" },
                 values: new object[,]
                 {
-                    { new Guid("06192ae7-e2e5-48b2-88e4-83d5eb6172ed"), "Gustave Aimard", 51.0, "\"The Smuggler Chief\" is a thrilling adventure story penned by French writer Gustave Aimard and translated by Lascelles Sir Wraxall. Set against a backdrop of danger and intrigue, the novel follows the lives of smugglers, exploring themes of loyalty, betrayal, and the quest for freedom. Aimard's vivid storytelling and rich characterization make this a must-read for fans of classic adventure tales.", 0L, "The-Smuggler-Chief", "Thriller Adventure Fiction", 105, 171.0, "The Smuggler Chief" },
-                    { new Guid("3004ebcd-db5f-46ac-9824-e407c1323a3b"), "Gustave Aimard", 55.0, "The action and adventure genre in fiction depicts events or a series of events that happen outside the ordinary course of the protagonist's daily life, generally accompanied by dangerous episodes and physical action. Adventure stories are quick moving, with the pace of the plot being a critical component of mood setting. Action and adventure have been common book themes since the earliest days of fiction writing. In fact, the plots of Medieval romances were comprised of a series of adventures. Action / adventure fiction often overlaps with other genres, such as: war novels, crime novels, sea stories, Robinsonades, and spy stories.", 0L, "The-Bee-Hunters-A-Tale-of-Adventure", "Action Adventure Fiction", 240, 132.94999999999999, "The Bee Hunters: A Tale of Adventure" },
-                    { new Guid("63495020-4f98-486e-a2c3-e1a519efc2a7"), "Gustave Aimard", 45.0, "Gustave Aimard, seudónimo de Olivier Groux (1818-1883), fue un novelista francés. Abandonado al nacer por sus padres, de espíritu rebelde, no aceptó a la pareja que lo adoptó y a los nueve años escapó de la casa y marchó a América del Sur. Posteriormente se trasladó a Estados Unidos, donde convivió con los cheyennes. De vuelta la Europa en 1847 viajó por España, Turquía y el Cáucaso. En 1852 volvió a América, pero en 1854 regresó definitivamente a Francia y comenzó a escribir a partir de 1856. Sus experiencias le sirvieron para escribir numerosas novelas del oeste que se hicieron muy populares en Francia y Estados Unidos.", 0L, "Las-noches-mejicanas", "Thriller Adventure Fiction", 240, 159.94999999999999, "Las noches mejicanas" },
-                    { new Guid("77686024-6631-4b3c-b178-73ad0e043681"), "Gustave Aimard", 45.0, "The Pearl of the Andes A Tale of Love and Adventure, a classical book, has been considered important throughout the human history, and so that this work is never forgotten we at Alpha Editions have made efforts in its preservation by republishing this book in a modern format for present and future generations. This whole book has been reformatted, retyped and designed. These books are not made of scanned copies of their original work and hence the text is clear and readable.", 0L, "The-Pearl-of-the-Andes-A-Tale-of-Love-and-Adventure", "Fantasy Adventure Romance Fiction", 205, 111.0, "The Pearl of the Andes A Tale of Love and Adventure" },
-                    { new Guid("ccf37921-d926-4868-86b2-ac99ef37f44e"), "Gustave Aimard", 27.0, "This work has been selected by scholars as being culturally important, and is part of the knowledge base of civilization as we know it. This work was reproduced from the original artifact, and remains as true to the original work as possible. Therefore, you will see the original copyright references, library stamps (as most of these works have been housed in our most important libraries around the world), and other notations in the work.This work is in the public domain in the United States of America, and possibly other nations. Within the United States, you may freely copy and distribute this work, as no entity (individual or corporate) has a copyright on the body of the work.As a reproduction of a historical artifact, this work may contain missing or blurred pages, poor pictures, errant marks, etc. Scholars believe, and we concur, that this work is important enough to be preserved, reproduced, and made generally available to the public. We appreciate your support of the preservation process, and thank you for being an important part of keeping this knowledge alive and relevant.", 0L, "The-Pirates-of-the-Prairies-Adventures-in-the-American-Desert", "History", 250, 89.950000000000003, "The Pirates of the Prairies: Adventures in the American Desert" },
-                    { new Guid("d5bf8f51-d10d-4af3-bc75-4a59c7105a17"), "Charlotte M. Yonge", 21.949999999999999, "This book has been considered by academicians and scholars of great significance and value to literature. This forms a part of the knowledge base for future generations. We havent used any OCR or photocopy to produce this book. The whole book has been typeset again to produce it without any errors or poor pictures and errant marks.", 0L, "History-of-France", "History", 78, 89.0, "History of France" },
-                    { new Guid("f0887fa1-0569-45df-b6fa-588d894bd54f"), "Gustave Aimard", 43.0, "Opening with loading a ship in Cape Horn, Chile, the book takes readers on an adventure throughout South America. Encounters with indigenous populations and learning to find common ground with others are at the heart of this tale, in many ways mirroring the author's own experiences.", 0L, "", "Fiction Adventure", 190, 206.94999999999999, "The Guide of the Desert" },
-                    { new Guid("f2d06bc4-19b8-4337-a6a5-8efae669fc9f"), "Gustave Aimard", 89.950000000000003, "\"The Flying Horseman\" is a thrilling tale penned by the French writer Gustave Aimard. Set in a world of adventure and danger, the story follows the journey of its titular character as he navigates challenges and confronts adversaries. With its gripping narrative and rich character development, this classic work is a testament to Aimard's literary genius.", 0L, "", "Thriller French Adventure", 166, 299.94999999999999, "The Flying Horseman" }
+                    { new Guid("34630099-f790-46bd-b3a2-ffcbc4098031"), "Gustave Aimard", 23.0, "The action and adventure genre in fiction depicts events or a series of events that happen outside the ordinary course of the protagonist's daily life, generally accompanied by dangerous episodes and physical action. Adventure stories are quick moving, with the pace of the plot being a critical component of mood setting. Action and adventure have been common book themes since the earliest days of fiction writing. In fact, the plots of Medieval romances were comprised of a series of adventures. Action / adventure fiction often overlaps with other genres, such as: war novels, crime novels, sea stories, Robinsonades, and spy stories.", 0L, "The-Bee-Hunters-A-Tale-of-Adventure", "Adventure", 240, 66.950000000000003, "The Bee Hunters: A Tale of Adventure" },
+                    { new Guid("37a5c24b-5921-4a0a-bfdc-1a86c7950091"), "Gustave Aimard", 55.0, "The action and adventure genre in fiction depicts events or a series of events that happen outside the ordinary course of the protagonist's daily life, generally accompanied by dangerous episodes and physical action. Adventure stories are quick moving, with the pace of the plot being a critical component of mood setting. Action and adventure have been common book themes since the earliest days of fiction writing. In fact, the plots of Medieval romances were comprised of a series of adventures. Action / adventure fiction often overlaps with other genres, such as: war novels, crime novels, sea stories, Robinsonades, and spy stories.", 0L, "The-Bee-Hunters-A-Tale-of-Adventure", "Action Adventure Fiction", 240, 132.94999999999999, "The Bee Hunters: A Tale of Adventure" },
+                    { new Guid("b8c9d2f6-9ec9-431a-badb-6f81d46c2ad0"), "Gustave Aimard", 45.0, "Gustave Aimard, seudónimo de Olivier Groux (1818-1883), fue un novelista francés. Abandonado al nacer por sus padres, de espíritu rebelde, no aceptó a la pareja que lo adoptó y a los nueve años escapó de la casa y marchó a América del Sur. Posteriormente se trasladó a Estados Unidos, donde convivió con los cheyennes. De vuelta la Europa en 1847 viajó por España, Turquía y el Cáucaso. En 1852 volvió a América, pero en 1854 regresó definitivamente a Francia y comenzó a escribir a partir de 1856. Sus experiencias le sirvieron para escribir numerosas novelas del oeste que se hicieron muy populares en Francia y Estados Unidos.", 0L, "Las-noches-mejicanas", "Thriller Adventure Fiction", 240, 159.94999999999999, "Las noches mejicanas" },
+                    { new Guid("c339e5e0-3e68-4b02-b4ed-ab2078646234"), "Gustave Aimard", 45.0, "The Pearl of the Andes A Tale of Love and Adventure, a classical book, has been considered important throughout the human history, and so that this work is never forgotten we at Alpha Editions have made efforts in its preservation by republishing this book in a modern format for present and future generations. This whole book has been reformatted, retyped and designed. These books are not made of scanned copies of their original work and hence the text is clear and readable.", 0L, "The-Pearl-of-the-Andes-A-Tale-of-Love-and-Adventure", "Fantasy Adventure Romance Fiction", 205, 111.0, "The Pearl of the Andes A Tale of Love and Adventure" },
+                    { new Guid("c88b4604-8d86-456f-ac5f-343e194c81f0"), "Gustave Aimard", 51.0, "\"The Smuggler Chief\" is a thrilling adventure story penned by French writer Gustave Aimard and translated by Lascelles Sir Wraxall. Set against a backdrop of danger and intrigue, the novel follows the lives of smugglers, exploring themes of loyalty, betrayal, and the quest for freedom. Aimard's vivid storytelling and rich characterization make this a must-read for fans of classic adventure tales.", 0L, "The-Smuggler-Chief", "Thriller Adventure Fiction", 105, 171.0, "The Smuggler Chief" },
+                    { new Guid("c8b5140e-6fb4-4a30-8f49-859c7012f45e"), "Charlotte M. Yonge", 21.949999999999999, "This book has been considered by academicians and scholars of great significance and value to literature. This forms a part of the knowledge base for future generations. We havent used any OCR or photocopy to produce this book. The whole book has been typeset again to produce it without any errors or poor pictures and errant marks.", 0L, "History-of-France", "History", 78, 89.0, "History of France" },
+                    { new Guid("c92d3f7c-7443-4590-a408-62777bbf242e"), "Gustave Aimard", 27.0, "This work has been selected by scholars as being culturally important, and is part of the knowledge base of civilization as we know it. This work was reproduced from the original artifact, and remains as true to the original work as possible. Therefore, you will see the original copyright references, library stamps (as most of these works have been housed in our most important libraries around the world), and other notations in the work.This work is in the public domain in the United States of America, and possibly other nations. Within the United States, you may freely copy and distribute this work, as no entity (individual or corporate) has a copyright on the body of the work.As a reproduction of a historical artifact, this work may contain missing or blurred pages, poor pictures, errant marks, etc. Scholars believe, and we concur, that this work is important enough to be preserved, reproduced, and made generally available to the public. We appreciate your support of the preservation process, and thank you for being an important part of keeping this knowledge alive and relevant.", 0L, "The-Pirates-of-the-Prairies-Adventures-in-the-American-Desert", "History", 250, 89.950000000000003, "The Pirates of the Prairies: Adventures in the American Desert" },
+                    { new Guid("d210234b-f17d-4afe-b440-ba78aad861ea"), "Gustave Aimard", 9.0, "The Heir of Redclyffe tells the story of Guy Morville, heir to the Redclyffe estate and baronetcy, and his cousin Philip Morville, a conceited hypocrite who enjoys an unwarrantedly high reputation, and of the two sisters whom they love, Amabel and Laura. When Guy raises money to secretly pay off the debts of his blackguard uncle, Philip spreads the rumour that Guy is a reckless gambler. As a result Guy's proposed marriage to Amabel (Amy), who is his guardian's daughter, is called off and he is disowned by his guardian. Guy bears the situation with a new-found Christian fortitude until the uncle clears his character, enabling him to marry Amy after all. They honeymoon in Italy, finding Philip there suffering from a life-threatening fever. Guy nurses him back to health, but catches the fever himself and dies. Philip, transformed by contrition, inherits Redclyffe and marries Laura. Amy has a daughter after her husband's death and says she is happy in her Christian faith and with her daughter.", 0L, "The-Heir-of-Redclyffe", "Thriller French Adventure", 574, 19.949999999999999, "The Heir of Redclyffe" }
                 });
 
             migrationBuilder.InsertData(
@@ -439,10 +439,10 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "SubscriptionID", "Active", "EndDate", "Message", "Price", "StartDate", "Title" },
                 values: new object[,]
                 {
-                    { new Guid("8673115c-f664-4de4-ab79-22a1181f0a84"), true, new DateTime(2024, 6, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(880), "My colliction of books i need for school", 49.950000000000003, new DateTime(2024, 4, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(877), "School books" },
-                    { new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c"), true, new DateTime(2024, 5, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(852), "Bored? Well do we have some excitement for you, right now we are running a special campain to get that excitement back into peoples lifes", 100.0, new DateTime(2024, 4, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(850), "Fantasy Hype" },
-                    { new Guid("9bd7be82-0c16-4270-91cf-3fd73ea08b73"), true, new DateTime(2024, 5, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(867), "Want to learn? Well read some of our History books", 45.0, new DateTime(2024, 4, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(856), "Book worm" },
-                    { new Guid("ba1fc5fe-8ae8-4b7e-b260-de422aab3f3b"), true, new DateTime(2024, 5, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(829), "This mounth we are running a campain to spread the love. so subscripe today to get all thoes juicy details", 119.95, new DateTime(2024, 4, 9, 12, 48, 47, 175, DateTimeKind.Local).AddTicks(708), "Romance Mounth" }
+                    { new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a"), true, new DateTime(2024, 5, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5303), "Bored? Well do we have some excitement for you, right now we are running a special campain to get that excitement back into peoples lifes", 100.0, new DateTime(2024, 4, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5299), "Fantasy Hype" },
+                    { new Guid("5b63a52e-e1e5-4f99-8899-d3d12b6e879d"), true, new DateTime(2024, 5, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5258), "This mounth we are running a campain to spread the love. so subscripe today to get all thoes juicy details", 119.95, new DateTime(2024, 4, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5083), "Romance Mounth" },
+                    { new Guid("7a2eb4f8-b060-4f8c-af4f-9ff0a4ea464a"), true, new DateTime(2024, 6, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5474), "My colliction of books i need for school", 49.950000000000003, new DateTime(2024, 4, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5469), "School books" },
+                    { new Guid("a03646e1-cef6-4c8b-b324-1289ee2caeb8"), true, new DateTime(2024, 5, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5453), "Want to learn? Well read some of our History books", 45.0, new DateTime(2024, 4, 10, 9, 12, 10, 834, DateTimeKind.Local).AddTicks(5430), "Book worm" }
                 });
 
             migrationBuilder.InsertData(
@@ -450,11 +450,11 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "dd36f81d-39d6-4111-a03f-f4b7a4b88221", "04e27f18-08ac-41be-b6c8-8be2218036cc" },
-                    { "3408f804-1ec4-4ae4-aa7d-2eafa6aec4f3", "65399a4e-3334-40d6-95e5-eafcc89f280e" },
-                    { "13a960dc-e6b1-4d16-ae95-8ba69138d534", "a90b0379-0b57-41b4-8ac1-2e7afe156243" },
-                    { "3408f804-1ec4-4ae4-aa7d-2eafa6aec4f3", "c53c25b8-a604-4bcd-a2fb-86ed379ed124" },
-                    { "dd36f81d-39d6-4111-a03f-f4b7a4b88221", "f0bc89f5-bad1-456d-a14b-a116b6fd4e4f" }
+                    { "5fae5ef2-2cc8-4b81-99c9-6b3c480682ad", "063a2e71-c5c3-490a-8731-d08e25ca43c9" },
+                    { "9bee65b2-7f7c-42b2-8051-b2e4bf57e556", "1edb2bf3-4c3d-4b94-8d0c-3a18dc159fcd" },
+                    { "5fae5ef2-2cc8-4b81-99c9-6b3c480682ad", "29edea6b-5e1a-48d9-bf42-d52572e49ef4" },
+                    { "9bee65b2-7f7c-42b2-8051-b2e4bf57e556", "84f5ddc8-55dc-4d4e-9b06-b263bde5305c" },
+                    { "9442baa8-756a-4c8c-bff2-122126d10ea9", "f9121407-b145-4cfe-a970-3f23e946e292" }
                 });
 
             migrationBuilder.InsertData(
@@ -462,14 +462,14 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "ID", "PubHubEBookEBookID", "PubHubSubscriptionSubscriptionID" },
                 values: new object[,]
                 {
-                    { new Guid("099fd5f5-cad1-4b90-84bc-9fdc2d92cdd0"), new Guid("d5bf8f51-d10d-4af3-bc75-4a59c7105a17"), new Guid("9bd7be82-0c16-4270-91cf-3fd73ea08b73") },
-                    { new Guid("431f8d8d-85e7-446b-947d-aa6464512684"), new Guid("77686024-6631-4b3c-b178-73ad0e043681"), new Guid("ba1fc5fe-8ae8-4b7e-b260-de422aab3f3b") },
-                    { new Guid("4a735e10-f4ef-4e4b-8157-8cfaab2ff6d0"), new Guid("f2d06bc4-19b8-4337-a6a5-8efae669fc9f"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") },
-                    { new Guid("894a76eb-15a4-4019-a262-d75be3e473be"), new Guid("63495020-4f98-486e-a2c3-e1a519efc2a7"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") },
-                    { new Guid("9c100023-2b26-479c-8e48-28bd8c6a92d0"), new Guid("06192ae7-e2e5-48b2-88e4-83d5eb6172ed"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") },
-                    { new Guid("b263b741-8072-454f-97ff-c1a8681f6a1d"), new Guid("3004ebcd-db5f-46ac-9824-e407c1323a3b"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") },
-                    { new Guid("e2f01950-fac0-45bb-bd5e-25537f127346"), new Guid("ccf37921-d926-4868-86b2-ac99ef37f44e"), new Guid("9bd7be82-0c16-4270-91cf-3fd73ea08b73") },
-                    { new Guid("e8a8c35e-c7b6-46cd-bd5c-88c8fd18eb77"), new Guid("f0887fa1-0569-45df-b6fa-588d894bd54f"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") }
+                    { new Guid("10520693-a97b-4e42-9f02-9693912ebc75"), new Guid("b8c9d2f6-9ec9-431a-badb-6f81d46c2ad0"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") },
+                    { new Guid("3c45f386-feb5-4415-b54f-54f2803a809f"), new Guid("c8b5140e-6fb4-4a30-8f49-859c7012f45e"), new Guid("a03646e1-cef6-4c8b-b324-1289ee2caeb8") },
+                    { new Guid("3e9a790f-5ee2-40dc-a6cf-000ea797d1b2"), new Guid("c339e5e0-3e68-4b02-b4ed-ab2078646234"), new Guid("5b63a52e-e1e5-4f99-8899-d3d12b6e879d") },
+                    { new Guid("747e8919-ed74-4185-b905-79c392bcb485"), new Guid("34630099-f790-46bd-b3a2-ffcbc4098031"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") },
+                    { new Guid("95d0905f-406e-4ebd-905d-f408e1cc4a9e"), new Guid("c88b4604-8d86-456f-ac5f-343e194c81f0"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") },
+                    { new Guid("a0879660-ceca-430a-ba53-5afd83b06a21"), new Guid("37a5c24b-5921-4a0a-bfdc-1a86c7950091"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") },
+                    { new Guid("b63fe173-1463-469b-8dd6-5c0d8198939b"), new Guid("c92d3f7c-7443-4590-a408-62777bbf242e"), new Guid("a03646e1-cef6-4c8b-b324-1289ee2caeb8") },
+                    { new Guid("d304700d-5f7f-495d-a6f5-1d5cce5f9dd4"), new Guid("d210234b-f17d-4afe-b440-ba78aad861ea"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") }
                 });
 
             migrationBuilder.InsertData(
@@ -477,8 +477,8 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "PublisherID", "ApplicationUserId", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0"), "65399a4e-3334-40d6-95e5-eafcc89f280e", "Forlaget Mellemgaard" },
-                    { new Guid("81909497-ac47-4b00-855f-63af580fa33e"), "c53c25b8-a604-4bcd-a2fb-86ed379ed124", "Buster Nordic" }
+                    { new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe"), "1edb2bf3-4c3d-4b94-8d0c-3a18dc159fcd", "Forlaget Mellemgaard" },
+                    { new Guid("8848bded-4306-4443-9962-d8e84ae802ef"), "84f5ddc8-55dc-4d4e-9b06-b263bde5305c", "Buster Nordic" }
                 });
 
             migrationBuilder.InsertData(
@@ -486,8 +486,8 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "ReaderID", "ApplicationUserId" },
                 values: new object[,]
                 {
-                    { new Guid("1a1d626a-3a33-46c9-9597-5519ed44a8eb"), "04e27f18-08ac-41be-b6c8-8be2218036cc" },
-                    { new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5"), "f0bc89f5-bad1-456d-a14b-a116b6fd4e4f" }
+                    { new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14"), "29edea6b-5e1a-48d9-bf42-d52572e49ef4" },
+                    { new Guid("ce3e6fa0-d2d3-48b8-82bc-7847f0198959"), "063a2e71-c5c3-490a-8731-d08e25ca43c9" }
                 });
 
             migrationBuilder.InsertData(
@@ -495,13 +495,13 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "ID", "PubHubEBookEBookID", "PubHubPublisherPublisherID" },
                 values: new object[,]
                 {
-                    { new Guid("2a443ccb-8a99-4872-9e7b-4df1220be3e5"), new Guid("06192ae7-e2e5-48b2-88e4-83d5eb6172ed"), new Guid("81909497-ac47-4b00-855f-63af580fa33e") },
-                    { new Guid("4504c299-93bb-4fb9-ac2c-6b2a333f13c1"), new Guid("3004ebcd-db5f-46ac-9824-e407c1323a3b"), new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0") },
-                    { new Guid("4a21a75a-8470-4650-972d-9a009d9d7908"), new Guid("63495020-4f98-486e-a2c3-e1a519efc2a7"), new Guid("81909497-ac47-4b00-855f-63af580fa33e") },
-                    { new Guid("5445f019-62a8-4347-9a92-73503d9bba15"), new Guid("77686024-6631-4b3c-b178-73ad0e043681"), new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0") },
-                    { new Guid("5c5501d2-e83b-4c47-90fd-1c7d1257b225"), new Guid("f0887fa1-0569-45df-b6fa-588d894bd54f"), new Guid("81909497-ac47-4b00-855f-63af580fa33e") },
-                    { new Guid("5d7ca24f-126c-4746-9b17-8de35cd1734d"), new Guid("f2d06bc4-19b8-4337-a6a5-8efae669fc9f"), new Guid("81909497-ac47-4b00-855f-63af580fa33e") },
-                    { new Guid("a7eaebce-53b5-437c-9911-5f0a285f6174"), new Guid("d5bf8f51-d10d-4af3-bc75-4a59c7105a17"), new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0") }
+                    { new Guid("08d54c14-b0e0-4ac1-9419-ca1e7b098444"), new Guid("b8c9d2f6-9ec9-431a-badb-6f81d46c2ad0"), new Guid("8848bded-4306-4443-9962-d8e84ae802ef") },
+                    { new Guid("10e1f648-739b-4520-aae3-02aa966dd721"), new Guid("c339e5e0-3e68-4b02-b4ed-ab2078646234"), new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe") },
+                    { new Guid("4d0299fe-9c4e-445a-bd38-f750412ef874"), new Guid("34630099-f790-46bd-b3a2-ffcbc4098031"), new Guid("8848bded-4306-4443-9962-d8e84ae802ef") },
+                    { new Guid("5fe56dae-3eb3-48db-bc0c-a9cfad8188b6"), new Guid("c88b4604-8d86-456f-ac5f-343e194c81f0"), new Guid("8848bded-4306-4443-9962-d8e84ae802ef") },
+                    { new Guid("7a4438b6-bccf-481b-87d8-342426bf1d8e"), new Guid("c8b5140e-6fb4-4a30-8f49-859c7012f45e"), new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe") },
+                    { new Guid("905b3e6d-9415-41e7-829d-392efae0a8df"), new Guid("d210234b-f17d-4afe-b440-ba78aad861ea"), new Guid("8848bded-4306-4443-9962-d8e84ae802ef") },
+                    { new Guid("bc3c5b75-3089-4a43-bcad-ebe20f1ea3d8"), new Guid("37a5c24b-5921-4a0a-bfdc-1a86c7950091"), new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe") }
                 });
 
             migrationBuilder.InsertData(
@@ -509,27 +509,27 @@ namespace PubHubWebServer.Migrations
                 columns: new[] { "ID", "PubHubEBookEBookID", "PubHubReaderReaderID" },
                 values: new object[,]
                 {
-                    { new Guid("15e95d7b-7426-4aa5-aa0d-1c12bb884c74"), new Guid("ccf37921-d926-4868-86b2-ac99ef37f44e"), new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5") },
-                    { new Guid("3804662a-5a8e-4567-ae7b-36d6dcad8d65"), new Guid("06192ae7-e2e5-48b2-88e4-83d5eb6172ed"), new Guid("1a1d626a-3a33-46c9-9597-5519ed44a8eb") },
-                    { new Guid("67014d43-878d-47bb-a0bf-0a7533cc0b0a"), new Guid("63495020-4f98-486e-a2c3-e1a519efc2a7"), new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5") },
-                    { new Guid("96f54c79-c82b-407d-b8ba-d47f495f6257"), new Guid("f2d06bc4-19b8-4337-a6a5-8efae669fc9f"), new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5") },
-                    { new Guid("f9022d44-fe69-4ae4-86a0-1325e34333ad"), new Guid("63495020-4f98-486e-a2c3-e1a519efc2a7"), new Guid("1a1d626a-3a33-46c9-9597-5519ed44a8eb") }
+                    { new Guid("816242e5-6633-4428-9cf1-31a2b497c672"), new Guid("c88b4604-8d86-456f-ac5f-343e194c81f0"), new Guid("ce3e6fa0-d2d3-48b8-82bc-7847f0198959") },
+                    { new Guid("a7283004-ba59-493a-aa23-bab3d73b9117"), new Guid("b8c9d2f6-9ec9-431a-badb-6f81d46c2ad0"), new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14") },
+                    { new Guid("bac4aa3b-9a0e-4f11-8f57-9c62cb9be626"), new Guid("b8c9d2f6-9ec9-431a-badb-6f81d46c2ad0"), new Guid("ce3e6fa0-d2d3-48b8-82bc-7847f0198959") },
+                    { new Guid("d5a795ac-a51c-4010-a50d-f53f81851935"), new Guid("d210234b-f17d-4afe-b440-ba78aad861ea"), new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14") },
+                    { new Guid("e02c6357-4580-492b-9d05-675bdb807ceb"), new Guid("c92d3f7c-7443-4590-a408-62777bbf242e"), new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14") }
                 });
 
             migrationBuilder.InsertData(
-                table: "PubHubSubscriptionPubHubReader",
-                columns: new[] { "ID", "PubHubReaderReaderID", "PubHubSubscriptionSubscriptionID" },
-                values: new object[] { new Guid("156a10dc-f38b-4b7a-82b6-4731098b2125"), new Guid("61f79e0f-e70f-4ab3-bb69-46c318c8d8d5"), new Guid("8673115c-f664-4de4-ab79-22a1181f0a84") });
-
-            migrationBuilder.InsertData(
-                table: "PubHubSupscriptionPubHubPublisher",
+                table: "SubscriptionPublishers",
                 columns: new[] { "ID", "PubHubPublisherPublisherID", "PubHubSubscriptionSubscriptionID" },
                 values: new object[,]
                 {
-                    { new Guid("55aac2da-822d-43ef-8c29-2b1f38ef3598"), new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0"), new Guid("ba1fc5fe-8ae8-4b7e-b260-de422aab3f3b") },
-                    { new Guid("7d2b0ce4-aa2c-4501-bd4b-25b013ca78e2"), new Guid("6e8a402d-6569-4a0d-8a42-b4a5c037cdb0"), new Guid("9bd7be82-0c16-4270-91cf-3fd73ea08b73") },
-                    { new Guid("e4076518-d02b-4c67-9ecb-e20811dda146"), new Guid("81909497-ac47-4b00-855f-63af580fa33e"), new Guid("9072ef40-ac3f-4e85-b5dd-aa7f9ba75b6c") }
+                    { new Guid("999632dc-9e92-48ed-970b-2d442c956e14"), new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe"), new Guid("5b63a52e-e1e5-4f99-8899-d3d12b6e879d") },
+                    { new Guid("a7d23c05-cf52-4bd0-8afe-7deab009bb96"), new Guid("8848bded-4306-4443-9962-d8e84ae802ef"), new Guid("1b4b4c06-1bab-4234-950a-89a022df1b8a") },
+                    { new Guid("b2747f3e-c2ee-478f-9b08-5a34ee8a5d54"), new Guid("1341f585-101b-48e0-bfdd-b38c2e2d72fe"), new Guid("a03646e1-cef6-4c8b-b324-1289ee2caeb8") }
                 });
+
+            migrationBuilder.InsertData(
+                table: "SubscriptionReaders",
+                columns: new[] { "ID", "PubHubReaderReaderID", "PubHubSubscriptionSubscriptionID" },
+                values: new object[] { new Guid("4e0e24de-d69d-48aa-a215-d40dadc45052"), new Guid("8ea44d2d-e537-4c75-a281-11ed24d52e14"), new Guid("7a2eb4f8-b060-4f8c-af4f-9ff0a4ea464a") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -606,26 +606,6 @@ namespace PubHubWebServer.Migrations
                 column: "PubHubSubscriptionSubscriptionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PubHubSubscriptionPubHubReader_PubHubReaderReaderID",
-                table: "PubHubSubscriptionPubHubReader",
-                column: "PubHubReaderReaderID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PubHubSubscriptionPubHubReader_PubHubSubscriptionSubscriptionID",
-                table: "PubHubSubscriptionPubHubReader",
-                column: "PubHubSubscriptionSubscriptionID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PubHubSupscriptionPubHubPublisher_PubHubPublisherPublisherID",
-                table: "PubHubSupscriptionPubHubPublisher",
-                column: "PubHubPublisherPublisherID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PubHubSupscriptionPubHubPublisher_PubHubSubscriptionSubscriptionID",
-                table: "PubHubSupscriptionPubHubPublisher",
-                column: "PubHubSubscriptionSubscriptionID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Publishers_ApplicationUserId",
                 table: "Publishers",
                 column: "ApplicationUserId");
@@ -634,6 +614,26 @@ namespace PubHubWebServer.Migrations
                 name: "IX_Readers_ApplicationUserId",
                 table: "Readers",
                 column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionPublishers_PubHubPublisherPublisherID",
+                table: "SubscriptionPublishers",
+                column: "PubHubPublisherPublisherID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionPublishers_PubHubSubscriptionSubscriptionID",
+                table: "SubscriptionPublishers",
+                column: "PubHubSubscriptionSubscriptionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionReaders_PubHubReaderReaderID",
+                table: "SubscriptionReaders",
+                column: "PubHubReaderReaderID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionReaders_PubHubSubscriptionSubscriptionID",
+                table: "SubscriptionReaders",
+                column: "PubHubSubscriptionSubscriptionID");
         }
 
         /// <inheritdoc />
@@ -667,13 +667,13 @@ namespace PubHubWebServer.Migrations
                 name: "Logs");
 
             migrationBuilder.DropTable(
-                name: "PubHubSubscriptionPubHubReader");
-
-            migrationBuilder.DropTable(
-                name: "PubHubSupscriptionPubHubPublisher");
-
-            migrationBuilder.DropTable(
                 name: "Receipts");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionPublishers");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionReaders");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -682,10 +682,10 @@ namespace PubHubWebServer.Migrations
                 name: "EBooks");
 
             migrationBuilder.DropTable(
-                name: "Readers");
+                name: "Publishers");
 
             migrationBuilder.DropTable(
-                name: "Publishers");
+                name: "Readers");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");

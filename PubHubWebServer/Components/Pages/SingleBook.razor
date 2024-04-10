@@ -1,50 +1,83 @@
-﻿@page "/BookList/Book"
+﻿@page "/BookDetail/{id:guid}"
 @using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
 
-<div class="row" style="height:100%">
-    <div class="col-auto col-md-6" style="background-color:green;">
-        <div class="h-25">Book title</div>
-        <div class="h-25">
-            <div>Authors</div>
-            <div>Genres</div>
-            <div>Download Count</div>
-            <div>Rent Price</div>
-            <div>Buy Price</div>
+@inject HttpClient client
+@inject NavigationManager navigationManager
+
+@if (EBook != null)
+{
+    <div class="col-7 w-100 h-25">
+        <div class="row">
+
         </div>
-        <div class="h-50">
-            <div>Text description</div>
+        <div class="row">
+
+        </div>
+        <div class="row">
 
         </div>
     </div>
-    <div class="col-auto col-md-6" style="background-color:blue;">
-        <div class="h-50">
-            Here goes an image
+    <div class="col-5">
+        <div class="row">
+
         </div>
-        <div class="h-50 d-flex flex-column" style="background-color:yellow">
-            <div class="text-center p-1">
-                Subscriptions denne bog er en del af
+    </div>
+    <div class="row">
+
+    </div>
+
+    <div class="row bg-light text-dark">
+        <div class="col-auto col-md-6" style="background-color:green;">
+            <div class="h-25">@EBook.Title</div>
+            <div class="h-25">
+                <div>@EBook.AuthorNames</div>
+                <div>@EBook.Genre</div>
+                <div>@EBook.DownloadCount</div>
+                <div>@EBook.BorrowPrice</div>
+                <div>@EBook.Price</div>
             </div>
-            <div class="row m-1">
-                <div class="col-6">
-                    Subscription name
+            <div class="h-50">
+                <div>@EBook.Description</div>
+
+            </div>
+        </div>
+        <div class="col-auto col-md-6" style="background-color:blue;">
+            <div class="h-50">
+                <img src="images/BookCovers/@(EBook.FilePath + "-Cover.jpg")" class="" alt="..." style="max-width: 100%;">
+            </div>
+            <div class="h-50 d-flex flex-column" style="background-color:yellow">
+                <div class="text-center p-1">
+                    Subscriptions denne bog er en del af
                 </div>
-                <button class="col-6">Til subscription</button>
+                <div class="row m-1">
+                    <div class="col-6">
+                        Subscription name
+                    </div>
+                    <button class="col-6">Til subscription</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row align-bottom justify-content-end">
-    <button class="col-3">Save changes</button>
-    <button class="col-3">Rent book</button>
-    <button class="col-3">Buy book</button>
-</div>
+    <div class="row align-bottom justify-content-end">
+        <button class="col-3">Save changes</button>
+        <button class="col-3">Rent book</button>
+        <button class="col-3">Buy book</button>
+    </div>
+}
+
 
 @code {
-    PubHubEBook TheBook;
-    int BookID = 0;
-    protected override void OnInitialized()
+    PubHubEBook? EBook;
+
+    [Parameter]
+    public Guid ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        ApiResponse<PubHubEBook> apiBookResult = await client.GetFromJsonAsync<ApiResponse<PubHubEBook>>(navigationManager.BaseUri + $"ebook/getBookByID?ID={ID}") ?? new ApiResponse<PubHubEBook>();
+        EBook = apiBookResult.Data;
+        StateHasChanged();
         //TODO: 1. Get ID from URl 
         //TODO: 2. get book from API with ID
         //TODO: 3. display book
