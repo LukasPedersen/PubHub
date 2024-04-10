@@ -2,6 +2,8 @@
 @using PubHubWebServer.Services
 @using PubHubWebServer.Data.Models
 
+@rendermode InteractiveServer
+
 @inject HttpClient client
 @inject NavigationManager navManager
 
@@ -48,14 +50,13 @@
 </div>
 
 @code {
-
-    private List<PubHubEBook> bookList = new();
+    public List<PubHubEBook> bookList { get; set; } = new();
     private string InputTitle = "";
     private string InputAuthor = "";
     private string InputGenre = "";
 
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
         + $"?skip=0&take=10");
@@ -67,10 +68,9 @@
 
         StateHasChanged();
 
-        //TODO: find the max amount of books
-
-        await base.OnInitializedAsync();
+        await base.OnAfterRenderAsync(firstRender);
     }
+
 
     /// <summary>
     /// Gets first X amount of books from the inputed filter options
@@ -82,7 +82,6 @@
 
         if (responce?.Data != null)
         {
-            
             bookList = responce.Data;
         }
 
