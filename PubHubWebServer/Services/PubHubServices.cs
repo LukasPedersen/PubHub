@@ -406,7 +406,11 @@ namespace PubHubWebServer.Services
         {
             try
             {
-                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.PublisherID == _publisherID);
+                PubHubPublisher publisher =
+                     pubHubDBContext.Publishers
+                     .Include(p => p.Subscriptions.Where(x => x.PubHubPublisherPublisherID == _publisherID))
+                     .FirstOrDefault();
+
                 if (publisher == null)
                 {
                     return new ApiResponse<List<PubHubSubscription>>
@@ -415,10 +419,12 @@ namespace PubHubWebServer.Services
                         ErrorMessage = "Publisher not found"
                     };
                 }
+
+
                 List<PubHubSubscription> subscriptions = new();
                 foreach (PubHubSupscriptionPubHubPublisher subscription in publisher.Subscriptions)
                 {
-                    subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.ID).FirstAsync());
+                    subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.PubHubSubscriptionSubscriptionID).FirstAsync());
                 }
 
                 return new ApiResponse<List<PubHubSubscription>>
@@ -1002,21 +1008,21 @@ namespace PubHubWebServer.Services
             try
             {
                 return new ApiResponse<PubHubEBook>
-                  {
-                      StatusCode = HttpStatusCode.OK,
-                      //Finds the books
-                      Data = await pubHubDBContext.EBooks.Where(b => b.EBookID == ID).FirstAsync()
-                  };
-                catch (Exception ex)
                 {
-                  string message = "Failed to get top books, with the following Error message: " + ex.Message;
-                  SaveLog(message, LogType.Error);//Save log
-                  return new ApiResponse<PubHubEBook>
-                  {
-                      StatusCode = HttpStatusCode.InternalServerError,
-                      ErrorMessage = "Error while getting top books"
-                  };
-                }
+                    StatusCode = HttpStatusCode.OK,
+                    //Finds the books
+                    Data = await pubHubDBContext.EBooks.Where(b => b.EBookID == ID).FirstAsync()
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ApiResponse<PubHubEBook>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Error while getting top books"
+                };
             }
         }
         
