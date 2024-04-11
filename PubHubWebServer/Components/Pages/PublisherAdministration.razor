@@ -1,4 +1,19 @@
 ﻿@page "/PublisherAdministration"
+@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using PubHubWebServer.Services
+@using PubHubWebServer.Data.Models
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+
+@inject HttpClient client
+@inject NavigationManager navigationManager
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> SigninManager
+
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Publisher")]
 
 <div class="row h-100">
     @* Left side*@
@@ -13,7 +28,7 @@
             <button class="col-1">Filter</button>
         </div>
 
-        @*foreach item in the subscription list*@
+        @*TODO: foreach item in the subscription list*@
         <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
             <div class="pe-1 col-3"> This is the name of the subscription</div>
             <div class="pe-1 col-2"> State: active </div>
@@ -106,8 +121,40 @@
         </div>
     </div>
 </div>
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+    @Subscriptions.Count()
+    @Ebooks.Count()
+</AuthorizeView>
 
 
 @code {
+    public List<PubHubSubscription> Subscriptions { get; set; } = new();
+    public List<PubHubEBook> Ebooks { get; set; } = new();
 
+
+    public PubHubEBook Book { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        if (Subscriptions.Count == 0)
+        {
+            ClaimsPrincipal claimsPrincipal = SigninManager.Context.User;
+
+            ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+            var a = navigationManager.BaseUri;
+            var b = user.MyPubHubAccount;
+
+            var test = "https://localhost:7005/publisher/getAllPublishersSubscriptions?publisherID=1341f585-101b-48e0-bfdd-b38c2e2d72fe";
+
+            var route = navigationManager.BaseUri + "publisher/getAllPublishersSubscriptions"
+            + $"?publisherID={user.MyPubHubAccount}";
+
+            var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>((route));
+            Subscriptions = responce.Data;
+
+            int i = 0;
+        }
+        await base.OnInitializedAsync();
+    }
 }
