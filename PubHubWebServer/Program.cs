@@ -264,9 +264,9 @@ namespace PubHubWebServer
                 return Results.Unauthorized();
             }).WithTags("subscriptions").RequireAuthorization();
 
-            app.MapGet("subscription/getTopSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices) =>
+            app.MapGet("subscription/getTopSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices, int amount, Guid? publisher = null) =>
             {
-                var response = await pubHubServices.GetTopSubscriptions();
+                var response = await pubHubServices.GetTopSubscriptions(amount, publisher);
                 return Results.Json(response);
             }).WithTags("subscriptions");
 
@@ -302,9 +302,9 @@ namespace PubHubWebServer
                 return Results.Unauthorized();
             }).WithTags("ebooks").RequireAuthorization();
 
-            app.MapGet("ebook/getTopBooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices) =>
+            app.MapGet("ebook/getTopBooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, int amount, Guid? publisher = null) =>
             {
-                var response = await pubHubServices.GetTopBooks();
+                var response = await pubHubServices.GetTopBooks(amount, publisher);
                 return Results.Json(response);
             }).WithTags("ebooks");
 

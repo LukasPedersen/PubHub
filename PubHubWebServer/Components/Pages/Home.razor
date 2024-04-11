@@ -76,10 +76,10 @@
     protected override async Task OnInitializedAsync()
     {
 
-        ApiResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks")) ?? new ApiResponse<List<PubHubEBook>>();
+        ApiResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks?amount=10")) ?? new ApiResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
 
-        ApiResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions") ?? new ApiResponse<List<PubHubSubscription>>();
+        ApiResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions?amount=10") ?? new ApiResponse<List<PubHubSubscription>>();
         _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
     }
 
