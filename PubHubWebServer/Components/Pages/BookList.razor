@@ -10,7 +10,7 @@
 <div class="row pb-3">
     <input type="text" @bind="InputTitle" class="col-3" placeholder="Title" />
     <input type="text" @bind="InputAuthor" class="col-3" placeholder="Author" />
-    <input type="text" @bind="InputAuthor" class="col-3" placeholder="Genre" />
+    <input type="text" @bind="InputGenre" class="col-3" placeholder="Genre" />
     <button @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</button>
 </div>
 
@@ -50,6 +50,7 @@
 </div>
 
 @code {
+
     public List<PubHubEBook> bookList { get; set; } = new();
     private string InputTitle = "";
     private string InputAuthor = "";
@@ -58,17 +59,19 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
-        + $"?skip=0&take=10");
-        if (responce?.Data != null)
+        if (bookList.Count == 0)
         {
-            bookList = responce.Data;
+            var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
+            + $"?skip=0&take=10");
+            if (responce?.Data != null)
+            {
+                bookList = responce.Data;
+            }
 
+            StateHasChanged();
         }
 
-        StateHasChanged();
-
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
