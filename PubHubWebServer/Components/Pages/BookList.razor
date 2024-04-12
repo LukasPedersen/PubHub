@@ -61,7 +61,7 @@
     {
         if (bookList.Count == 0)
         {
-            var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
+            var responce = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
             + $"?skip=0&take=10");
             if (responce?.Data != null)
             {
@@ -80,7 +80,7 @@
     /// </summary>
     private async Task SetFilter()
     {
-        var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
+        var responce = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
         + $"?skip=0&take=10&title={InputTitle}&author={InputAuthor}&genre={InputGenre}");
 
         if (responce?.Data != null)

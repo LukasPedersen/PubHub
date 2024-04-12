@@ -2,9 +2,8 @@
 
 namespace PubHubWebServer.Services
 {
-    public class ApiResponse<T>
+    public class ServiceResponse<T>
     {
-        public HttpStatusCode StatusCode { get; set; }
         public T? Data { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
     }

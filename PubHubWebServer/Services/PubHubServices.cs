@@ -19,6 +19,7 @@ using IronSoftware.Drawing;
 
 //using YamlDotNet.Core.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Policy;
 using System.Security.Claims;
 
 namespace PubHubWebServer.Services
@@ -40,23 +41,22 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type of the entity</typeparam>
         /// <param name="_entity">The entity object</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> AddSingleEntity<T>(T _entity)
+        public async Task<ServiceResponse<bool>> AddSingleEntity<T>(T _entity)
         {
             try
             {
                 if (_entity == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
                         ErrorMessage = "Entity was null"
                     };
                 }
                 await pubHubDBContext.AddAsync(_entity);
                 pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
@@ -64,10 +64,10 @@ namespace PubHubWebServer.Services
                 string message = $"Failed to add entity: {_entity}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error adding entity"
+                    ErrorMessage = "Error adding entity",
+                    Data = false
                 };
             }
         }
@@ -78,33 +78,33 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type that is to be added should be of the type <see cref="List{T}"/> where T is the type</typeparam>
         /// <param name="_entities">The List of entities that should be added</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> AddMultipleEntities<T>(T _entities)
+        public async Task<ServiceResponse<bool>> AddMultipleEntities<T>(T _entities)
         {
             try
             {
                 if (_entities == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "Entities was null"
+                        ErrorMessage = "Entities was null",
+                        Data = false
                     };
                 }
                 await pubHubDBContext.AddRangeAsync(_entities);
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to add entiies: {_entities}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error adding entities"
+                    ErrorMessage = "Error adding entities",
+                    Data = false
                 };
             }
         }
@@ -115,33 +115,33 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The Type of the entity that should be added</typeparam>
         /// <param name="_entity">The entity object</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> UpdateEntity<T>(T _entity)
+        public async Task<ServiceResponse<bool>> UpdateEntity<T>(T _entity)
         {
             try
             {
                 if (_entity == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "Entity was null"
+                        ErrorMessage = "Entity was null",
+                        Data = false
                     };
                 }
                 pubHubDBContext.Update(_entity);
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to update entity: {_entity}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error while trying to update enitity"
+                    ErrorMessage = "Error while trying to update enitity",
+                    Data = false
                 };
             }
         }
@@ -152,33 +152,33 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type that is to be added should be of the type <see cref="List{T}"/> where T is the type</typeparam>
         /// <param name="_entities">The List of entities that should be added</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> UpdateMultipleEntities<T>(T _entities)
+        public async Task<ServiceResponse<bool>> UpdateMultipleEntities<T>(T _entities)
         {
             try
             {
                 if (_entities == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "Entities was null"
+                        ErrorMessage = "Entities was null",
+                        Data = false
                     };
                 }
                 pubHubDBContext.UpdateRange(_entities);
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to Update entiries: {_entities}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error updating entities"
+                    ErrorMessage = "Error updating entities",
+                    Data = false
                 };
             }
         }
@@ -189,13 +189,12 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type of the entity</typeparam>
         /// <param name="_entity">The entity object</param>
         /// <returns></returns>
-        public async Task<ApiResponse<T>> GetEntityByID<T>(Guid _entityID)
+        public async Task<ServiceResponse<T>> GetEntityByID<T>(Guid _entityID)
         {
             try
             {
-                return new ApiResponse<T>
+                return new ServiceResponse<T>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = (T)await pubHubDBContext.FindAsync(_entityID.GetType(), _entityID)
                 };
             }
@@ -203,9 +202,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get entiry by ID: {_entityID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _entityID);//Save log
-                return new ApiResponse<T>
+                return new ServiceResponse<T>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting entity"
                 };
             }
@@ -217,7 +215,7 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type that is to be retived, should be of the type <see cref="List{T}"/> where T is the type</typeparam>
         /// <param name="_entities">The List of entities that should be added</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<T>>> GetMultipleEntitiesByIDs<T>(List<Guid> _entities)
+        public async Task<ServiceResponse<List<T>>> GetMultipleEntitiesByIDs<T>(List<Guid> _entities)
         {
             try
             {
@@ -227,18 +225,16 @@ namespace PubHubWebServer.Services
                     entities.Add((T)await pubHubDBContext.FindAsync(entity.GetType(), entity));
                 }
 
-                return new ApiResponse<List<T>>
+                return new ServiceResponse<List<T>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = entities,
                 };
             }
             catch (Exception ex)
             {
                 //TODO: Add logger
-                return new ApiResponse<List<T>>
+                return new ServiceResponse<List<T>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting entity"
                 };
             }
@@ -250,33 +246,33 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type of the entity</typeparam>
         /// <param name="_entity">The entity object</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> DeleteEntity<T>(T _entity)
+        public async Task<ServiceResponse<bool>> DeleteEntity<T>(T _entity)
         {
             try
             {
                 if (_entity == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "Entity was null"
+                        ErrorMessage = "Entity was null",
+                        Data = false
                     };
                 }
                 pubHubDBContext.Remove(_entity);
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data= true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to delete entiry: {_entity}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error deleting entity"
+                    ErrorMessage = "Error deleting entity",
+                    Data = false
                 };
             }
         }
@@ -287,33 +283,33 @@ namespace PubHubWebServer.Services
         /// <typeparam name="T">The type that is to be Deleted, should be of the type <see cref="List{T}"/> where T is the type</typeparam>
         /// <param name="_entities">The List of entities that should be added</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> DeleteMultipleEntities<T>(T _entities)
+        public async Task<ServiceResponse<bool>> DeleteMultipleEntities<T>(T _entities)
         {
             try
             {
                 if (_entities == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "Entity was null"
+                        ErrorMessage = "Entity was null",
+                        Data = false
                     };
                 }
                 pubHubDBContext.RemoveRange(_entities);
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.BadRequest,
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to delete entities {_entities}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error deleting entities"
+                    ErrorMessage = "Error deleting entities",
+                    Data = false
                 };
             }
         }
@@ -327,21 +323,19 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user in question</param>
         /// <returns></returns>
-        public async Task<ApiResponse<IdentityRole>> GetUserRoles(string _userID)
+        public async Task<ServiceResponse<IdentityRole>> GetUserRoles(ClaimsPrincipal user, string _userID)
         {
             try
             {
                 if (_userID == null)
                 {
-                    return new ApiResponse<IdentityRole>
+                    return new ServiceResponse<IdentityRole>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
                         ErrorMessage = "UserID was null"
                     };
                 }
-                return new ApiResponse<IdentityRole>
+                return new ServiceResponse<IdentityRole>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = await pubHubDBContext.Roles.FindAsync(await pubHubDBContext.Users.Where(u => u.Id == _userID).FirstAsync())
                 };
             }
@@ -349,9 +343,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get user roles on userID: {_userID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
-                return new ApiResponse<IdentityRole>
+                return new ServiceResponse<IdentityRole>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error getting user roles"
                 };
             }
@@ -362,34 +355,34 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user that shoud be deactived</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> DeactivateUser(string _userID)
+        public async Task<ServiceResponse<bool>> DeactivateUser(ClaimsPrincipal user, string _userID)
         {
             try
             {
                 if (_userID == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.NotFound,
-                        ErrorMessage = "UserID was null"
+                        ErrorMessage = "UserID was null",
+                        Data = false
                     };
                 }
                 ApplicationUser tempUser = await pubHubDBContext.Users.FindAsync(_userID);
                 tempUser.Active = false;
                 await pubHubDBContext.SaveChangesAsync();
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK,
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to Deactivate userID:{_userID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error deactivating user"
+                    ErrorMessage = "Error deactivating user",
+                    Data = false
                 };
             }
         }
@@ -403,7 +396,7 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_publisherID">The publisher that should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubSubscription>>> GetAllPublishersSubscriptions(Guid _publisherID, ClaimsPrincipal user)
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllPublishersSubscriptions(ClaimsPrincipal user, Guid _publisherID)
         {
             try
             {
@@ -414,9 +407,8 @@ namespace PubHubWebServer.Services
 
                 if (publisher == null)
                 {
-                    return new ApiResponse<List<PubHubSubscription>>
+                    return new ServiceResponse<List<PubHubSubscription>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Publisher not found"
                     };
                 }
@@ -428,9 +420,8 @@ namespace PubHubWebServer.Services
                     subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.PubHubSubscriptionSubscriptionID).FirstAsync());
                 }
 
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = subscriptions,
                 };
             }
@@ -438,9 +429,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get all subscriptions on publisherID: {_publisherID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _publisherID);//Save log
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error getting publishers subscriptions"
                 };
             }
@@ -451,21 +441,18 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_PublisherID">The publisher to be looked at</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetAllPublishersBooks(Guid _PublisherID, ClaimsPrincipal user)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllPublishersBooks(ClaimsPrincipal user, Guid _PublisherID)
         {
-            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            try
             {
-                try
+                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _PublisherID);
+                if (publisher == null)
                 {
-                    PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _PublisherID);
-                    if (publisher == null)
+                    return new ServiceResponse<List<PubHubEBook>>
                     {
-                        return new ApiResponse<List<PubHubEBook>>
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ErrorMessage = "Publisher not found"
-                        };
-                    }
+                        ErrorMessage = "Publisher not found"
+                    };
+                }
 
                     List<PubHubEBook> eBooks = new();
                     foreach (PubHubEBookPubHubPublisher item in publisher.EBooks)
@@ -473,28 +460,17 @@ namespace PubHubWebServer.Services
                         eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
                     }
 
-                    return new ApiResponse<List<PubHubEBook>>
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Data = eBooks,
-                    };
-                }
-                catch (Exception ex)
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    string message = $"Failed to get Publisher books on publisherID: {_PublisherID}, with the following Error message: " + ex.Message;
-                    SaveLog(message, LogType.Error, _PublisherID);//Save log
-                    return new ApiResponse<List<PubHubEBook>>
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError,
-                        ErrorMessage = "Error getting publishers books"
-                    };
-                }
+                    Data = eBooks,
+                };
             }
-            else
+            catch (Exception ex)
             {
-                return new ApiResponse<List<PubHubEBook>>
+                string message = $"Failed to get Publisher books on publisherID: {_PublisherID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, _PublisherID);//Save log
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.Unauthorized,
                     ErrorMessage = "Error getting publishers books"
                 };
             }
@@ -505,22 +481,20 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user tha should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<double>> GetTotalEarnings(Guid _userID)
+        public async Task<ServiceResponse<double>> GetTotalEarnings(ClaimsPrincipal user, Guid _userID)
         {
             try
             {
                 double total = await pubHubDBContext.Receipts.Where(r => r.EntityID == _userID).SumAsync(r => r.Price);
                 if (total == null)
                 {
-                    return new ApiResponse<double>
+                    return new ServiceResponse<double>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "total not found"
                     };
                 }
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = total
                 };
             }
@@ -529,10 +503,31 @@ namespace PubHubWebServer.Services
 
                 string message = $"Failed to get total eranings on the user: {_userID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _userID);//Save log
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error getting publishers books"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> DoesPublisherOwnBook(ClaimsPrincipal user, string _userID, Guid _bookID)
+        {
+            try
+            {
+                Guid publisherID = await pubHubDBContext.Publishers.Where(p => p.ApplicationUserId == _userID).Select(p => p.PublisherID).FirstAsync();
+                bool isOwner = await pubHubDBContext.EBookPublishers.AnyAsync(bp => bp.PubHubPublisherPublisherID == publisherID && bp.PubHubEBookEBookID == _bookID);
+                return new ServiceResponse<bool>
+                {
+                    Data = isOwner
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get information on the user: {_userID}, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error on tjek if publisher is owner of book"
                 };
             }
         }
@@ -541,23 +536,21 @@ namespace PubHubWebServer.Services
 
         #region Reader Endpoints
 
-        public async Task<ApiResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(Guid _readerID)
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(ClaimsPrincipal user, Guid _readerID)
         {
             try
             {
                 PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.ReaderID == _readerID);
                 if (reader == null)
                 {
-                    return new ApiResponse<List<PubHubSubscription>>
+                    return new ServiceResponse<List<PubHubSubscription>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Reader not found"
                     };
                 }
                 List<Guid> subscriptionReaders = reader.Subscriptions.Where(sr => sr.PubHubReaderReaderID == _readerID).Select(s => s.PubHubSubscriptionSubscriptionID).ToList();
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = GetMultipleEntitiesByIDs<PubHubSubscription>(subscriptionReaders).Result.Data,
                 };
             }
@@ -565,9 +558,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Reader Subscription on ReaderID: {_readerID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all subscriptions from reader"
                 };
             }
@@ -578,16 +570,15 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_readerID">The GUID of the reader that should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetAllReadersBooks(Guid _readerID)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, Guid _readerID)
         {
             try
             {
                 PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.ReaderID == _readerID);
                 if (reader == null)
                 {
-                    return new ApiResponse<List<PubHubEBook>>
+                    return new ServiceResponse<List<PubHubEBook>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Reader not found"
                     };
                 }
@@ -598,9 +589,8 @@ namespace PubHubWebServer.Services
                     eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
                 }
 
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = eBooks
                 };
             }
@@ -608,9 +598,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Book on a ReaderID: {_readerID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _readerID);//Save log
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all Ebooks from reader"
                 };
             }
@@ -621,7 +610,7 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user that should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<double>> GetTotalSpendings(Guid _userID)
+        public async Task<ServiceResponse<double>> GetTotalSpendings(ClaimsPrincipal user, Guid _userID)
         {
             //TODO: Do later
             throw new NotImplementedException();
@@ -646,7 +635,7 @@ namespace PubHubWebServer.Services
         /// <param name="_bookID">The EbookID of the book that should be added</param>
         /// <param name="_subscriptionID">The ID of the subscription that the EBook should be added to</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> AddBookToSubscription(Guid _bookID, Guid _subscriptionID)
+        public async Task<ServiceResponse<bool>> AddBookToSubscription(ClaimsPrincipal user, Guid _bookID, Guid _subscriptionID)
         {
             try
             {
@@ -654,10 +643,10 @@ namespace PubHubWebServer.Services
                 PubHubSubscription subscription = await pubHubDBContext.Subscriptions.FindAsync(_subscriptionID);
                 if (subscription == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        ErrorMessage = "Subscription not found"
+                        ErrorMessage = "Subscription not found",
+                        Data = false
                     };
                 }
 
@@ -665,10 +654,10 @@ namespace PubHubWebServer.Services
                 PubHubEBook book = await pubHubDBContext.EBooks.FindAsync(_bookID);
                 if (book == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        ErrorMessage = "Book not found"
+                        ErrorMessage = "Book not found",
+                        Data = false
                     };
                 }
 
@@ -685,19 +674,19 @@ namespace PubHubWebServer.Services
                 // Save changes to the database
                 await pubHubDBContext.SaveChangesAsync();
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to add bookid: {_bookID} to subscriptionID: {_subscriptionID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _subscriptionID);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Internal server error while trying to add book to subscription"
+                    ErrorMessage = "Internal server error while trying to add book to subscription",
+                    Data = false
                 };
             }
         }
@@ -708,7 +697,7 @@ namespace PubHubWebServer.Services
         /// <param name="_bookID">The EBookID of the book that should be removed</param>
         /// <param name="_subscriptionID">The subscriptionID that should have a book removed from it</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> RemoveBookFromSubscription(Guid _bookID, Guid _subscriptionID)
+        public async Task<ServiceResponse<bool>> RemoveBookFromSubscription(ClaimsPrincipal user, Guid _bookID, Guid _subscriptionID)
         {
             try
             {
@@ -716,10 +705,10 @@ namespace PubHubWebServer.Services
                 PubHubSubscription subscription = await pubHubDBContext.Subscriptions.FindAsync(_subscriptionID);
                 if (subscription == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        ErrorMessage = "Subscription not found"
+                        ErrorMessage = "Subscription not found",
+                        Data = false
                     };
                 }
 
@@ -727,10 +716,10 @@ namespace PubHubWebServer.Services
                 PubHubEBook book = await pubHubDBContext.EBooks.FindAsync(_bookID);
                 if (book == null)
                 {
-                    return new ApiResponse<string>
+                    return new ServiceResponse<bool>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        ErrorMessage = "Book not found"
+                        ErrorMessage = "Book not found",
+                        Data = false
                     };
                 }
 
@@ -747,19 +736,19 @@ namespace PubHubWebServer.Services
                     await pubHubDBContext.SaveChangesAsync();
                 }
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 string message = $"Failed to remove bookID: {_bookID} from subscriptionID: {_subscriptionID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Internal server error while trying to remove book from subscription"
+                    ErrorMessage = "Internal server error while trying to remove book from subscription",
+                    Data = false
                 };
             }
         }
@@ -769,7 +758,7 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_subscriptionID">The subscriptonID of the subscription that should retrive all books</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetAllBooksFromSubscription(Guid _subscriptionID)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromSubscription(ClaimsPrincipal user, Guid _subscriptionID)
         {
             try
             {
@@ -777,9 +766,8 @@ namespace PubHubWebServer.Services
                 PubHubSubscription subscription = await pubHubDBContext.Subscriptions.FindAsync(_subscriptionID);
                 if (subscription == null)
                 {
-                    return new ApiResponse<List<PubHubEBook>>
+                    return new ServiceResponse<List<PubHubEBook>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Subscription not found"
                     };
                 }
@@ -790,9 +778,8 @@ namespace PubHubWebServer.Services
                     .Select(es => es.PubHubEBookEBookID)
                     .ToListAsync();
 
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = GetMultipleEntitiesByIDs<PubHubEBook>(bookIDs).Result.Data
                 };
             }
@@ -800,9 +787,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Book on the given subscriptionID:{_subscriptionID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all books from subscription"
                 };
             }
@@ -813,13 +799,12 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_subscriptionID">The subscription ID that should be looked up</param>
         /// <returns>The total amount as a double</returns>
-        public async Task<ApiResponse<double>> GetTotalErningsFromSubscription(Guid _subscriptionID)
+        public async Task<ServiceResponse<double>> GetTotalErningsFromSubscription(ClaimsPrincipal user, Guid _subscriptionID)
         {
             try
             {
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = pubHubDBContext.Receipts.Where(x => x.Acquired == _subscriptionID).Sum(y => y.Price)
                 };
             }
@@ -827,9 +812,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Total Earnings with a subscriptionID: {_subscriptionID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _subscriptionID);//Save log
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting Total Earnings subscription. Message" + ex.Message
                 };
             }
@@ -839,7 +823,7 @@ namespace PubHubWebServer.Services
         /// Get the top X subscriptions
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser = null)
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(ClaimsPrincipal user, int _amount, Guid? _publiser = null)
         {
             try
             {
@@ -854,9 +838,8 @@ namespace PubHubWebServer.Services
                     .Include(b => b.EBooks)
                     .ToList();
 
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = subscriptions
                 };
             }
@@ -864,9 +847,8 @@ namespace PubHubWebServer.Services
             {
                 string message = "Failed to get Top subscriptions, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting top subscription. Message" + ex.Message
                 };
             }
@@ -881,13 +863,12 @@ namespace PubHubWebServer.Services
         /// <param name="_skip">The skip amount</param>
         /// <param name="_take">The take amount</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10)
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(ClaimsPrincipal user, DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10)
         {
             try
             {
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = pubHubDBContext.Subscriptions.Where(x => x.Title.Contains(_title)
                     && x.StartDate <= startDate
                     && x.EndDate >= endDate)
@@ -900,9 +881,8 @@ namespace PubHubWebServer.Services
             {
                 //string message = $"Failed to get books from filter with the following {_title}, {_author}, {_genre}, {_skip}, {_take}, with the following Error message: " + ex.Message;
                 //SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubSubscription>>
+                return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting books on user"
                 };
             }
@@ -917,7 +897,7 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The ID of the user that should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetAllBooksFromUserByID(string _userID)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromUserByID(ClaimsPrincipal user, string _userID)
         {
             //TODO: Fix
             throw new NotImplementedException();
@@ -926,9 +906,8 @@ namespace PubHubWebServer.Services
                 PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.ReaderID == Guid.Parse(_userID));
                 if (reader == null)
                 {
-                    return new ApiResponse<List<PubHubEBook>>
+                    return new ServiceResponse<List<PubHubEBook>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Publisher not found"
                     };
                 }
@@ -939,9 +918,8 @@ namespace PubHubWebServer.Services
                     eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
                 }
 
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = eBooks
                 };
             }
@@ -949,9 +927,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get books from a user with ID:{_userID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting books on user"
                 };
             }
@@ -962,13 +939,12 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_bookID">The bookID that should be looked at</param>
         /// <returns>The total amount earned to that book</returns>
-        public async Task<ApiResponse<double>> GetAllEarningsFromBookByID(Guid _bookID)
+        public async Task<ServiceResponse<double>> GetAllEarningsFromBookByID(ClaimsPrincipal user, Guid _bookID)
         {
             try
             {
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     //Finds the total amount of earnings from a single book
                     Data = pubHubDBContext.Receipts.Where(book => book.Acquired == _bookID).Sum(x => x.Price),
                 };
@@ -977,9 +953,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Earnings with the given bookID: {_bookID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _bookID);//Save log
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting earnings"
                 };
             }
@@ -989,50 +964,36 @@ namespace PubHubWebServer.Services
         /// Gets the top 10 books with the most download count
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher = null)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher = null)
         {
-            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            try
             {
-                try
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    return new ApiResponse<List<PubHubEBook>>
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        //Finds the books
-                        Data = pubHubDBContext.EBooks
-                        .Include(x => x.Publishers.Where(x => x.PubHubPublisherPublisherID == _publisher))
-                        .OrderByDescending(d => d.DownloadCount)
-                        .Take(_amount)
-                        .ToList()
-                    };
-                }
-                catch (Exception ex)
-                {
-                    string message = "Failed to get top books, with the following Error message: " + ex.Message;
-                    SaveLog(message, LogType.Error);//Save log
-                    return new ApiResponse<List<PubHubEBook>>
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError,
-                        ErrorMessage = "Error while getting top books"
-                    };
-                }
+                    //Finds the books
+                    Data = pubHubDBContext.EBooks
+                    .Include(x => x.Publishers.Where(x => x.PubHubPublisherPublisherID == _publisher))
+                    .OrderByDescending(d => d.DownloadCount)
+                    .Take(_amount)
+                    .ToList()
+                };
             }
-            else
+            catch (Exception ex)
             {
-                return new ApiResponse<List<PubHubEBook>>
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.Unauthorized,
                     ErrorMessage = "Error while getting top books"
                 };
             }
         }
-        public async Task<ApiResponse<PubHubEBook>> GetBookByID(Guid ID)
+        public async Task<ServiceResponse<PubHubEBook>> GetBookByID(ClaimsPrincipal user, Guid ID)
         {
             try
             {
-                return new ApiResponse<PubHubEBook>
+                return new ServiceResponse<PubHubEBook>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     //Finds the books
                     Data = await pubHubDBContext.EBooks.Where(b => b.EBookID == ID).FirstAsync()
                 };
@@ -1041,9 +1002,8 @@ namespace PubHubWebServer.Services
             {
                 string message = "Failed to get top books, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<PubHubEBook>
+                return new ServiceResponse<PubHubEBook>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting top books"
                 };
             }
@@ -1058,13 +1018,12 @@ namespace PubHubWebServer.Services
         /// <param name="_skip">The amount that should be skiped</param>
         /// <param name="_take">The amount tha should be taken</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(ClaimsPrincipal user, string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10)
         {
             try
             {
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = pubHubDBContext.EBooks.Where(x => x.Title.Contains(_title)
                     && x.AuthorNames.Contains(_author)
                     && x.Genre.Contains(_genre))
@@ -1077,9 +1036,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get books from filter with the following {_title}, {_author}, {_genre}, {_skip}, {_take}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubEBook>>
+                return new ServiceResponse<List<PubHubEBook>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting books on user"
                 };
             }
@@ -1092,7 +1050,7 @@ namespace PubHubWebServer.Services
         /// <param name="_newsubscription">The subscription that hold the information</param>
         /// <param name="_RentedBoks">The list of books that should be added to the readers subscription list</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> ReaderRentBook(Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks)
+        public async Task<ServiceResponse<bool>> ReaderRentBook(ClaimsPrincipal user, Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks)
         {
             try
             {
@@ -1128,9 +1086,9 @@ namespace PubHubWebServer.Services
                     AddSingleEntity(BookSub);
                 }
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
@@ -1138,10 +1096,10 @@ namespace PubHubWebServer.Services
                 string message = $"Failed to add subscription to reader: {_reader}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error adding entity"
+                    ErrorMessage = "Error adding entity",
+                    Data = false
                 };
             }
         }
@@ -1152,7 +1110,7 @@ namespace PubHubWebServer.Services
         /// <param name="_readerID">The reader that should have a book added</param>
         /// <param name="_bookID">The book that should be added</param>
         /// <returns></returns>
-        public async Task<ApiResponse<string>> ReaderBuyBook(Guid _readerID, Guid _bookID)
+        public async Task<ServiceResponse<bool>> ReaderBuyBook(ClaimsPrincipal user, Guid _readerID, Guid _bookID)
         {
             try
             {
@@ -1167,9 +1125,9 @@ namespace PubHubWebServer.Services
                 AddSingleEntity(EbookREader);
 
                 //Responce
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.OK
+                    Data = true
                 };
             }
             catch (Exception ex)
@@ -1177,10 +1135,37 @@ namespace PubHubWebServer.Services
                 string message = $"Failed to nuy book: {_bookID} to Reader: {_readerID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
 
-                return new ApiResponse<string>
+                return new ServiceResponse<bool>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Error adding entity"
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(ClaimsPrincipal user, Guid _bookID)
+        {
+            try
+            {
+                List<PubHubEBookPubHubSubscription> bookSubscription = await pubHubDBContext.EBookSubscriptions.Where(sp => sp.PubHubEBookEBookID == _bookID).ToListAsync();
+                List<PubHubSubscription> subscriptions = new();
+                foreach (PubHubEBookPubHubSubscription item in bookSubscription)
+                {
+                    subscriptions.Add(await pubHubDBContext.Subscriptions.FindAsync(item.PubHubSubscriptionSubscriptionID));
+                }
+                return new ServiceResponse<List<PubHubSubscription>>
+                {
+                    //Finds the books
+                    Data = subscriptions
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<List<PubHubSubscription>>
+                {
+                    ErrorMessage = "Error while getting top books"
                 };
             }
         }
@@ -1193,22 +1178,20 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_logID">The log that should be rerived</param>
         /// <returns></returns>
-        public async Task<ApiResponse<PubHubLog>> GetLogByID(Guid _logID)
+        public async Task<ServiceResponse<PubHubLog>> GetLogByID(ClaimsPrincipal user, Guid _logID)
         {
             try
             {
                 PubHubLog log = await pubHubDBContext.Logs.Where(l => l.EntityID == _logID).FirstAsync();
                 if (log == null)
                 {
-                    return new ApiResponse<PubHubLog>
+                    return new ServiceResponse<PubHubLog>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "log not found"
                     };
                 }
-                return new ApiResponse<PubHubLog>
+                return new ServiceResponse<PubHubLog>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = log
                 };
             }
@@ -1216,9 +1199,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Log with the following ID: {_logID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _logID);//Save log
-                return new ApiResponse<PubHubLog>
+                return new ServiceResponse<PubHubLog>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get log"
                 };
             }
@@ -1228,22 +1210,20 @@ namespace PubHubWebServer.Services
         /// Gets all logs
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubLog>>> GetAllLogs()
+        public async Task<ServiceResponse<List<PubHubLog>>> GetAllLogs(ClaimsPrincipal user)
         {
             try
             {
                 List<PubHubLog> logs = await pubHubDBContext.Logs.ToListAsync();
                 if (logs == null)
                 {
-                    return new ApiResponse<List<PubHubLog>>
+                    return new ServiceResponse<List<PubHubLog>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "logs not found"
                     };
                 }
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = logs
                 };
             }
@@ -1251,9 +1231,8 @@ namespace PubHubWebServer.Services
             {
                 string message = "Failed to get Logs, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all logs"
                 };
             }
@@ -1264,22 +1243,20 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_EntityID">The entity that should be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(Guid _EntityID)
+        public async Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(ClaimsPrincipal user, Guid _EntityID)
         {
             try
             {
                 List<PubHubLog> logs = await pubHubDBContext.Logs.Where(l => l.EntityID == _EntityID).ToListAsync();
                 if (logs == null)
                 {
-                    return new ApiResponse<List<PubHubLog>>
+                    return new ServiceResponse<List<PubHubLog>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "logs not found"
                     };
                 }
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = logs
                 };
             }
@@ -1287,9 +1264,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Failed to get Logs on a the given EntiryID: {_EntityID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _EntityID);//Save log
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all logs from entity"
                 };
             }
@@ -1299,22 +1275,20 @@ namespace PubHubWebServer.Services
         /// Looks though all logs and finds all that have the word "acquired" within its message
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResponse<List<PubHubLog>>> GetAllLogsForAcquired()
+        public async Task<ServiceResponse<List<PubHubLog>>> GetAllLogsForAcquired(ClaimsPrincipal user)
         {
             try
             {
                 List<PubHubLog> logs = await pubHubDBContext.Logs.Where(l => l.Message.ToUpper().Contains("ACQUIRED")).ToListAsync();
                 if (logs == null)
                 {
-                    return new ApiResponse<List<PubHubLog>>
+                    return new ServiceResponse<List<PubHubLog>>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "logs not found"
                     };
                 }
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = logs
                 };
             }
@@ -1322,9 +1296,8 @@ namespace PubHubWebServer.Services
             {
                 string message = "Failed to get Logs, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ApiResponse<List<PubHubLog>>
+                return new ServiceResponse<List<PubHubLog>>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get all logs for acquired"
                 };
             }
@@ -1339,22 +1312,20 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user that is to be looked up</param>
         /// <returns></returns>
-        public async Task<ApiResponse<PubHubReceipt>> GetNewestReceiptFromUser(Guid _userID)
+        public async Task<ServiceResponse<PubHubReceipt>> GetNewestReceiptFromUser(Guid _userID)
         {
             try
             {
                 PubHubReceipt receipt = await pubHubDBContext.Receipts.Where(r => r.EntityID == _userID).OrderByDescending(r => r.TimeStamp).FirstAsync();
                 if (receipt == null)
                 {
-                    return new ApiResponse<PubHubReceipt>
+                    return new ServiceResponse<PubHubReceipt>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "Receipt not found"
                     };
                 }
-                return new ApiResponse<PubHubReceipt>
+                return new ServiceResponse<PubHubReceipt>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = receipt
                 };
             }
@@ -1362,9 +1333,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"{_userID} tryed to get a receipt information but got the following error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _userID);//Save log
-                return new ApiResponse<PubHubReceipt>
+                return new ServiceResponse<PubHubReceipt>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get newest receipt fron user"
                 };
             }
@@ -1375,22 +1345,20 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<double>> GetTotalFromAcquired(Guid _userID)
+        public async Task<ServiceResponse<double>> GetTotalFromAcquired(Guid _userID)
         {
             try
             {
                 double total = await pubHubDBContext.Receipts.Where(r => r.Acquired == _userID).SumAsync(r => r.Price);
                 if (total == null)
                 {
-                    return new ApiResponse<double>
+                    return new ServiceResponse<double>
                     {
-                        StatusCode = HttpStatusCode.BadRequest,
                         ErrorMessage = "total not found"
                     };
                 }
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.OK,
                     Data = total
                 };
             }
@@ -1398,9 +1366,8 @@ namespace PubHubWebServer.Services
             {
                 string message = $"Tryed to get total on: {_userID} , but got following error message: " + ex.Message;
                 SaveLog(message, LogType.Error, _userID);//Save the log
-                return new ApiResponse<double>
+                return new ServiceResponse<double>
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Internal server error while trying to get total from acquired"
                 };
             }
@@ -1426,7 +1393,7 @@ namespace PubHubWebServer.Services
                 TimeStamp = DateTime.UtcNow,
                 Message = _message
             };
-            AddSingleEntity<PubHubLog>(log);
+            pubHubDBContext.Logs.Add(log);
         }
 
         /// <summary>
@@ -1445,38 +1412,7 @@ namespace PubHubWebServer.Services
                 Price = _price,
                 TimeStamp = DateTime.UtcNow,
             };
-            AddSingleEntity<PubHubReceipt>(receipt);
-
-        }
-
-        public async Task<ApiResponse<bool>> AnyUsersInDB()
-        {
-            try
-            {
-                if (await pubHubDBContext.Users.CountAsync() > 0)
-                {
-                    return new ApiResponse<bool>
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Data = true,
-                    };
-                }
-
-                return new ApiResponse<bool>
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Data = false,
-                    ErrorMessage = "No users in DB"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse<bool>
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Internal server error while trying to check for users in DB"
-                };
-            }
+            pubHubDBContext.Receipts.Add(receipt);
         }
 
         #endregion
