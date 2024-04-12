@@ -1,11 +1,21 @@
 ﻿@page "/"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using PubHubWebServer.Data
+@using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
+@using Microsoft.AspNetCore.Authorization
+
 @inject IPubHubServices services
 @inject NavigationManager navigationManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-@using PubHubWebServer.Data.Models
-@using System.Text.Json.Serialization
-@using System.Text.Json
-@using PubHubWebServer.Services;
+
 
 <PageTitle>Home</PageTitle>
 <div class="row flex-wrap">
@@ -53,7 +63,6 @@
         @foreach (PubHubSubscription subscription in _topSubscriptions)
         {
             <div class="card" style="width: 18rem;">
-                <img src="@client.GetAsync("{subscription.SubscriptionID}")" class="card-img" alt="...">@*Image *@
                 <div class="card-img-overlay">
                     <h5 class="card-title">@subscription.Title</h5>@*Title*@
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
@@ -75,17 +84,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        ServiceResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks?amount=10")) ?? new ServiceResponse<List<PubHubEBook>>();
+        ServiceResponse<List<PubHubEBook>> apiBookResult = await services.GetTopBooks(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
 
-        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ServiceResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions?amount=10") ?? new ServiceResponse<List<PubHubSubscription>>();
+        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await services.GetTopSubscriptions(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubSubscription>>();
         _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
-    }
-
-    protected async Task<List<byte[]>> GetBookImage(string _path)
-    {
-        ServiceResponse<List<byte[]>> apiResult = await client.GetFromJsonAsync<ServiceResponse<List<byte[]>>>((navigationManager.BaseUri + $"ebook/getBookImage/{_path}")) ?? new ServiceResponse<List<byte[]>>();
-        return apiResult.Data ?? new List<byte[]>();
     }
 }

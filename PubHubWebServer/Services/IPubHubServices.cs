@@ -68,9 +68,11 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromSubscription(ClaimsPrincipal user, Guid _subscriptionID);
 
+        public Task<ServiceResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(ClaimsPrincipal user, DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10);
+
         public Task<ServiceResponse<double>> GetTotalErningsFromSubscription(ClaimsPrincipal user, Guid _subscriptionID);
 
-        public Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(ClaimsPrincipal user, int _amount, Guid? _publiser);
+        public Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(ClaimsPrincipal user, int _amount, Guid? _publiser = null);
 
         public Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(ClaimsPrincipal user, Guid _bookID);
 
@@ -82,11 +84,9 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<double>> GetAllEarningsFromBookByID(ClaimsPrincipal user, Guid _bookID);
 
-        public Task<ServiceResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher);
+        public Task<ServiceResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher = null);
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(ClaimsPrincipal user, string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
-
-        public Task<ServiceResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(ClaimsPrincipal user, DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10);
 
         public Task<ServiceResponse<bool>> ReaderRentBook(ClaimsPrincipal user, Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks);
 
