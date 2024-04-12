@@ -5,11 +5,15 @@
 @using PubHubWebServer.Data.Models
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
+@using System.Text.Json
+@using System.Text
 
 @inject HttpClient client
 @inject NavigationManager navigationManager
 @inject UserManager<ApplicationUser> userManager
 @inject SignInManager<ApplicationUser> SigninManager
+@inject PubHubServices Service
+
 
 @rendermode InteractiveServer
 
@@ -29,13 +33,17 @@
         </div>
 
         @*TODO: foreach item in the subscription list*@
-        <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
-            <div class="pe-1 col-3"> This is the name of the subscription</div>
-            <div class="pe-1 col-2"> State: active </div>
-            <div class="pe-1 col-3"> Subscribers: 1234</div>
-            <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
-            <button class="col-1">Edit</button>@*This should go to the subscription page so that the publisher can edit the subscription*@
-        </div>
+        @foreach (PubHubSubscription subscription in Subscriptions)
+        {
+            <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
+                <div class="pe-1 col-3"> This is the name of the subscription</div>
+                <div class="pe-1 col-2"> State: active </div>
+                <div class="pe-1 col-3"> Subscribers: 1234</div>
+                <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
+                <a href="" class="btn btn-check col-1">Edit</a>@*This should go to the subscription page so that the publisher can edit the subscription*@
+            </div>
+        }
+       
         <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
             <div class="pe-1 col-3"> This is the name of the subscription</div>
             <div class="pe-1 col-2"> State: active </div>
@@ -142,16 +150,17 @@
 
             ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-            var a = navigationManager.BaseUri;
-            var b = user.MyPubHubAccount;
-
-            var test = "https://localhost:7005/publisher/getAllPublishersSubscriptions?publisherID=1341f585-101b-48e0-bfdd-b38c2e2d72fe";
-
             var route = navigationManager.BaseUri + "publisher/getAllPublishersSubscriptions"
             + $"?publisherID={user.MyPubHubAccount}";
 
             var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>((route));
             Subscriptions = responce.Data;
+
+            //Ebooks = Service.GetAllPublishersBooks(user.MyPubHubAccount);
+            route = navigationManager.BaseUri + "publisher/getAllPublishersBooks"
+            + $"?publisherID={user.MyPubHubAccount}";
+            var responce2 = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((route));
+            Ebooks = responce2.Data;
 
             int i = 0;
         }

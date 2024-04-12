@@ -124,27 +124,26 @@ namespace PubHubWebServer
 
             #region Publisher Endpoints
 
-            app.MapGet("publisher/getAllPublishersSubscriptions/{publisherID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid publisherID) =>
+            app.MapGet("publisher/getAllPublishersSubscriptions", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid publisherID) =>
             {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    var response = await pubHubServices.GetAllPublishersSubscriptions(publisherID);
-                    return Results.Json(response);
-                }
+                //if (user.Identity is not null && user.Identity.IsAuthenticated)
+                //{
+                var response = await pubHubServices.GetAllPublishersSubscriptions(publisherID);
+                return Results.Json(response);
+                //}
+                //return Results.Unauthorized();
+            }).WithTags("publishers");
 
-                return Results.Unauthorized();
-            }).WithTags("publishers").RequireAuthorization();
-
-            app.MapGet("publisher/getAllPublishersBooks/{publisherID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid publisherID) =>
+            app.MapGet("publisher/getAllPublishersBooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid publisherID) =>
             {
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
+                //if (user.Identity is not null && user.Identity.IsAuthenticated)
+                //{
                     var response = await pubHubServices.GetAllPublishersBooks(publisherID);
                     return Results.Json(response);
-                }
+                //}
 
-                return Results.Unauthorized();
-            }).WithTags("publishers").RequireAuthorization();
+                //return Results.Unauthorized();
+            }).WithTags("publishers");
 
             app.MapGet("publisher/getTotalEarnings/{userID}", async (ClaimsPrincipal user, IPubHubServices pubHubServices, Guid userID) =>
             {
