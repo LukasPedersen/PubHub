@@ -1,85 +1,167 @@
 ﻿@page "/BookDetail/{id:guid}"
+
 @using PubHubWebServer.Data.Models
 @using PubHubWebServer.Services
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using System.Net.Http.Headers
+@using Blazored.LocalStorage
 
+@inject UserManager<ApplicationUser> userManager
 @inject HttpClient client
 @inject NavigationManager navigationManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILocalStorageService localStorage
+
+@rendermode InteractiveServer
 
 @if (EBook != null)
 {
-    <div class="col-7 w-100 h-25">
-        <div class="row">
-
-        </div>
-        <div class="row">
-
-        </div>
-        <div class="row">
-
-        </div>
-    </div>
-    <div class="col-5">
-        <div class="row">
-
-        </div>
-    </div>
-    <div class="row">
-
-    </div>
-
-    <div class="row bg-light text-dark">
-        <div class="col-auto col-md-6" style="background-color:green;">
-            <div class="h-25">@EBook.Title</div>
-            <div class="h-25">
-                <div>@EBook.AuthorNames</div>
-                <div>@EBook.Genre</div>
-                <div>@EBook.DownloadCount</div>
-                <div>@EBook.BorrowPrice</div>
-                <div>@EBook.Price</div>
-            </div>
-            <div class="h-50">
-                <div>@EBook.Description</div>
-
-            </div>
-        </div>
-        <div class="col-auto col-md-6" style="background-color:blue;">
-            <div class="h-50">
-                <img src="images/BookCovers/@(EBook.FilePath + "-Cover.jpg")" class="" alt="..." style="max-width: 100%;">
-            </div>
-            <div class="h-50 d-flex flex-column" style="background-color:yellow">
-                <div class="text-center p-1">
-                    Subscriptions denne bog er en del af
-                </div>
-                <div class="row m-1">
-                    <div class="col-6">
-                        Subscription name
+    <AuthorizeView Roles="Publisher">
+        <Authorized>
+            <div class="row position-relative">
+                <div class="col-auto h-25 ">
+                    <div class="row" style="height: auto;">
+                        <div class="" style="text-align: center;">
+                            <h1>@EBook.Title</h1>
+                        </div>
                     </div>
-                    <button class="col-6">Til subscription</button>
+                    <div class="row" style="text-align: center;">
+                        @EBook.Description
+                    </div>
+                    <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
+                        @if (subscriptions != null)
+                        {
+                            <div class="row">
+                                <h3>Denne bog er i disse abonnementer</h3>
+                            </div>
+                            <table class="table table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Abonnement</th>
+                                        <th scope="col">Beskrivelse</th>
+                                        <th scope="col">Start dato</th>
+                                        <th scope="col">Slut dato</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (PubHubSubscription subscription in subscriptions)
+                                    {
+                                        <tr>
+                                            <th scope="row">@subscription.Title</th>
+                                            <td>@subscription.Message</td>
+                                            <td>@subscription.StartDate</td>
+                                            <td>@subscription.EndDate</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                    <div class="row" style="">
+                        @if (Owner)
+                        {
+                            <div class="col-auto">
+                                <button class="btn btn-primary">Save changes</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-5 singleBookPageImageRow">
+                    <div class="row ">
+                        <img src="images/BookCovers/@(EBook.FilePath + "-Cover.jpg")" class="card-img-top img-thumbnail" alt="..." style="max-width: 100%;">
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row align-bottom justify-content-end">
-        <button class="col-3">Save changes</button>
-        <button class="col-3">Rent book</button>
-        <button class="col-3">Buy book</button>
-    </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="row position-relative">
+                <div class="col-auto h-25 ">
+                    <div class="row" style="height: auto;">
+                        <div class="" style="text-align: center;">
+                            <h1>@EBook.Title</h1>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center;">
+                        @EBook.Description
+                    </div>
+                    <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
+                        @if (subscriptions != null)
+                        {
+                            <div class="row">
+                                <h3>Denne bog er i disse abonnementer</h3>
+                            </div>
+                            <table class="table table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Abonnement</th>
+                                        <th scope="col">Beskrivelse</th>
+                                        <th scope="col">Start dato</th>
+                                        <th scope="col">Slut dato</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (PubHubSubscription subscription in subscriptions)
+                                    {
+                                        <tr>
+                                            <th scope="row">@subscription.Title</th>
+                                            <td>@subscription.Message</td>
+                                            <td>@subscription.StartDate</td>
+                                            <td>@subscription.EndDate</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                    <div class="row" style="">
+                        <div class="col-auto">
+                            <button class="btn btn-success">Køb: @EBook.Price Kr.</button>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-warning">Lån: @EBook.BorrowPrice Kr.</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5 singleBookPageImageRow">
+                    <div class="row ">
+                        <img src="images/BookCovers/@(EBook.FilePath + "-Cover.jpg")" class="card-img-top img-thumbnail" alt="..." style="max-width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+    
 }
 
 
 @code {
     PubHubEBook? EBook;
+    public bool Owner { get; set; } = false;
+    List<PubHubSubscription>? subscriptions;
 
     [Parameter]
     public Guid ID { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+
+        var claimsPrincipal = SignInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", claimsPrincipal.Identity.);
+
         ApiResponse<PubHubEBook> apiBookResult = await client.GetFromJsonAsync<ApiResponse<PubHubEBook>>(navigationManager.BaseUri + $"ebook/getBookByID?ID={ID}") ?? new ApiResponse<PubHubEBook>();
         EBook = apiBookResult.Data;
+
+        string url = navigationManager.BaseUri + $"publisher/DoesPublisherOwnBook?userID={user.Id}&bookID={EBook.EBookID}";
+        ApiResponse<bool> apiOwnerResult = await client.GetFromJsonAsync<ApiResponse<bool>>(url) ?? new ApiResponse<bool>();
+        Owner = apiOwnerResult.Data;
+
+        ApiResponse<List<PubHubSubscription>> apiSubResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + $"subscription/getAllSubscriptionsWithBookID?bookID={EBook.EBookID}") ?? new ApiResponse<List<PubHubSubscription>>();
+        subscriptions = apiSubResult.Data;
+
         StateHasChanged();
-        //TODO: 1. Get ID from URl 
-        //TODO: 2. get book from API with ID
-        //TODO: 3. display book
     }
 }

@@ -45,6 +45,8 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<double>> GetTotalEarnings(Guid _userID);
 
+        public Task<ApiResponse<bool>> DoesPublisherOwnBook(string _publisherID, Guid _bookID);
+
         #endregion
 
         #region Reader Endpoints
@@ -69,6 +71,8 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser);
 
+        public Task<ApiResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(Guid _bookID);
+
         #endregion
 
         #region Ebook Endpoints
@@ -88,6 +92,7 @@ namespace PubHubWebServer.Services
         public Task<ApiResponse<string>> ReaderBuyBook(Guid _readerID, Guid _bookID);
 
         public Task<ApiResponse<PubHubEBook>> GetBookByID(Guid ID);
+
 
         //public Task<ApiResponse<List<byte[]>>> GetBookImage(string _path);
 
