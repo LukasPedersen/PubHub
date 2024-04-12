@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject HttpClient client
+@inject IPubHubServices services
 @inject NavigationManager navigationManager
 
 @using PubHubWebServer.Data.Models
@@ -76,16 +76,16 @@
     protected override async Task OnInitializedAsync()
     {
 
-        ApiResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks?amount=10")) ?? new ApiResponse<List<PubHubEBook>>();
+        ServiceResponse<List<PubHubEBook>> apiBookResult = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>((navigationManager.BaseUri + "ebook/getTopBooks?amount=10")) ?? new ServiceResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
 
-        ApiResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions?amount=10") ?? new ApiResponse<List<PubHubSubscription>>();
+        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await client.GetFromJsonAsync<ServiceResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + "subscription/getTopSubscriptions?amount=10") ?? new ServiceResponse<List<PubHubSubscription>>();
         _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
     }
 
     protected async Task<List<byte[]>> GetBookImage(string _path)
     {
-        ApiResponse<List<byte[]>> apiResult = await client.GetFromJsonAsync<ApiResponse<List<byte[]>>>((navigationManager.BaseUri + $"ebook/getBookImage/{_path}")) ?? new ApiResponse<List<byte[]>>();
+        ServiceResponse<List<byte[]>> apiResult = await client.GetFromJsonAsync<ServiceResponse<List<byte[]>>>((navigationManager.BaseUri + $"ebook/getBookImage/{_path}")) ?? new ServiceResponse<List<byte[]>>();
         return apiResult.Data ?? new List<byte[]>();
     }
 }

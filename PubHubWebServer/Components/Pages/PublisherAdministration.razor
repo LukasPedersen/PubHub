@@ -153,13 +153,13 @@
             var route = navigationManager.BaseUri + "publisher/getAllPublishersSubscriptions"
             + $"?publisherID={user.MyPubHubAccount}";
 
-            var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>((route));
+            var responce = await client.GetFromJsonAsync<ServiceResponse<List<PubHubSubscription>>>((route));
             Subscriptions = responce.Data;
 
             //Ebooks = Service.GetAllPublishersBooks(user.MyPubHubAccount);
             route = navigationManager.BaseUri + "publisher/getAllPublishersBooks"
             + $"?publisherID={user.MyPubHubAccount}";
-            var responce2 = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((route));
+            var responce2 = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>((route));
             Ebooks = responce2.Data;
 
             int i = 0;

@@ -152,14 +152,14 @@
 
         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", claimsPrincipal.Identity.);
 
-        ApiResponse<PubHubEBook> apiBookResult = await client.GetFromJsonAsync<ApiResponse<PubHubEBook>>(navigationManager.BaseUri + $"ebook/getBookByID?ID={ID}") ?? new ApiResponse<PubHubEBook>();
+        ServiceResponse<PubHubEBook> apiBookResult = await client.GetFromJsonAsync<ServiceResponse<PubHubEBook>>(navigationManager.BaseUri + $"ebook/getBookByID?ID={ID}") ?? new ServiceResponse<PubHubEBook>();
         EBook = apiBookResult.Data;
 
         string url = navigationManager.BaseUri + $"publisher/DoesPublisherOwnBook?userID={user.Id}&bookID={EBook.EBookID}";
-        ApiResponse<bool> apiOwnerResult = await client.GetFromJsonAsync<ApiResponse<bool>>(url) ?? new ApiResponse<bool>();
+        ServiceResponse<bool> apiOwnerResult = await client.GetFromJsonAsync<ServiceResponse<bool>>(url) ?? new ServiceResponse<bool>();
         Owner = apiOwnerResult.Data;
 
-        ApiResponse<List<PubHubSubscription>> apiSubResult = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + $"subscription/getAllSubscriptionsWithBookID?bookID={EBook.EBookID}") ?? new ApiResponse<List<PubHubSubscription>>();
+        ServiceResponse<List<PubHubSubscription>> apiSubResult = await client.GetFromJsonAsync<ServiceResponse<List<PubHubSubscription>>>(navigationManager.BaseUri + $"subscription/getAllSubscriptionsWithBookID?bookID={EBook.EBookID}") ?? new ServiceResponse<List<PubHubSubscription>>();
         subscriptions = apiSubResult.Data;
 
         StateHasChanged();
