@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -39,9 +40,9 @@ namespace PubHubWebServer.Services
 
         #region Publisher Endpoints
 
-        public Task<ApiResponse<List<PubHubSubscription>>> GetAllPublishersSubscriptions(Guid _readerID);
+        public Task<ApiResponse<List<PubHubSubscription>>> GetAllPublishersSubscriptions(Guid _readerID, ClaimsPrincipal user);
 
-        public Task<ApiResponse<List<PubHubEBook>>> GetAllPublishersBooks(Guid _readerID);
+        public Task<ApiResponse<List<PubHubEBook>>> GetAllPublishersBooks(Guid _readerID, ClaimsPrincipal user);
 
         public Task<ApiResponse<double>> GetTotalEarnings(Guid _userID);
 
@@ -77,7 +78,7 @@ namespace PubHubWebServer.Services
 
         public Task<ApiResponse<double>> GetAllEarningsFromBookByID(Guid _bookID);
 
-        public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks(int _amount, Guid? _publisher);
+        public Task<ApiResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher);
 
         public Task<ApiResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
 

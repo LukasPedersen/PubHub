@@ -12,7 +12,7 @@
 @inject NavigationManager navigationManager
 @inject UserManager<ApplicationUser> userManager
 @inject SignInManager<ApplicationUser> SigninManager
-@inject PubHubServices Service
+@inject IPubHubServices Service
 
 
 @rendermode InteractiveServer
@@ -36,21 +36,13 @@
         @foreach (PubHubSubscription subscription in Subscriptions)
         {
             <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
-                <div class="pe-1 col-3"> This is the name of the subscription</div>
-                <div class="pe-1 col-2"> State: active </div>
+                <div class="pe-1 col-3"> @subscription.Title</div>
+                <div class="pe-1 col-2"> State: @subscription.Active </div>
                 <div class="pe-1 col-3"> Subscribers: 1234</div>
                 <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
-                <a href="" class="btn btn-check col-1">Edit</a>@*This should go to the subscription page so that the publisher can edit the subscription*@
+                <a href="#" class="btn btn-check col-1">Edit</a>@*This should go to the subscription page so that the publisher can edit the subscription*@
             </div>
         }
-       
-        <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
-            <div class="pe-1 col-3"> This is the name of the subscription</div>
-            <div class="pe-1 col-2"> State: active </div>
-            <div class="pe-1 col-3"> Subscribers: 1234</div>
-            <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
-            <button class="col-1">Edit</button>@*This should go to the subscription page so that the publisher can edit the subscription*@
-        </div>
         <div class="pull-right bottom-right">
             <a class="btn border" href="#">
                 New Subscription
@@ -61,42 +53,16 @@
     @*Right side*@
     <div class="col-auto col-md-6" style="background-color:yellow">
         <div class="mb-1">
-
-            <a href="#" class="row text-decoration-none" style="background-color:green;">
-                @*This should go to the books page*@
-                <div class="col-4">This is the books name</div>
-                <div class="col-3">Here the names of the authors will be</div>
-                <div class="col-2">Downloads: 1234</div>
-                <button class="col-3"></button>
-            </a>
-            <a href="#" class="row text-decoration-none" style="background-color:green;">
-                @*This should go to the books page*@
-                <div class="col-4">This is the books name</div>
-                <div class="col-3">Here the names of the authors will be</div>
-                <div class="col-2">Downloads: 1234</div>
-                <button class="col-3"></button>
-            </a>
-            <a href="#" class="row text-decoration-none" style="background-color:green;">
-                @*This should go to the books page*@
-                <div class="col-4">This is the books name</div>
-                <div class="col-3">Here the names of the authors will be</div>
-                <div class="col-2">Downloads: 1234</div>
-                <button class="col-3"></button>
-            </a>
-            <a href="#" class="row text-decoration-none" style="background-color:green;">
-                @*This should go to the books page*@
-                <div class="col-4">This is the books name</div>
-                <div class="col-3">Here the names of the authors will be</div>
-                <div class="col-2">Downloads: 1234</div>
-                <button class="col-3"></button>
-            </a>
-            <a href="#" class="row text-decoration-none" style="background-color:green;">
-                @*This should go to the books page*@
-                <div class="col-4">This is the books name</div>
-                <div class="col-3">Here the names of the authors will be</div>
-                <div class="col-2">Downloads: 1234</div>
-                <button class="col-3"></button>
-            </a>
+            @foreach (PubHubEBook eBook in Ebooks.OrderByDescending(x => x.DownloadCount).Take(5))
+            {
+                <a href="#" class="row text-decoration-none" style="background-color:green;">
+                    @*This should go to the books page*@
+                    <div class="col-4">@eBook.Title</div>
+                    <div class="col-3">@eBook.AuthorNames</div>
+                    <div class="col-2">Downloads: @eBook.DownloadCount</div>
+                    <a class="col-3"></a>
+                </a>
+            }
 
         </div>
         <div class="mt-1 mb-1">
@@ -140,6 +106,12 @@
     public List<PubHubSubscription> Subscriptions { get; set; } = new();
     public List<PubHubEBook> Ebooks { get; set; } = new();
 
+    public PubHubEBook TopBook { get; set; }
+    public double TopBookIncome { get; set; }
+    public int TopBookSubs { get; set; }
+    public PubHubSubscription TopSubscrioption { get; set; }
+    public double TopSubIncome { get; set; }
+    public int TopSubSubs { get; set; }
 
     public PubHubEBook Book { get; set; }
     protected override async Task OnInitializedAsync()
@@ -150,19 +122,25 @@
 
             ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-            var route = navigationManager.BaseUri + "publisher/getAllPublishersSubscriptions"
-            + $"?publisherID={user.MyPubHubAccount}";
+            //All subscriptions on the publisher
+            ApiResponse<List<PubHubSubscription>> ApiSubs = await Service.GetAllPublishersSubscriptions(user.MyPubHubAccount, claimsPrincipal);
+            Subscriptions = ApiSubs.Data;
 
-            var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubSubscription>>>((route));
-            Subscriptions = responce.Data;
+            //The top subscription
+            ApiResponse<List< PubHubSubscription>> ApiTopSub = await Service.GetTopSubscriptions(1, user.MyPubHubAccount);
+            TopSubscrioption = ApiTopSub.Data.First();
 
-            //Ebooks = Service.GetAllPublishersBooks(user.MyPubHubAccount);
-            route = navigationManager.BaseUri + "publisher/getAllPublishersBooks"
-            + $"?publisherID={user.MyPubHubAccount}";
-            var responce2 = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>((route));
-            Ebooks = responce2.Data;
+            //The income from the top subscription
+            ApiResponse<double> IncomeFromTopSub = await Service.GetTotalErningsFromSubscription(TopSubscrioption.SubscriptionID);
+            TopSubIncome = IncomeFromTopSub.Data;
 
-            int i = 0;
+
+
+            // ApiResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 5, user.MyPubHubAccount);
+            // Ebooks = apiBooks.Data;
+
+            // ApiResponse<double> ApiTopFromBook = await Service.GetTotalFromAcquired(Ebooks.OrderByDescending(x => x.DownloadCount).First().EBookID);
+            // TopBookIncome = ApiTopFromBook.Data;
         }
         await base.OnInitializedAsync();
     }

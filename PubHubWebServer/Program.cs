@@ -128,7 +128,7 @@ namespace PubHubWebServer
             {
                 //if (user.Identity is not null && user.Identity.IsAuthenticated)
                 //{
-                var response = await pubHubServices.GetAllPublishersSubscriptions(publisherID);
+                var response = await pubHubServices.GetAllPublishersSubscriptions(publisherID, user);
                 return Results.Json(response);
                 //}
                 //return Results.Unauthorized();
@@ -138,7 +138,7 @@ namespace PubHubWebServer
             {
                 //if (user.Identity is not null && user.Identity.IsAuthenticated)
                 //{
-                    var response = await pubHubServices.GetAllPublishersBooks(publisherID);
+                    var response = await pubHubServices.GetAllPublishersBooks(publisherID, user);
                     return Results.Json(response);
                 //}
 
@@ -303,7 +303,7 @@ namespace PubHubWebServer
 
             app.MapGet("ebook/getTopBooks", async (ClaimsPrincipal user, IPubHubServices pubHubServices, int amount, Guid? publisher = null) =>
             {
-                var response = await pubHubServices.GetTopBooks(amount, publisher);
+                var response = await pubHubServices.GetTopBooks(user, amount, publisher);
                 return Results.Json(response);
             }).WithTags("ebooks");
 
