@@ -24,6 +24,8 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<T>> GetEntityByID<T>(Guid _entityID);
 
+        public Task<ServiceResponse<List<T>>> GetMultipleEntitiesByIDs<T>(List<Guid> _entityID);
+
         public Task<ServiceResponse<bool>> DeleteEntity<T>(T _entity);
 
         public Task<ServiceResponse<bool>> DeleteMultipleEntities<T>(T _entity);
@@ -72,9 +74,11 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<double>> GetTotalErningsFromSubscription(ClaimsPrincipal user, Guid _subscriptionID);
 
-        public Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(ClaimsPrincipal user, int _amount, Guid? _publiser = null);
+        public Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser = null);
 
         public Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(ClaimsPrincipal user, Guid _bookID);
+
+        public Task<ServiceResponse<int>> GetTotalSubscrbersOnSubscription(ClaimsPrincipal user, Guid _SubscriptionID);
 
         #endregion
 

@@ -21,6 +21,7 @@ using IronSoftware.Drawing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Policy;
 using System.Security.Claims;
+using System.Globalization;
 
 namespace PubHubWebServer.Services
 {
@@ -262,7 +263,7 @@ namespace PubHubWebServer.Services
                 await pubHubDBContext.SaveChangesAsync();
                 return new ServiceResponse<bool>
                 {
-                    Data= true
+                    Data = true
                 };
             }
             catch (Exception ex)
@@ -454,11 +455,11 @@ namespace PubHubWebServer.Services
                     };
                 }
 
-                    List<PubHubEBook> eBooks = new();
-                    foreach (PubHubEBookPubHubPublisher item in publisher.EBooks)
-                    {
-                        eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
-                    }
+                List<PubHubEBook> eBooks = new();
+                foreach (PubHubEBookPubHubPublisher item in publisher.EBooks)
+                {
+                    eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
+                }
 
                 return new ServiceResponse<List<PubHubEBook>>
                 {
@@ -530,6 +531,21 @@ namespace PubHubWebServer.Services
                     ErrorMessage = "Error on tjek if publisher is owner of book"
                 };
             }
+        }
+
+        public async Task<ServiceResponse<int>> GetTotalSubscrbersOnSubscription(ClaimsPrincipal user, Guid _SubscriptionID)
+        {
+            if (user is not null && user.Identity.IsAuthenticated)
+            {
+
+                int TotalSubs = pubHubDBContext.SubscriptionReaders.Where(x => x.PubHubSubscriptionSubscriptionID == _SubscriptionID).ToList().Count;
+
+                return new ServiceResponse<int>
+                {
+                    Data = TotalSubs
+                };
+            }
+            return null;
         }
 
         #endregion
@@ -823,19 +839,16 @@ namespace PubHubWebServer.Services
         /// Get the top X subscriptions
         /// </summary>
         /// <returns></returns>
-        public async Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(ClaimsPrincipal user, int _amount, Guid? _publiser = null)
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser = null)
         {
             try
             {
-                List<PubHubSubscription> subscriptions = pubHubDBContext.Subscriptions
-                    .Include(p => p.Publisher
-                        .Where(x => x.PubHubPublisherPublisherID == _publiser))
-                    .Include(r => r.Reader
-                        .GroupBy(q => q.PubHubSubscriptionSubscriptionID)
-                        .OrderByDescending(gp => gp.Count())
-                        .Take(_amount)
-                        .Select(g => g.Key))
-                    .Include(b => b.EBooks)
+                List<PubHubSubscription> subscriptions = pubHubDBContext.Subscriptions.
+                    Include(x => x.Publisher
+                        .Where(p => p.PubHubPublisherPublisherID == _publiser))
+                    .Include(r => r.Reader)
+                    .OrderByDescending(r => r.Reader.Count)
+                    .Take(_amount)
                     .ToList();
 
                 return new ServiceResponse<List<PubHubSubscription>>
@@ -968,6 +981,12 @@ namespace PubHubWebServer.Services
         {
             try
             {
+                var t = pubHubDBContext.EBooks
+                    .Include(x => x.Publishers.Where(x => x.PubHubPublisherPublisherID == _publisher))
+                    .OrderByDescending(d => d.DownloadCount)
+                    .Take(_amount)
+                    .ToList();
+
                 return new ServiceResponse<List<PubHubEBook>>
                 {
                     //Finds the books
