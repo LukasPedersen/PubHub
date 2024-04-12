@@ -18,6 +18,7 @@ using IronSoftware.Drawing;
 
 //using YamlDotNet.Core.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Policy;
 
 namespace PubHubWebServer.Services
 {
@@ -518,6 +519,30 @@ namespace PubHubWebServer.Services
             }
         }
 
+        public async Task<ApiResponse<bool>> DoesPublisherOwnBook(string _userID, Guid _bookID)
+        {
+            try
+            {
+                Guid publisherID = await pubHubDBContext.Publishers.Where(p => p.ApplicationUserId == _userID).Select(p => p.PublisherID).FirstAsync();
+                bool isOwner = await pubHubDBContext.EBookPublishers.AnyAsync(bp => bp.PubHubPublisherPublisherID == publisherID && bp.PubHubEBookEBookID == _bookID);
+                return new ApiResponse<bool>
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Data = isOwner
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get information on the user: {_userID}, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
+                return new ApiResponse<bool>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Error on tjek if publisher is owner of book"
+                };
+            }
+        }
+
         #endregion
 
         #region Reader Endpoints
@@ -997,6 +1022,35 @@ namespace PubHubWebServer.Services
                 string message = "Failed to get top books, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
                 return new ApiResponse<PubHubEBook>
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Error while getting top books"
+                };
+            }
+        }
+
+        public async Task<ApiResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(Guid _bookID)
+        {
+            try
+            {
+                List<PubHubEBookPubHubSubscription> bookSubscription = await pubHubDBContext.EBookSubscriptions.Where(sp => sp.PubHubEBookEBookID == _bookID).ToListAsync();
+                List<PubHubSubscription> subscriptions = new();
+                foreach (PubHubEBookPubHubSubscription item in bookSubscription)
+                {
+                    subscriptions.Add(await pubHubDBContext.Subscriptions.FindAsync(item.PubHubSubscriptionSubscriptionID));
+                }
+                return new ApiResponse<List<PubHubSubscription>>
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    //Finds the books
+                    Data = subscriptions
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ApiResponse<List<PubHubSubscription>>
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessage = "Error while getting top books"
