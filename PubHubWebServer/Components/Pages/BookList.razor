@@ -1,115 +1,90 @@
 ﻿@page "/BookList"
+@using PubHubWebServer.Services
+@using PubHubWebServer.Data.Models
+
+@rendermode InteractiveServer
+
+@inject HttpClient client
+@inject NavigationManager navManager
 
 <div class="row pb-3">
-    <input type="text" name="inputTitle" value="" class="col-3" placeholder="Title" />
-    <input type="text" name="InputAuthor" value="" class="col-3" placeholder="Author" />
-    <input type="text" name="InputGenre" value="" class="col-3" placeholder="Genre" />
-    <a @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</a>
+    <input type="text" @bind="InputTitle" class="col-3" placeholder="Title" />
+    <input type="text" @bind="InputAuthor" class="col-3" placeholder="Author" />
+    <input type="text" @bind="InputAuthor" class="col-3" placeholder="Genre" />
+    <button @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</button>
 </div>
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-4">
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="/BookList/Book?Value=id" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
+    @if (bookList != null)
+    {
+        foreach (PubHubEBook eBook in bookList)
+        {
+            <div class="col">
+                <div class="card overflow-auto w-auto text-dark" style=" height:300px;">
+                    @*Todo: the height should be removed once images are added*@
+                    <img src="images/BookCovers/@(eBook.FilePath + "-Cover.jpg")" class="card-img">@*Image *@
+                    <div class="card-img-overlay">
+                        <h5 class="card-title">@eBook.Title</h5>@*Title*@
+                        <p class="card-text">@eBook.Description</p>@*Content*@
+                        <div class="row">
+                            <a href="/BookList/Book?Value=@eBook.EBookID" class="btn btn-primary col-6">Mere information</a>@*should go to the books information*@
+                            <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            @*Todo: the height should be removed once images are added*@
-            <img src="..." class="card-img" alt="...">@*Image *@
-            <div class="card-img-overlay">
-                <h5 class="card-title">Card title</h5>@*Title*@
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                <div class="row">
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*should go to the books information*@
-                    <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
-                </div>
-            </div>
-        </div>
-    </div>
+        }
+    }
 </div>
 
 <div class="d-flex align-content-center" style="background-color:darkblue">
-    <a class="p-2" href="#">&#8606;</a> @*Back to fist page *@
-    <a class="p-2" href="#">&#8592</a> @*Back 1 page*@
-    <a class="p-2" href="#">1</a> @*Back 1 page*@
-    <a class="p-2" href="#">2</a> @*Back 1 page*@
-    <a class="p-2" href="#">3</a> @*Back 1 page*@
-    <a class="p-2" href="#">&#8594</a> @*forward 1 page*@
-    <a class="p-2" href="#">&#8608;</a> @*To last page*@
+    <div class="w-100">
+        <button class="p-2" href="#">&#8606;</button> @*Back to fist page *@
+        <button class="p-2" href="#">&#8592</button> @*Back 1 page*@
+        <button class="p-2" href="#">1</button> @*To page 1*@
+        <button class="p-2" href="#">2</button> @*To page 2*@
+        <button class="p-2" href="#">3</button> @*To page 3*@
+        <button class="p-2" href="#">&#8594</button> @*forward 1 page*@
+        <button class="p-2" href="#">&#8608;</button> @*To last page*@
+    </div>
 </div>
 
 @code {
+    public List<PubHubEBook> bookList { get; set; } = new();
+    private string InputTitle = "";
+    private string InputAuthor = "";
+    private string InputGenre = "";
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
+        + $"?skip=0&take=10");
+        if (responce?.Data != null)
+        {
+            bookList = responce.Data;
+
+        }
+
+        StateHasChanged();
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
 
     /// <summary>
     /// Gets first X amount of books from the inputed filter options
     /// </summary>
-    private void SetFilter()
+    private async Task SetFilter()
     {
+        var responce = await client.GetFromJsonAsync<ApiResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
+        + $"?skip=0&take=10&title={InputTitle}&author={InputAuthor}&genre={InputGenre}");
 
+        if (responce?.Data != null)
+        {
+            bookList = responce.Data;
+        }
+
+        StateHasChanged();
     }
 }
