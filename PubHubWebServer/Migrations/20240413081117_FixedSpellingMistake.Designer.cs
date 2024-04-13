@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubHubWebServer.Data;
 
@@ -11,9 +12,11 @@ using PubHubWebServer.Data;
 namespace PubHubWebServer.Migrations
 {
     [DbContext(typeof(PubHubDBContext))]
-    partial class PubHubDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240413081117_FixedSpellingMistake")]
+    partial class FixedSpellingMistake
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
