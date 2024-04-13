@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubHubWebServer.Data;
 
@@ -11,9 +12,11 @@ using PubHubWebServer.Data;
 namespace PubHubWebServer.Migrations
 {
     [DbContext(typeof(PubHubDBContext))]
-    partial class PubHubDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240412113329_AddAvailableToBook")]
+    partial class AddAvailableToBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,22 +59,22 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "71d3eda2-0069-41cc-9e76-09117bb977cd",
-                            ConcurrencyStamp = "71d3eda2-0069-41cc-9e76-09117bb977cd",
+                            Id = "9b035ccf-ffd1-438a-be8f-83bacfe4bace",
+                            ConcurrencyStamp = "9b035ccf-ffd1-438a-be8f-83bacfe4bace",
                             Name = "Publisher",
                             NormalizedName = "PUBLISHER"
                         },
                         new
                         {
-                            Id = "e566e2ec-825a-460b-9753-0d4525021d3a",
-                            ConcurrencyStamp = "e566e2ec-825a-460b-9753-0d4525021d3a",
+                            Id = "ed24e676-706b-4900-aca3-64447375bc0f",
+                            ConcurrencyStamp = "ed24e676-706b-4900-aca3-64447375bc0f",
                             Name = "Reader",
                             NormalizedName = "READER"
                         },
                         new
                         {
-                            Id = "99dd34ef-a62a-447b-9583-1e1ce6bf7723",
-                            ConcurrencyStamp = "99dd34ef-a62a-447b-9583-1e1ce6bf7723",
+                            Id = "380030f1-cc81-420d-af3d-6b057ce258a6",
+                            ConcurrencyStamp = "380030f1-cc81-420d-af3d-6b057ce258a6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -240,28 +243,28 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "b4665254-1122-480e-9473-7a945a0c753e",
-                            RoleId = "71d3eda2-0069-41cc-9e76-09117bb977cd"
+                            UserId = "c14a84f5-ee67-4c8b-a633-5b2c041a5f5d",
+                            RoleId = "9b035ccf-ffd1-438a-be8f-83bacfe4bace"
                         },
                         new
                         {
-                            UserId = "1ea46bde-c4e1-4461-9abd-d1e213364d3f",
-                            RoleId = "71d3eda2-0069-41cc-9e76-09117bb977cd"
+                            UserId = "b9eae165-e18c-48a9-832f-f8e48a448beb",
+                            RoleId = "9b035ccf-ffd1-438a-be8f-83bacfe4bace"
                         },
                         new
                         {
-                            UserId = "1fe12077-ee83-4362-86e4-136d8368b6a3",
-                            RoleId = "e566e2ec-825a-460b-9753-0d4525021d3a"
+                            UserId = "90c6b1e4-4c51-42a1-8a87-74c1d0de041f",
+                            RoleId = "ed24e676-706b-4900-aca3-64447375bc0f"
                         },
                         new
                         {
-                            UserId = "b7e58ae5-8976-401d-8e09-919e59f2266b",
-                            RoleId = "e566e2ec-825a-460b-9753-0d4525021d3a"
+                            UserId = "c1672b48-42c0-4439-8038-eb275ef7863f",
+                            RoleId = "ed24e676-706b-4900-aca3-64447375bc0f"
                         },
                         new
                         {
-                            UserId = "98988cb5-3ede-4f5a-95ab-34569e24290c",
-                            RoleId = "99dd34ef-a62a-447b-9583-1e1ce6bf7723"
+                            UserId = "a53c8fb9-e56c-4cd3-9aa7-23ba6cf5c59f",
+                            RoleId = "380030f1-cc81-420d-af3d-6b057ce258a6"
                         });
                 });
 
@@ -332,7 +335,7 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            EBookID = new Guid("7fdcff5d-eea6-4f3d-b79c-60b929b4bf38"),
+                            EBookID = new Guid("bc5e4e13-ac1c-485c-8255-7619296e633f"),
                             AuthorNames = "Charlotte M. Yonge",
                             Available = true,
                             BorrowPrice = 21.949999999999999,
@@ -346,7 +349,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("4014ab42-199c-4dc2-ae1e-cfb51bf67b65"),
+                            EBookID = new Guid("42fb8e87-42b8-4b37-a8f8-302c0dcbbdf1"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 45.0,
@@ -360,7 +363,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("42973c3a-ea90-4411-bb22-f1ac78dece6a"),
+                            EBookID = new Guid("ac71b766-9c44-423f-9c17-c1b81f0b7d73"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 27.0,
@@ -374,7 +377,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("49bf65b3-8cdc-4688-b955-7035d1e516b0"),
+                            EBookID = new Guid("0fbc59e2-5f35-4da2-be03-84da515f2cab"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 55.0,
@@ -388,7 +391,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("88e2d267-89b3-4289-afe3-13cde4b5ee37"),
+                            EBookID = new Guid("54f8d4fa-09e6-45f0-81e1-f98876852b76"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 51.0,
@@ -402,7 +405,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("c8267340-f844-4c33-a19c-61c7fd2c3f65"),
+                            EBookID = new Guid("bb232250-81a7-4547-a239-e7c75206a7b1"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 45.0,
@@ -416,7 +419,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("cfefa5e0-0be9-4a62-b27c-f2058220ba9c"),
+                            EBookID = new Guid("8b8a39ec-006b-43c0-975f-b0c91e7ad5ce"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 9.0,
@@ -430,7 +433,7 @@ namespace PubHubWebServer.Migrations
                         },
                         new
                         {
-                            EBookID = new Guid("802c8048-63d7-4f2a-8f19-dbfd8207c623"),
+                            EBookID = new Guid("a28d4719-c5c9-4240-a025-e350c9bd722a"),
                             AuthorNames = "Gustave Aimard",
                             Available = true,
                             BorrowPrice = 23.0,
@@ -491,14 +494,14 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            PublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c"),
-                            ApplicationUserId = "b4665254-1122-480e-9473-7a945a0c753e",
+                            PublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147"),
+                            ApplicationUserId = "c14a84f5-ee67-4c8b-a633-5b2c041a5f5d",
                             Name = "Forlaget Mellemgaard"
                         },
                         new
                         {
-                            PublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9"),
-                            ApplicationUserId = "1ea46bde-c4e1-4461-9abd-d1e213364d3f",
+                            PublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1"),
+                            ApplicationUserId = "b9eae165-e18c-48a9-832f-f8e48a448beb",
                             Name = "Buster Nordic"
                         });
                 });
@@ -522,13 +525,13 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ReaderID = new Guid("aba8c345-3d08-4d90-b64b-fe34d65b9776"),
-                            ApplicationUserId = "1fe12077-ee83-4362-86e4-136d8368b6a3"
+                            ReaderID = new Guid("af4119b4-352f-4690-98ef-cf576b0400db"),
+                            ApplicationUserId = "90c6b1e4-4c51-42a1-8a87-74c1d0de041f"
                         },
                         new
                         {
-                            ReaderID = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c"),
-                            ApplicationUserId = "b7e58ae5-8976-401d-8e09-919e59f2266b"
+                            ReaderID = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8"),
+                            ApplicationUserId = "c1672b48-42c0-4439-8038-eb275ef7863f"
                         });
                 });
 
@@ -588,42 +591,42 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            SubscriptionID = new Guid("a9a119ff-82ed-4acf-99be-3afe3519e66d"),
+                            SubscriptionID = new Guid("633a99f4-122f-43b6-a815-1793d3b1d1d8"),
                             Active = true,
-                            EndDate = new DateTime(2024, 5, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7033),
+                            EndDate = new DateTime(2024, 5, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6468),
                             Message = "This mounth we are running a campain to spread the love. so subscripe today to get all thoes juicy details",
                             Price = 119.95,
-                            StartDate = new DateTime(2024, 4, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(6909),
+                            StartDate = new DateTime(2024, 4, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6387),
                             Title = "Romance Mounth"
                         },
                         new
                         {
-                            SubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f"),
+                            SubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12"),
                             Active = true,
-                            EndDate = new DateTime(2024, 5, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7067),
+                            EndDate = new DateTime(2024, 5, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6501),
                             Message = "Bored? Well do we have some excitement for you, right now we are running a special campain to get that excitement back into peoples lifes",
                             Price = 100.0,
-                            StartDate = new DateTime(2024, 4, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7062),
+                            StartDate = new DateTime(2024, 4, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6497),
                             Title = "Fantasy Hype"
                         },
                         new
                         {
-                            SubscriptionID = new Guid("83eaede9-0bcb-4e65-b69c-3a87e208d295"),
+                            SubscriptionID = new Guid("ad62eb17-501c-431c-84fb-541a76d623c5"),
                             Active = true,
-                            EndDate = new DateTime(2024, 5, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7090),
+                            EndDate = new DateTime(2024, 5, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6521),
                             Message = "Want to learn? Well read some of our History books",
                             Price = 45.0,
-                            StartDate = new DateTime(2024, 4, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7074),
+                            StartDate = new DateTime(2024, 4, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6508),
                             Title = "Book worm"
                         },
                         new
                         {
-                            SubscriptionID = new Guid("26c93320-1dc4-4571-bc12-d5f086a7e4dc"),
+                            SubscriptionID = new Guid("4256c227-591e-41af-b705-677b1502d37d"),
                             Active = true,
-                            EndDate = new DateTime(2024, 6, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7110),
+                            EndDate = new DateTime(2024, 6, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6544),
                             Message = "My colliction of books i need for school",
                             Price = 49.950000000000003,
-                            StartDate = new DateTime(2024, 4, 13, 10, 11, 16, 299, DateTimeKind.Local).AddTicks(7105),
+                            StartDate = new DateTime(2024, 4, 12, 13, 33, 27, 980, DateTimeKind.Local).AddTicks(6539),
                             Title = "School books"
                         });
                 });
@@ -651,45 +654,45 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("7fa90e95-93f5-4f6f-b20e-dabe8bd7748a"),
-                            PubHubEBookEBookID = new Guid("7fdcff5d-eea6-4f3d-b79c-60b929b4bf38"),
-                            PubHubPublisherPublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c")
+                            ID = new Guid("78d5b52a-ff81-4c6c-b596-e85b5c810fb1"),
+                            PubHubEBookEBookID = new Guid("bc5e4e13-ac1c-485c-8255-7619296e633f"),
+                            PubHubPublisherPublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147")
                         },
                         new
                         {
-                            ID = new Guid("8d030ebd-c5c2-41f0-ab3f-39e424217ab1"),
-                            PubHubEBookEBookID = new Guid("4014ab42-199c-4dc2-ae1e-cfb51bf67b65"),
-                            PubHubPublisherPublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c")
+                            ID = new Guid("fb90970e-a3bf-45e0-88d8-8671fe6ad762"),
+                            PubHubEBookEBookID = new Guid("42fb8e87-42b8-4b37-a8f8-302c0dcbbdf1"),
+                            PubHubPublisherPublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147")
                         },
                         new
                         {
-                            ID = new Guid("b55f6abc-457b-40a0-aae6-ab35bb37dcc8"),
-                            PubHubEBookEBookID = new Guid("49bf65b3-8cdc-4688-b955-7035d1e516b0"),
-                            PubHubPublisherPublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c")
+                            ID = new Guid("698e0807-ffc0-42de-880f-989a4d29b854"),
+                            PubHubEBookEBookID = new Guid("0fbc59e2-5f35-4da2-be03-84da515f2cab"),
+                            PubHubPublisherPublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147")
                         },
                         new
                         {
-                            ID = new Guid("9f2c3c3a-c5b7-4c8a-aefa-1782eac03637"),
-                            PubHubEBookEBookID = new Guid("88e2d267-89b3-4289-afe3-13cde4b5ee37"),
-                            PubHubPublisherPublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9")
+                            ID = new Guid("2ab15c60-5c39-4c9d-8844-1f61e8e1d5c4"),
+                            PubHubEBookEBookID = new Guid("54f8d4fa-09e6-45f0-81e1-f98876852b76"),
+                            PubHubPublisherPublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1")
                         },
                         new
                         {
-                            ID = new Guid("3cb443b2-0dc6-4848-b5f0-419e875b2e9d"),
-                            PubHubEBookEBookID = new Guid("c8267340-f844-4c33-a19c-61c7fd2c3f65"),
-                            PubHubPublisherPublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9")
+                            ID = new Guid("8e61b2e7-3301-42e1-a993-4166ac0f8dab"),
+                            PubHubEBookEBookID = new Guid("bb232250-81a7-4547-a239-e7c75206a7b1"),
+                            PubHubPublisherPublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1")
                         },
                         new
                         {
-                            ID = new Guid("584cd805-6e80-4912-a729-f04c3b7843fd"),
-                            PubHubEBookEBookID = new Guid("cfefa5e0-0be9-4a62-b27c-f2058220ba9c"),
-                            PubHubPublisherPublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9")
+                            ID = new Guid("51a021e8-5023-4aeb-a083-29e31ba7aaee"),
+                            PubHubEBookEBookID = new Guid("8b8a39ec-006b-43c0-975f-b0c91e7ad5ce"),
+                            PubHubPublisherPublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1")
                         },
                         new
                         {
-                            ID = new Guid("33a56c83-6f6b-4f44-ad46-9133e89c0ec0"),
-                            PubHubEBookEBookID = new Guid("802c8048-63d7-4f2a-8f19-dbfd8207c623"),
-                            PubHubPublisherPublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9")
+                            ID = new Guid("ae91fdfb-e35f-4713-9695-75bc94a298e0"),
+                            PubHubEBookEBookID = new Guid("a28d4719-c5c9-4240-a025-e350c9bd722a"),
+                            PubHubPublisherPublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1")
                         });
                 });
 
@@ -716,33 +719,33 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("4250dc9b-8908-4044-8011-80444f5e9f36"),
-                            PubHubEBookEBookID = new Guid("88e2d267-89b3-4289-afe3-13cde4b5ee37"),
-                            PubHubReaderReaderID = new Guid("aba8c345-3d08-4d90-b64b-fe34d65b9776")
+                            ID = new Guid("536f5175-69cf-47dd-bc73-e4319083673a"),
+                            PubHubEBookEBookID = new Guid("54f8d4fa-09e6-45f0-81e1-f98876852b76"),
+                            PubHubReaderReaderID = new Guid("af4119b4-352f-4690-98ef-cf576b0400db")
                         },
                         new
                         {
-                            ID = new Guid("b56ad657-c56b-4b09-af7c-066cb2b9dc91"),
-                            PubHubEBookEBookID = new Guid("c8267340-f844-4c33-a19c-61c7fd2c3f65"),
-                            PubHubReaderReaderID = new Guid("aba8c345-3d08-4d90-b64b-fe34d65b9776")
+                            ID = new Guid("b286b342-bd31-4765-8fe7-50e585956036"),
+                            PubHubEBookEBookID = new Guid("bb232250-81a7-4547-a239-e7c75206a7b1"),
+                            PubHubReaderReaderID = new Guid("af4119b4-352f-4690-98ef-cf576b0400db")
                         },
                         new
                         {
-                            ID = new Guid("708ae1cd-b7ec-4a30-a120-ad7867e316bd"),
-                            PubHubEBookEBookID = new Guid("cfefa5e0-0be9-4a62-b27c-f2058220ba9c"),
-                            PubHubReaderReaderID = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c")
+                            ID = new Guid("b153534b-b9c2-4e29-8809-5a4bffd453a7"),
+                            PubHubEBookEBookID = new Guid("8b8a39ec-006b-43c0-975f-b0c91e7ad5ce"),
+                            PubHubReaderReaderID = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8")
                         },
                         new
                         {
-                            ID = new Guid("f1aa22be-b260-4b1c-8517-9d587d42f98c"),
-                            PubHubEBookEBookID = new Guid("c8267340-f844-4c33-a19c-61c7fd2c3f65"),
-                            PubHubReaderReaderID = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c")
+                            ID = new Guid("76338351-e6b0-441d-8aee-cf248b24c2b9"),
+                            PubHubEBookEBookID = new Guid("bb232250-81a7-4547-a239-e7c75206a7b1"),
+                            PubHubReaderReaderID = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8")
                         },
                         new
                         {
-                            ID = new Guid("1114142e-8763-4e68-89cf-ab0a9349c123"),
-                            PubHubEBookEBookID = new Guid("42973c3a-ea90-4411-bb22-f1ac78dece6a"),
-                            PubHubReaderReaderID = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c")
+                            ID = new Guid("7b328cc8-1136-4757-834e-d5af639e1122"),
+                            PubHubEBookEBookID = new Guid("ac71b766-9c44-423f-9c17-c1b81f0b7d73"),
+                            PubHubReaderReaderID = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8")
                         });
                 });
 
@@ -769,51 +772,51 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("f1e5f3cc-355e-4f9f-9973-ca3f380eed3a"),
-                            PubHubEBookEBookID = new Guid("4014ab42-199c-4dc2-ae1e-cfb51bf67b65"),
-                            PubHubSubscriptionSubscriptionID = new Guid("a9a119ff-82ed-4acf-99be-3afe3519e66d")
+                            ID = new Guid("5f970849-652e-439f-88b9-bc6952affa89"),
+                            PubHubEBookEBookID = new Guid("42fb8e87-42b8-4b37-a8f8-302c0dcbbdf1"),
+                            PubHubSubscriptionSubscriptionID = new Guid("633a99f4-122f-43b6-a815-1793d3b1d1d8")
                         },
                         new
                         {
-                            ID = new Guid("e02162c6-be18-4a3f-835e-08333c51d34a"),
-                            PubHubEBookEBookID = new Guid("42973c3a-ea90-4411-bb22-f1ac78dece6a"),
-                            PubHubSubscriptionSubscriptionID = new Guid("83eaede9-0bcb-4e65-b69c-3a87e208d295")
+                            ID = new Guid("603dcdf6-9679-4a83-aa32-c4571be457b3"),
+                            PubHubEBookEBookID = new Guid("ac71b766-9c44-423f-9c17-c1b81f0b7d73"),
+                            PubHubSubscriptionSubscriptionID = new Guid("ad62eb17-501c-431c-84fb-541a76d623c5")
                         },
                         new
                         {
-                            ID = new Guid("9cefc482-5442-49ef-804e-83929901c6a1"),
-                            PubHubEBookEBookID = new Guid("7fdcff5d-eea6-4f3d-b79c-60b929b4bf38"),
-                            PubHubSubscriptionSubscriptionID = new Guid("83eaede9-0bcb-4e65-b69c-3a87e208d295")
+                            ID = new Guid("f4ad3e10-8ce5-452e-9533-0781cc5a2091"),
+                            PubHubEBookEBookID = new Guid("bc5e4e13-ac1c-485c-8255-7619296e633f"),
+                            PubHubSubscriptionSubscriptionID = new Guid("ad62eb17-501c-431c-84fb-541a76d623c5")
                         },
                         new
                         {
-                            ID = new Guid("daf5ffe9-9393-4faa-9767-7f274d925bbd"),
-                            PubHubEBookEBookID = new Guid("49bf65b3-8cdc-4688-b955-7035d1e516b0"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("8ad2f863-1b48-4b39-ab85-1e6d2e2f85f6"),
+                            PubHubEBookEBookID = new Guid("0fbc59e2-5f35-4da2-be03-84da515f2cab"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         },
                         new
                         {
-                            ID = new Guid("cd8c36b1-d8a1-4fb8-84bb-62572d38dc7c"),
-                            PubHubEBookEBookID = new Guid("88e2d267-89b3-4289-afe3-13cde4b5ee37"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("207a4aab-ffd0-4fa3-a17f-ac65a5199b99"),
+                            PubHubEBookEBookID = new Guid("54f8d4fa-09e6-45f0-81e1-f98876852b76"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         },
                         new
                         {
-                            ID = new Guid("7d89a8be-6110-4b7a-bf59-b8d9f46d7d35"),
-                            PubHubEBookEBookID = new Guid("c8267340-f844-4c33-a19c-61c7fd2c3f65"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("0cb91807-7ca5-433d-b843-a1b5fdd12cf6"),
+                            PubHubEBookEBookID = new Guid("bb232250-81a7-4547-a239-e7c75206a7b1"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         },
                         new
                         {
-                            ID = new Guid("54390f5b-3f3d-4d33-882b-759ef95fe3b3"),
-                            PubHubEBookEBookID = new Guid("cfefa5e0-0be9-4a62-b27c-f2058220ba9c"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("75f342fb-13cf-46ac-aa97-ef93afa867b8"),
+                            PubHubEBookEBookID = new Guid("8b8a39ec-006b-43c0-975f-b0c91e7ad5ce"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         },
                         new
                         {
-                            ID = new Guid("ac9b8d11-d901-4684-98e3-9abbb45b7f28"),
-                            PubHubEBookEBookID = new Guid("802c8048-63d7-4f2a-8f19-dbfd8207c623"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("bed8f677-0372-4784-b577-52ffda38e0cf"),
+                            PubHubEBookEBookID = new Guid("a28d4719-c5c9-4240-a025-e350c9bd722a"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         });
                 });
 
@@ -840,9 +843,9 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("d2aa90c7-f798-49e5-8c26-a19bd6b22c8b"),
-                            PubHubReaderReaderID = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c"),
-                            PubHubSubscriptionSubscriptionID = new Guid("26c93320-1dc4-4571-bc12-d5f086a7e4dc")
+                            ID = new Guid("d118b27e-0196-4f1b-9b2d-bfaec34c66a2"),
+                            PubHubReaderReaderID = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8"),
+                            PubHubSubscriptionSubscriptionID = new Guid("4256c227-591e-41af-b705-677b1502d37d")
                         });
                 });
 
@@ -869,21 +872,21 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("d6bd33c2-5d93-4f65-8b59-43231af06c6a"),
-                            PubHubPublisherPublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c"),
-                            PubHubSubscriptionSubscriptionID = new Guid("a9a119ff-82ed-4acf-99be-3afe3519e66d")
+                            ID = new Guid("4c0a86b0-6146-45da-bb3d-3468597b56d0"),
+                            PubHubPublisherPublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147"),
+                            PubHubSubscriptionSubscriptionID = new Guid("633a99f4-122f-43b6-a815-1793d3b1d1d8")
                         },
                         new
                         {
-                            ID = new Guid("90d11d08-e86d-4e9c-b7b7-eb0e07463e47"),
-                            PubHubPublisherPublisherID = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c"),
-                            PubHubSubscriptionSubscriptionID = new Guid("83eaede9-0bcb-4e65-b69c-3a87e208d295")
+                            ID = new Guid("8b59f7b1-cb20-4f8e-aa58-f959549d3273"),
+                            PubHubPublisherPublisherID = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147"),
+                            PubHubSubscriptionSubscriptionID = new Guid("ad62eb17-501c-431c-84fb-541a76d623c5")
                         },
                         new
                         {
-                            ID = new Guid("609a7401-d2f4-4ec4-b020-24f34611853f"),
-                            PubHubPublisherPublisherID = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9"),
-                            PubHubSubscriptionSubscriptionID = new Guid("11fea985-f34a-4167-beed-505643d9d27f")
+                            ID = new Guid("b5ea3011-03fd-4738-9ffa-cb03cd7b8e54"),
+                            PubHubPublisherPublisherID = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1"),
+                            PubHubSubscriptionSubscriptionID = new Guid("d2f96097-ccd7-4188-abdb-65558ae46a12")
                         });
                 });
 
@@ -902,89 +905,89 @@ namespace PubHubWebServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b4665254-1122-480e-9473-7a945a0c753e",
+                            Id = "c14a84f5-ee67-4c8b-a633-5b2c041a5f5d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0c400bbe-b021-4aeb-847b-4b7d4ce75670",
+                            ConcurrencyStamp = "e8a55ce3-5615-4565-891d-e9b1d91af5e6",
                             Email = "Mellemgaard@hotmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedEmail = "MELLEMGAARD@HOTMAIL.COM",
                             NormalizedUserName = "MELLEMGAARD@HOTMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK9f2/r5mppj71oIdnTmhl3Q2uZH6xsnNBP4hi5XqYdMRLah/wmwuduI3bljOvCBDg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHRprFgCLFJGeBZTFkpDo5sEseUk8nIl/HsyNIG9L+jws8fpJ3M4b7hgJkMMK378EQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0db19f29-48dd-45a7-b042-06538432fe1e",
+                            SecurityStamp = "7fd90c38-cc53-4e3e-acd5-6961b1cfbdd7",
                             TwoFactorEnabled = false,
                             UserName = "Mellemgaard@hotmail.com",
                             Active = true,
-                            MyPubHubAccount = new Guid("b828c87a-9eb6-45be-bcf8-bbaa1925971c")
+                            MyPubHubAccount = new Guid("9dd4620b-e9f4-48fa-bf2c-272fa67e8147")
                         },
                         new
                         {
-                            Id = "1ea46bde-c4e1-4461-9abd-d1e213364d3f",
+                            Id = "b9eae165-e18c-48a9-832f-f8e48a448beb",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dbd7ee92-2dd8-4a96-a818-5703da528c8a",
+                            ConcurrencyStamp = "e0117b0c-f66a-436b-bca1-04d6b080302b",
                             Email = "Nordic@hotmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedEmail = "NORDIC@HOTMAIL.COM",
                             NormalizedUserName = "NORDIC@HOTMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEC03VHK6A1NtEMAQ6QL+bohjRzm5uDkmU+lVP79Wrm6vjLpQrVSiDw09lKUJ/WaP0A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHp5A9jKfP3+GMF/3UobE/lGKe4YUCrU9O2ySSSeysYpkANCzcXUB/RTMvO3U0lw6A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "733572b8-6326-4ae0-84c2-7c2b1618b4d8",
+                            SecurityStamp = "b8fb0cf1-499a-47e9-83cb-37a923b72647",
                             TwoFactorEnabled = false,
                             UserName = "Nordic@hotmail.com",
                             Active = true,
-                            MyPubHubAccount = new Guid("400546fd-a965-413c-8f09-b0bf04c5acc9")
+                            MyPubHubAccount = new Guid("9d05a58f-f8b7-44ce-a296-701108cb68e1")
                         },
                         new
                         {
-                            Id = "1fe12077-ee83-4362-86e4-136d8368b6a3",
+                            Id = "90c6b1e4-4c51-42a1-8a87-74c1d0de041f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee7d0cda-8322-4ef4-8b97-ed0ba753d825",
+                            ConcurrencyStamp = "91d021dd-fa0f-40ff-a989-85ef8c6e6ae0",
                             Email = "lukas3302@hotmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedEmail = "LUKAS3302@HOTMAIL.COM",
                             NormalizedUserName = "LUKAS3302@HOTMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECLK5z7dBmyTmq4aP3+9dxAZpU9stSgAv8UUnQi4U5h3EC4Rpl3MZwPUE6JnKc3n4w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIxd98oQ1RHQzNx88rKGJIy/+RF/lX4zXmSoDo7LC/I/dQ91NCrJvuTR4w9Gksq5cA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "20b8b6b2-5690-442a-9f1e-80f3801b7d55",
+                            SecurityStamp = "798b9032-92b4-4045-997c-108e155ea7e1",
                             TwoFactorEnabled = false,
                             UserName = "lukas3302@hotmail.com",
                             Active = true,
-                            MyPubHubAccount = new Guid("aba8c345-3d08-4d90-b64b-fe34d65b9776")
+                            MyPubHubAccount = new Guid("af4119b4-352f-4690-98ef-cf576b0400db")
                         },
                         new
                         {
-                            Id = "b7e58ae5-8976-401d-8e09-919e59f2266b",
+                            Id = "c1672b48-42c0-4439-8038-eb275ef7863f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "76a85aa0-67fa-457b-bcae-7f9b5744fe30",
+                            ConcurrencyStamp = "2243f7ac-cd9c-4618-8861-a093a841d38a",
                             Email = "Jens2837@hotmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedEmail = "JENS2837@HOTMAIL.COM",
                             NormalizedUserName = "JENS2837@HOTMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFrQFmrsx5BNODONICue+VlQCa1Pn6D2QElzCnGTeC6fG+z0Jkk5onyysaZdVXz3ow==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKUeBZ8FHoJEsgIqXFGj6FR76wnufZgCZsHHdI9XNWfXYq6wzZKYwOyX7ltJKWvjWw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "371fcebe-3aef-4c68-baf6-3d6ba68866a0",
+                            SecurityStamp = "10099d98-7e26-43f4-951f-96331b879157",
                             TwoFactorEnabled = false,
-                            UserName = "jens2837@hotmail.com",
+                            UserName = "ens2837@hotmail.com",
                             Active = true,
-                            MyPubHubAccount = new Guid("c388c882-ff34-4dfc-80ae-86dc2682d16c")
+                            MyPubHubAccount = new Guid("6dbd34cb-8e2e-4bf6-bb00-9b4cb711a0e8")
                         },
                         new
                         {
-                            Id = "98988cb5-3ede-4f5a-95ab-34569e24290c",
+                            Id = "a53c8fb9-e56c-4cd3-9aa7-23ba6cf5c59f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "afc9708f-9d69-4980-8b21-906cf1a238ae",
+                            ConcurrencyStamp = "82da0866-568f-4a44-802b-41bc6e4efe89",
                             Email = "Admin@hotmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedEmail = "ADMIN@HOTMAIL.COM",
                             NormalizedUserName = "ADMIN@HOTMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFCqc3UUv17n7nBkGVyngPfWnKaieHGQKiwh9eguL4xvZCY13Cd35xIWTTihCm5ckA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDFaM9Vp1+HTXKfazzcY0Wyq5pqs0psh8KDj397d101fYRae5aRokiZ8PWtCntoW7Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7d2c2a45-fafc-402d-8d86-f5397ec1d237",
+                            SecurityStamp = "9be4ba6e-13b1-4802-b355-66abc6e575ad",
                             TwoFactorEnabled = false,
                             UserName = "Admin@hotmail.com",
                             Active = true,

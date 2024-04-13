@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using PubHubWebServer.Data;
 using PubHubWebServer.Data.Models;
@@ -95,12 +96,19 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(ClaimsPrincipal user, string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
 
+
         public Task<ServiceResponse<bool>> ReaderRentBook(ClaimsPrincipal user, Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks);
 
-        public Task<ServiceResponse<bool>> ReaderBuyBook(ClaimsPrincipal user, Guid _readerID, Guid _bookID);
+        public Task<ServiceResponse<bool>> ReaderBuyBook(ClaimsPrincipal user, string _readerID, Guid _bookID);
 
         public Task<ServiceResponse<PubHubEBook>> GetBookByID(ClaimsPrincipal user, Guid ID);
 
+        public Task<ServiceResponse<bool>> UpdateBook(ClaimsPrincipal user, string _publisherID, PubHubEBook book);
+        public Task<ServiceResponse<bool>> UpdateBookImage(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file);
+        public Task<ServiceResponse<bool>> UpdateBookFile(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file);
+
+
+        //public Task<ApiResponse<List<byte[]>>> GetBookImage(string _path);
         public Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID);
 
         #endregion

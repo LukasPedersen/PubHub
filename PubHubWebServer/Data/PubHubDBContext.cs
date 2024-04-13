@@ -129,7 +129,7 @@ namespace PubHubWebServer.Data
             applicationUsers.Add(new ApplicationUser
             {
                 Id = applicationUserIDs[3].ToString(),
-                UserName = "ens2837@hotmail.com",
+                UserName = "jens2837@hotmail.com",
                 NormalizedUserName = "JENS2837@HOTMAIL.COM",
                 Email = "Jens2837@hotmail.com",
                 NormalizedEmail = "JENS2837@HOTMAIL.COM",
@@ -258,6 +258,7 @@ namespace PubHubWebServer.Data
                 Price = 89,
                 BorrowPrice = 21.95,
                 FilePath = "History-of-France",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -270,6 +271,7 @@ namespace PubHubWebServer.Data
                 Price = 111,
                 BorrowPrice = 45,
                 FilePath = "The-Pearl-of-the-Andes-A-Tale-of-Love-and-Adventure",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -282,6 +284,7 @@ namespace PubHubWebServer.Data
                 Price = 89.95,
                 BorrowPrice = 27,
                 FilePath = "The-Pirates-of-the-Prairies-Adventures-in-the-American-Desert",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -294,6 +297,7 @@ namespace PubHubWebServer.Data
                 Price = 132.95,
                 BorrowPrice = 55,
                 FilePath = "The-Bee-Hunters-A-Tale-of-Adventure",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -306,6 +310,7 @@ namespace PubHubWebServer.Data
                 Price = 171,
                 BorrowPrice = 51,
                 FilePath = "The-Smuggler-Chief",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -318,6 +323,7 @@ namespace PubHubWebServer.Data
                 Price = 159.95,
                 BorrowPrice = 45,
                 FilePath = "Las-noches-mejicanas",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -330,6 +336,7 @@ namespace PubHubWebServer.Data
                 Price = 19.95,
                 BorrowPrice = 9,
                 FilePath = "The-Heir-of-Redclyffe",
+                Available = true
             });
             books.Add(new PubHubEBook
             {
@@ -342,6 +349,7 @@ namespace PubHubWebServer.Data
                 Price = 66.95,
                 BorrowPrice = 23,
                 FilePath = "The-Bee-Hunters-A-Tale-of-Adventure",
+                Available = true
             });
 
             foreach (PubHubEBook book in books)

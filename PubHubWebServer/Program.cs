@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,8 @@ namespace PubHubWebServer
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddHttpClient();//Added HttpClient as a service
+
+            builder.Services.AddBlazoredToast();
 
             var app = builder.Build();
 

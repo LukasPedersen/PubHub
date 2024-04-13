@@ -21,6 +21,8 @@ using IronSoftware.Drawing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Policy;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.SignalR;
 using System.Globalization;
 
 namespace PubHubWebServer.Services
@@ -647,6 +649,58 @@ namespace PubHubWebServer.Services
             }
         }
 
+        public async Task<ServiceResponse<bool>> DoesReaderOwnBook(ClaimsPrincipal user, Guid _readerID, Guid _bookID)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    PubHubReader reader = await pubHubDBContext.Readers.Where(p => p.ReaderID == _readerID).FirstAsync();
+                    if (reader == null)
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            ErrorMessage = "Reader not found",
+                            Data = false
+                        };
+                    }
+                    bool isInSub = false;
+                    List<Guid> subscriptions = await pubHubDBContext.SubscriptionReaders.Where(sr => sr.PubHubReaderReaderID == _readerID).Select(s => s.PubHubSubscriptionSubscriptionID).ToListAsync();
+                    foreach (Guid subID in subscriptions)
+                    {
+
+                    }
+                    
+                    if (pubHubDBContext.EBookReaders.Any(er => er.PubHubReaderReaderID == _readerID && er.PubHubEBookEBookID == _bookID) || isInSub)
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            Data = true
+                        };
+                    }
+                    return new ServiceResponse<bool>
+                    {
+                        ErrorMessage = "Did not find any relation between reader and book",
+                        Data = false
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Publisher or the owner of this book",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get Book on a ReaderID: {_readerID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, _readerID);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Internal server error while trying to get all Ebooks from reader",
+                };
+            }
+        }
+
         #endregion
 
         #region Subscription Endpoints
@@ -1129,29 +1183,45 @@ namespace PubHubWebServer.Services
         /// <param name="_readerID">The reader that should have a book added</param>
         /// <param name="_bookID">The book that should be added</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<bool>> ReaderBuyBook(ClaimsPrincipal user, Guid _readerID, Guid _bookID)
+        public async Task<ServiceResponse<bool>> ReaderBuyBook(ClaimsPrincipal user, string _userID, Guid _bookID)
         {
             try
             {
-                //Makes the object need the database
-                PubHubEBookPubHubReader EbookREader = new()
+                if (user is not null && user.Identity.IsAuthenticated)
                 {
-                    PubHubEBookEBookID = _bookID,
-                    PubHubReaderReaderID = _readerID
-                };
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(b => b.ReaderID).FirstAsync();
+                    if (await pubHubDBContext.EBookReaders.AnyAsync(er => er.PubHubReaderReaderID == readerID && er.PubHubEBookEBookID == _bookID))
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            ErrorMessage = "User allready owns this book to cant buy it again",
+                            Data = false
+                        };
+                    }
 
-                //Leaves the rest to Addsingle entity
-                AddSingleEntity(EbookREader);
+                    PubHubEBookPubHubReader EBookReader = new PubHubEBookPubHubReader
+                    {
+                        ID = Guid.NewGuid(),
+                        PubHubReaderReaderID = readerID,
+                        PubHubEBookEBookID = _bookID
+                    };
 
-                //Responce
+                    await AddSingleEntity<PubHubEBookPubHubReader>(EBookReader);
+                    await SaveBookReceipt(readerID, _bookID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
                 return new ServiceResponse<bool>
                 {
-                    Data = true
+                    ErrorMessage = "User is not loged in and therefor cant buy a book",
+                    Data = false
                 };
             }
             catch (Exception ex)
             {
-                string message = $"Failed to nuy book: {_bookID} to Reader: {_readerID}, with the following Error message: " + ex.Message;
+                string message = $"Failed to nuy book: {_bookID} for user: {_userID}, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
 
                 return new ServiceResponse<bool>
@@ -1188,6 +1258,145 @@ namespace PubHubWebServer.Services
                 };
             }
         }
+
+        /// <summary>
+        /// Update a book in db
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_publisherID"></param>
+        /// <param name="book"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<bool>> UpdateBook(ClaimsPrincipal user, string _publisherID, PubHubEBook book)
+        {
+            try
+            {
+                ServiceResponse<bool> serviceResponse = await DoesPublisherOwnBook(user, _publisherID, book.EBookID);
+                if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
+                {
+                    await UpdateEntity<PubHubEBook>(book);
+                    await SaveLog($"This book has been updated by Publisher:{_publisherID}", LogType.Information, book.EBookID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated, A Publisher or the owner of this book tired to update it", LogType.Warning);
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Publisher or the owner of this book",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error while updating top books",
+                    Data = false
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateBookImage(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file)
+        {
+            try
+            {
+                ServiceResponse<bool> serviceResponse = await DoesPublisherOwnBook(user, _publisherID, _bookID);
+                if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
+                {
+                    PubHubEBook book = await pubHubDBContext.EBooks.Where(b => b.EBookID == _bookID).FirstAsync();
+
+                    File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{_file.Name}");
+                    File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg");
+
+                    string newFilePath = _file.Name;
+                    newFilePath = newFilePath.Remove((newFilePath.Length - 4));
+
+                    File.Move($"../PubHubWebServer/EBooks/{book.FilePath}.pdf", $"../PubHubWebServer/EBooks/{newFilePath}.pdf");
+
+                    book.FilePath = newFilePath;
+
+
+                    await using FileStream fs = new($"../PubHubWebServer/wwwroot/images/BookCovers/{_file.Name}", FileMode.Create);
+                    await _file.OpenReadStream(maxAllowedSize: 1024 * 10000).CopyToAsync(fs);
+
+                    await UpdateEntity<PubHubEBook>(book);
+                    await SaveLog($"This book has been updated by Publisher:{_publisherID}", LogType.Information, book.EBookID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated, A Publisher or the owner of this book tired to update it", LogType.Warning);
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Publisher or the owner of this book",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error while updating book",
+                    Data = false
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateBookFile(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file)
+        {
+            try
+            {
+                ServiceResponse<bool> serviceResponse = await DoesPublisherOwnBook(user, _publisherID, _bookID);
+                if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
+                {
+                    PubHubEBook book = await pubHubDBContext.EBooks.Where(b => b.EBookID == _bookID).FirstAsync();
+
+                    File.Delete($"../PubHubWebServer/EBooks/{_file.Name}");
+                    File.Delete($"../PubHubWebServer/EBooks/{book.FilePath}.pdf");
+
+                    string newFilePath = _file.Name;
+                    newFilePath = newFilePath.Remove((newFilePath.Length - 4));
+
+                    File.Move($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg", $"../PubHubWebServer/wwwroot/images/BookCovers/{newFilePath}.jpg");
+
+                    book.FilePath = newFilePath;
+
+
+                    await using FileStream fs = new($"../PubHubWebServer/EBooks/{_file.Name}", FileMode.Create);
+                    await _file.OpenReadStream(maxAllowedSize: 1024 * 10000).CopyToAsync(fs);
+
+                    await UpdateEntity<PubHubEBook>(book);
+                    await SaveLog($"This book has been updated by Publisher:{_publisherID}", LogType.Information, book.EBookID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated, A Publisher or the owner of this book tired to update it", LogType.Warning);
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Publisher or the owner of this book",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error while updating book",
+                    Data = false
+                };
+            }
+        }
+
 
         public async Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID)
         {
@@ -1446,13 +1655,14 @@ namespace PubHubWebServer.Services
         /// <param name="_Acquired">What did they get</param>
         /// <param name="_price">How much did they pay for it</param>
         /// <returns></returns>
-        private async Task SaveReceipt(Guid _Entiry, Guid _Acquired, double _price)
+        private async Task SaveBookReceipt(Guid _Entiry, Guid _Acquired)
         {
+            double price = await pubHubDBContext.EBooks.Where(b => b.EBookID == _Acquired).Select(b => b.Price).FirstAsync();
             PubHubReceipt receipt = new()
             {
                 EntityID = _Entiry,
                 Acquired = _Acquired,
-                Price = _price,
+                Price = price,
                 TimeStamp = DateTime.UtcNow,
             };
             pubHubDBContext.Receipts.Add(receipt);

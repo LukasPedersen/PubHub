@@ -35,6 +35,9 @@ namespace PubHubWebServer.Data.Models
         [Required]
         public string FilePath { get; set; }
 
+        [Required]
+        public bool Available { get; set; } = true;
+
         //Relationships
         public List<PubHubEBookPubHubSubscription> Subscriptions { get; set; }
 
