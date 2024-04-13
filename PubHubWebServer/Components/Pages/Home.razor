@@ -87,7 +87,7 @@
         ServiceResponse<List<PubHubEBook>> apiBookResult = await services.GetTopBooks(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
 
-        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await services.GetTopSubscriptions(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubSubscription>>();
+        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await services.GetTopSubscriptions(10) ?? new ServiceResponse<List<PubHubSubscription>>();
         _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
     }
 }

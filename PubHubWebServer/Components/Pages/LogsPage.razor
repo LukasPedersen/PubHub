@@ -1,4 +1,16 @@
-﻿@using PubHubWebServer.Data.Models
+﻿@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
+@using System.Security.Claims
+
+@inject IPubHubServices Service
+@inject UserManager<ApplicationUser> _UserManager
+@inject SignInManager<ApplicationUser> _SignInManager
+
+@rendermode InteractiveServer
+
+
 @*Search*@
 <div class="m-1">
 
@@ -21,7 +33,25 @@
 @code {
     List<PubHubLog> PubHubLogs = new();
 
+    ClaimsPrincipal claimsPrincipal;
+    ApplicationUser user;
+
+    public string MyProperty { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        claimsPrincipal = _SignInManager.Context.User;
+
+        user = await _UserManager.GetUserAsync(claimsPrincipal);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    /// <summary>
+    /// Finds the logs that match the search
+    /// </summary>
+    /// <returns></returns>
     private async Task FindLogs()
     {
+        PubHubLogs = new();
+
+
     }
 }

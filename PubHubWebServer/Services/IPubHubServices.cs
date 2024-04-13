@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using PubHubWebServer.Data;
 using PubHubWebServer.Data.Models;
 
 namespace PubHubWebServer.Services
@@ -80,6 +81,8 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<int>> GetTotalSubscrbersOnSubscription(ClaimsPrincipal user, Guid _SubscriptionID);
 
+
+
         #endregion
 
         #region Ebook Endpoints
@@ -98,8 +101,7 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<PubHubEBook>> GetBookByID(ClaimsPrincipal user, Guid ID);
 
-
-        //public Task<ApiResponse<List<byte[]>>> GetBookImage(string _path);
+        public Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID);
 
         #endregion
 
@@ -110,6 +112,7 @@ namespace PubHubWebServer.Services
         public Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(ClaimsPrincipal user, Guid _EntityID);
 
         public Task<ServiceResponse<List<PubHubLog>>> GetAllLogsForAcquired(ClaimsPrincipal user);
+
 
         #endregion
 
@@ -122,6 +125,9 @@ namespace PubHubWebServer.Services
         #endregion
 
         #region Other
+        public Task SaveLog(string _message, LogType _logType = LogType.Information, Guid? _EntiryID = null);
+
+        public Task<ServiceResponse<List<ApplicationUser>>> FindUserAdminRights(string _email, string _username);
 
         #endregion
     }

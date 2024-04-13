@@ -17,6 +17,7 @@
 @inject RoleManager<IdentityRole> _roleManager
 @inject IPubHubServices Services
 
+@rendermode InteractiveServer
 @* @attribute [Authorize(Roles = "Admin")] TODO: Incomment this when system is ready *@
 
 <div class="row h-100">
@@ -25,7 +26,7 @@
         <div class="row">
             @*User creation*@
             <div class="col-auto">
-                <StatusMessage Message="@Message"/>
+                <StatusMessage Message="@Message" />
                 <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
                     <DataAnnotationsValidator />
                     <h2>Create a new account.</h2>
@@ -46,9 +47,10 @@
                         <label for="confirm-password">Confirm Password</label>
                         <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
                     </div>
+                    @IsAdmin
                     <div class="form-floating mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" bind-Value="@IsAdmin" id="flexCheckDefault">
+                            <input class="form-check-input" type="checkbox" @bind="IsAdmin" id="flexCheckDefault">
                             <label class="form-check-label" for="flexCheckDefault">
                                 Is user an Admin?
                             </label>
@@ -64,8 +66,8 @@
         </div>
         @*finding user to disable*@
         <div class="row">
-            <input type="text" name="FinderEmail" placeholder="Email@Email.dk eller dele af emailen" value="" />
-            <input type="text" name="FinderName" placeholder="" value="" />
+            <input type="text" name="FinderEmail" placeholder="Email@Email.dk eller dele af emailen" @bind="_InputEmail" />
+            <input type="text" name="FinderName" placeholder="Username" @bind="_InputUserName" />
             <button onclick="@FindUser">Find person</button>
         </div>
         <div class="row">
@@ -106,10 +108,22 @@
 
     private IEnumerable<IdentityError>? identityErrors;
 
+    ApplicationUser userID;
+
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
 
     private bool IsAdmin { get; set; }
+
+    public string _InputEmail { get; set; }
+    public string _InputUserName { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        userID = await UserManager.GetUserAsync(SignInManager.Context.User);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
     private sealed class InputModel
@@ -152,26 +166,18 @@
 
         if (IsAdmin)
         {
-            if (_roleManager.RoleExistsAsync("Admin").Result == false)
-            {
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
             await UserManager.AddToRoleAsync(user, "Admin");
         }
         else
         {
-            if (_roleManager.RoleExistsAsync("Publisher").Result == false)
-            {
-                await _roleManager.CreateAsync(new IdentityRole("Publisher"));
-            }
             await UserManager.AddToRoleAsync(user, "Publisher");
             Guid publisherID = Guid.NewGuid();
             await Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
-            {
-                PublisherID = publisherID,
-                Name = Input.PublisherName,
-                ApplicationUser = user
-            });
+                {
+                    PublisherID = publisherID,
+                    Name = Input.PublisherName,
+                    ApplicationUser = user
+                });
 
             user.MyPubHubAccount = publisherID;
             user.EmailConfirmed = true;
@@ -179,6 +185,11 @@
 
         }
         await Services.UpdateEntity<ApplicationUser>(user);
+
+
+        //Save a log of what just happend
+        Services.SaveLog($"Create a new User with wit the id of {user.Id}", LogType.Information, Guid.Parse(userID.Id));
+
     }
     private ApplicationUser CreateUser()
     {
@@ -207,7 +218,8 @@
     /// <returns></returns>
     private async Task FindUser()
     {
-
+        var result = await Services.FindUserAdminRights(_InputEmail, _InputUserName);
+        _UserToDiable = result.Data;
     }
 
     /// <summary>
@@ -217,8 +229,13 @@
     /// <returns></returns>
     private async Task DisableUser(ApplicationUser _user)
     {
+        if (_user.Id != userID.Id)
+        {
+            _user.Active = false;
+            Services.UpdateEntity<ApplicationUser>(_user);
 
-
+            Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(userID.Id));
+        }
     }
 
     /// <summary>
@@ -228,6 +245,8 @@
     /// <returns></returns>
     private async Task ActivateUser(ApplicationUser _user)
     {
-
+        _user.Active = true;
+        Services.UpdateEntity<ApplicationUser>(_user);
+        Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(userID.Id));
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/Subscription"
+﻿@page "/Subscription/{ID:guid}"
 @using PubHubWebServer.Data.Models
 
 <div class="row">
@@ -79,9 +79,12 @@
     <button @onclick="SaveChanges">Save changes</button>
     <button @onclick="CreateSubscription">Create Subsdription</button>
 </div>
-
+@ID
 @code {
     PubHubSubscription TheSubscription;//TODO: get the subscription onload
+
+    [Parameter]
+    public Guid ID { get; set; }
 
     /// <summary>
     /// Sets the filter for the Searching

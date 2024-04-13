@@ -18,130 +18,268 @@
 @rendermode InteractiveServer
 
 @attribute [Authorize(Roles = "Publisher")]
-
+<AuthorizeView>
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1> Hello @context.User.Identity?.Name!</h1>
+        </div>
+    </div>
+</AuthorizeView>
 <div class="row h-100">
     @* Left side*@
-    <div class="col-auto col-md-6" style="background-color:blue">
+    <div class="col-auto col-md-6">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3> Subscriptions information</h3>
+            </div>
+        </div>
         <div class="d-flex">
-            <input class="col-2" placeholder="Title" />
-            <input class="col-2" placeholder="stateDate" />
-            <input class="col-2" placeholder="endDate" />
-            <input class="col-1" placeholder="state" />
+            <input @bind="InputTitleSub" type="text" class="col-2" placeholder="Title" />
+            <input @bind="InputStartTimeSub" type="datetime-local" class="col-2" placeholder="state dato" />
+            <input @bind="InputEndTimeSub" type="datetime-local" class="col-2" placeholder="slut dato" />
+            <input @bind="state" type="checkbox" class="col-1" placeholder="" />
             <input class="col-2" placeholder="other" />
             <input class="col-2" placeholder="last" />
-            <button class="col-1">Filter</button>
+            <button @onclick="FilterSubscriptions" class="col-1 btn btn-primary">Filter</button>
         </div>
 
-        @*TODO: foreach item in the subscription list*@
-        @foreach (PubHubSubscription subscription in Subscriptions)
+        @foreach (PubHubSubscription subscription in _FilterSubs)
         {
-            <div class="d-flex align-content-center m-1 align-items-center" style="background-color:pink;">
-                <div class="pe-1 col-3"> @subscription.Title</div>
-                <div class="pe-1 col-2"> State: @subscription.Active </div>
-                <div class="pe-1 col-3"> Subscribers: 1234</div>
-                <div class="pe-1 col-3"> Total: 1234,56 DKK</div>
-                <a href="#" class="btn btn-check col-1">Edit</a>@*This should go to the subscription page so that the publisher can edit the subscription*@
+            ServiceResponse<double> IncomeFromTopSub = Service.GetTotalErningsFromSubscription(claimsPrincipal, subscription.SubscriptionID).Result;
+            ServiceResponse<int> TotalFromSubs = Service.GetTotalSubscrbersOnSubscription(claimsPrincipal, subscription.SubscriptionID).Result;
+
+            <div class="border">
+                <div class="d-flex align-content-center m-1 align-items-center">
+                    <div class="pe-1 col-2">@subscription.Title</div>
+                    <div class="pe-2 col-2">@subscription.StartDate</div>
+                    <div class="pe-2 col-2">@subscription.EndDate</div>
+                    <div class="pe-1 col-1">State: @subscription.Active </div>
+                    <div class="pe-1 col-2">Subscribers: @TotalFromSubs.Data</div>
+                    <div class="pe-1 col-1">Total: @IncomeFromTopSub.Data DKK</div>
+                    <NavLink href=@($"/Subscription/{subscription.SubscriptionID}") class="col-1">
+                        <div class="btn btn-light">
+                            Edit
+                        </div>
+                    </NavLink>
+                    <button @onclick="() => ChangeActiveState(subscription)" class="col-1 btn btn-danger">Status</button>
+                </div>
             </div>
         }
         <div class="pull-right bottom-right">
-            <a class="btn border" href="#">
+            <a class="btn border btn-primary" href="/Subscription">
                 New Subscription
             </a>
         </div>
     </div>
 
     @*Right side*@
-    <div class="col-auto col-md-6" style="background-color:yellow">
-        <div class="mb-1">
-            @foreach (PubHubEBook eBook in Ebooks.OrderByDescending(x => x.DownloadCount).Take(5))
-            {
-                <a href="#" class="row text-decoration-none" style="background-color:green;">
-                    @*This should go to the books page*@
-                    <div class="col-4">@eBook.Title</div>
-                    <div class="col-3">@eBook.AuthorNames</div>
-                    <div class="col-2">Downloads: @eBook.DownloadCount</div>
-                    <a class="col-3"></a>
-                </a>
-            }
-
+    <div class="col-auto col-md-6">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3> Statestik </h3>
+            </div>
         </div>
         <div class="mt-1 mb-1">
-            <div class="row" style="background-color:lime;">
-                <div class="col-4">Subscription Name</div>
-                <div class="col-4">Income: 1234.56 DKK</div>
-                <div class="col-4">Subscriber antal: 12345</div>
+            <div class="row">
+                <div class="col-4">Top Sub @TopSubscrioption.Title</div>
+                <div class="col-4">Income: @TopSubIncome DKK</div>
+                <div class="col-4">Subscriber antal: @TopSubSubs</div>
 
             </div>
-            <div class="row" style="background-color:deepskyblue;">
+            <div class="row">
                 <div class="col-4">Alle subscriptions</div>
-                <div class="col-4">Total Income: 12345.67 DKK</div>
-                <div class="col-4">Total subs: 123456</div>
+                <div class="col-4">Total Income: @TotalIncomeOnSubscripstion DKK</div>
+                <div class="col-4">Total subs: @TotalSubsOnSubscripstion</div>
             </div>
         </div>
         <div class="mt-1 mb-1">
-            <div class="row" style="background-color:deeppink;">
-                <div class="col-4">Top Book: This is the book name</div>
-                <div class="col-4">Income: 1234.56 DKK</div>
-                <div class="col-4">Subscriber antal: 123</div>
+            <div class="row">
+                <div class="col-4">Top Book: @TopBook.Title</div>
+                <div class="col-4">Income: @TopBookIncome DKK</div>
+                <div class="col-4">Subscriber antal: @TopBookSubs</div>
             </div>
-            <div class="row" style="background-color:pink;">
+            <div class="row">
                 <div class="col-4">All books</div>
-                <div class="col-4">Total Income: 1234.56 DKK</div>
-                <div class="col-4">Total Subs: 123567</div>
+                <div class="col-4">Total Income: @TotalIncomeOnBooks DKK</div>
+                <div class="col-4">Total Subs: @TotalSubsOnBooks</div>
             </div>
         </div>
-        <div>
-            <a class="btn border" href="#">See all books</a>
+        <div class="mb-1">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3> Book information</h3>
+                </div>
+            </div>
+            <div class="d-flex">
+                <input type="text" @bind="InputTitleBook" class="col-3" placeholder="Title" />
+                <input type="text" @bind="InputAuthorBook" class="col-3" placeholder="Author" />
+                <input type="text" @bind="InputGenreBook" class="col-3" placeholder="Genre" />
+                <button @onclick="FilterBooks" class="btn btn-primary col-3">Set Filters</button>
+            </div>
+            @foreach (PubHubEBook eBook in _FilterBooks.OrderByDescending(x => x.DownloadCount))
+            {
+                <div class="border">
+                    <div class="row text-decoration-none">
+                        @*This should go to the books page*@
+                        <div class="col-4">@eBook.Title</div>
+                        <div class="col-3">@eBook.AuthorNames</div>
+                        <div class="col-2">Downloads: @eBook.DownloadCount</div>
+                        <NavLink class="nav-link p-0 m-auto col-3 btn" href="@($"/BookDetail/{eBook.EBookID}")">
+                            <div class="btn btn-light">
+                                Edit
+                            </div>
+                        </NavLink>
+                    </div>
+                </div>
+            }
+            <div class="pull-right bottom-right">
+                <a class="btn border btn-primary" href="/BookDetail">
+                    New Book
+                </a>
+            </div>
         </div>
     </div>
 </div>
-<AuthorizeView>
-    Hello @context.User.Identity?.Name!
-    @Subscriptions.Count()
-    @Ebooks.Count()
-</AuthorizeView>
+
 
 
 @code {
-    public List<PubHubSubscription> Subscriptions { get; set; } = new();
+    //Books
     public List<PubHubEBook> Ebooks { get; set; } = new();
+    public PubHubEBook TopBook { get; set; } = new();
+    public double TopBookIncome { get; set; } = 0;
+    public int TopBookSubs { get; set; } = 0;
+    public double TotalIncomeOnBooks { get; set; } = 0;
+    public int TotalSubsOnBooks { get; set; } = 0;
 
-    public PubHubEBook TopBook { get; set; }
-    public double TopBookIncome { get; set; }
-    public int TopBookSubs { get; set; }
-    public PubHubSubscription TopSubscrioption { get; set; }
-    public double TopSubIncome { get; set; }
-    public int TopSubSubs { get; set; }
+    //Subscriptions
+    public List<PubHubSubscription> Subscriptions { get; set; } = new();
+    public PubHubSubscription TopSubscrioption { get; set; } = new();
+    public double TopSubIncome { get; set; } = 0;
+    public int TopSubSubs { get; set; } = 0;
+    public double TotalIncomeOnSubscripstion { get; set; } = 0;
+    public int TotalSubsOnSubscripstion { get; set; } = 0;
 
-    public PubHubEBook Book { get; set; }
-    protected override async Task OnInitializedAsync()
+    //Filter
+    public List<PubHubSubscription> _FilterSubs { get; set; } = new();
+    public List<PubHubEBook> _FilterBooks { get; set; } = new();
+
+    private string InputTitleBook = "";
+    private string InputAuthorBook = "";
+    private string InputGenreBook = "";
+
+    public string InputTitleSub = "";
+    public DateTime InputStartTimeSub = DateTime.MinValue;
+    public DateTime InputEndTimeSub = DateTime.MaxValue;
+    public bool state = true;
+
+    ClaimsPrincipal claimsPrincipal;
+    ApplicationUser user;
+
+    protected override async void OnAfterRender(bool firstRender)
     {
         if (Subscriptions.Count == 0)
         {
-            ClaimsPrincipal claimsPrincipal = SigninManager.Context.User;
+            claimsPrincipal = SigninManager.Context.User;
 
-            ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+            user = await userManager.GetUserAsync(claimsPrincipal);
 
-            //All subscriptions on the publisher
-            ApiResponse<List<PubHubSubscription>> ApiSubs = await Service.GetAllPublishersSubscriptions(user.MyPubHubAccount, claimsPrincipal);
-            Subscriptions = ApiSubs.Data;
+            GetData(claimsPrincipal, user);
 
-            //The top subscription
-            ApiResponse<List< PubHubSubscription>> ApiTopSub = await Service.GetTopSubscriptions(1, user.MyPubHubAccount);
-            TopSubscrioption = ApiTopSub.Data.First();
-
-            //The income from the top subscription
-            ApiResponse<double> IncomeFromTopSub = await Service.GetTotalErningsFromSubscription(TopSubscrioption.SubscriptionID);
-            TopSubIncome = IncomeFromTopSub.Data;
-
-
-
-            // ApiResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 5, user.MyPubHubAccount);
-            // Ebooks = apiBooks.Data;
-
-            // ApiResponse<double> ApiTopFromBook = await Service.GetTotalFromAcquired(Ebooks.OrderByDescending(x => x.DownloadCount).First().EBookID);
-            // TopBookIncome = ApiTopFromBook.Data;
+            _FilterSubs = Subscriptions;
+            _FilterBooks = Ebooks;
+            StateHasChanged();
         }
-        await base.OnInitializedAsync();
+        base.OnAfterRender(firstRender);
     }
+
+    /// <summary>
+    /// Retrives all the data the is need on the page
+    /// </summary>
+    /// <param name="claimsPrincipal"></param>
+    /// <param name="user"></param>
+    private async void GetData(ClaimsPrincipal claimsPrincipal, ApplicationUser user)
+    {
+        //All subscriptions on the publisher
+        ServiceResponse<List<PubHubSubscription>> ApiSubs = await Service.GetAllPublishersSubscriptions(claimsPrincipal, user.MyPubHubAccount);
+        Subscriptions = ApiSubs.Data;
+
+        //The top subscription
+        ServiceResponse<List<PubHubSubscription>> ApiTopSub = await Service.GetTopSubscriptions(1, user.MyPubHubAccount);
+        TopSubscrioption = ApiTopSub.Data.First();
+
+        //Getting income and subs count
+        foreach (PubHubSubscription item in Subscriptions)
+        {
+            ServiceResponse<double> IncomeFromTopSub = await Service.GetTotalErningsFromSubscription(claimsPrincipal, item.SubscriptionID);
+            ServiceResponse<int> TotalFromSubs = await Service.GetTotalSubscrbersOnSubscription(claimsPrincipal, item.SubscriptionID);
+
+            TotalIncomeOnSubscripstion += IncomeFromTopSub.Data;
+            TotalSubsOnSubscripstion += TotalFromSubs.Data;
+            //The income from the top subscription
+            if (IncomeFromTopSub.Data > TopSubIncome)
+            {
+                TopSubIncome = IncomeFromTopSub.Data;
+                //Total subs on this top subscription
+                TopSubSubs = TotalFromSubs.Data;
+            }
+        }
+
+        StateHasChanged();
+
+        ServiceResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 5, user.MyPubHubAccount);
+        Ebooks = apiBooks.Data;
+
+        ServiceResponse<double> ApiTopFromBook = await Service.GetTotalFromAcquired(Ebooks.OrderByDescending(x => x.DownloadCount).First().EBookID);
+        TopBookIncome = ApiTopFromBook.Data;
+
+        foreach (PubHubEBook book in Ebooks)
+        {
+            //Total income from books
+            ServiceResponse<double> IncomeFromBook = await Service.GetAllEarningsFromBookByID(claimsPrincipal, book.EBookID);
+            //total subs from book
+            ServiceResponse<int> SubsfromBook = await Service.GetAmountOfSubscriberOnBook(claimsPrincipal, book.EBookID);
+
+            if (TotalIncomeOnBooks < IncomeFromBook.Data)
+            {
+                TotalIncomeOnBooks = IncomeFromBook.Data;
+                TotalSubsOnBooks = SubsfromBook.Data;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Changes the state of a subscription and sends it the service layer
+    /// </summary>
+    /// <param name="_subscription"></param>
+    private void ChangeActiveState(PubHubSubscription _subscription)
+    {
+        _subscription.Active = !_subscription.Active;
+
+        Service.UpdateEntity<PubHubSubscription>(_subscription);
+    }
+
+    private void FilterSubscriptions()
+    {
+        _FilterSubs = Subscriptions
+                        .Where(x => x.Title.ToUpper().Contains(InputTitleSub.ToUpper())
+                        && x.StartDate >= InputStartTimeSub
+                        && x.EndDate <= InputEndTimeSub)
+                        .ToList();
+        if (!state)
+        {
+            _FilterSubs = _FilterSubs.Where(x => x.Active == false).ToList();
+        }
+    }
+    private void FilterBooks()
+    {
+        _FilterBooks = Ebooks
+                    .Where(x => x.Title.ToUpper().Contains(InputTitleBook.ToUpper())
+                    && x.AuthorNames.ToUpper().Contains(InputAuthorBook.ToUpper())
+                    && x.Genre.ToUpper().Contains(InputGenreBook.ToUpper()))
+                    .ToList();
+
+        StateHasChanged();
+    }
+
 }

@@ -401,25 +401,31 @@ namespace PubHubWebServer.Services
         {
             try
             {
-                PubHubPublisher publisher =
-                     pubHubDBContext.Publishers
-                     .Include(p => p.Subscriptions.Where(x => x.PubHubPublisherPublisherID == _publisherID))
-                     .FirstOrDefault();
-
-                if (publisher == null)
-                {
-                    return new ServiceResponse<List<PubHubSubscription>>
-                    {
-                        ErrorMessage = "Publisher not found"
-                    };
-                }
+                List<PubHubSubscription> subscriptions = pubHubDBContext.Subscriptions
+                    .Where(x => x.Publisher.Where(x => x.PubHubPublisherPublisherID == _publisherID).Any())
+                    .ToList();
 
 
-                List<PubHubSubscription> subscriptions = new();
-                foreach (PubHubSupscriptionPubHubPublisher subscription in publisher.Subscriptions)
-                {
-                    subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.PubHubSubscriptionSubscriptionID).FirstAsync());
-                }
+                //PubHubPublisher publisher =
+                //     pubHubDBContext.Publishers
+                //     .Where(x => x.PublisherID == _publisherID)
+                //     .Include(p => p.Subscriptions)
+                //     .FirstOrDefault();
+
+                //if (publisher == null)
+                //{
+                //    return new ServiceResponse<List<PubHubSubscription>>
+                //    {
+                //        ErrorMessage = "Publisher not found"
+                //    };
+                //}
+
+
+                ////List<PubHubSubscription> subscriptions = new();
+                //foreach (PubHubSupscriptionPubHubPublisher subscription in publisher.Subscriptions)
+                //{
+                //    subscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscription.PubHubSubscriptionSubscriptionID).FirstAsync());
+                //}
 
                 return new ServiceResponse<List<PubHubSubscription>>
                 {
@@ -981,12 +987,6 @@ namespace PubHubWebServer.Services
         {
             try
             {
-                var t = pubHubDBContext.EBooks
-                    .Include(x => x.Publishers.Where(x => x.PubHubPublisherPublisherID == _publisher))
-                    .OrderByDescending(d => d.DownloadCount)
-                    .Take(_amount)
-                    .ToList();
-
                 return new ServiceResponse<List<PubHubEBook>>
                 {
                     //Finds the books
@@ -1185,6 +1185,30 @@ namespace PubHubWebServer.Services
                 return new ServiceResponse<List<PubHubSubscription>>
                 {
                     ErrorMessage = "Error while getting top books"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID)
+        {
+            try
+            {
+                int amount = pubHubDBContext.EBookSubscriptions
+                    .Where(x => x.PubHubEBookEBookID == _BookID)
+                    .Count();
+
+                return new ServiceResponse<int>
+                {
+                    Data = amount
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get Top subscriptions, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<int>
+                {
+                    ErrorMessage = "Error while getting top subscription. Message" + ex.Message
                 };
             }
         }
@@ -1403,7 +1427,7 @@ namespace PubHubWebServer.Services
         /// <param name="_logType">How severe is the insident</param>
         /// <param name="_EntiryID">Who did something of note</param>
         /// <returns></returns>
-        private async Task SaveLog(string _message, LogType _logType = LogType.Information, Guid? _EntiryID = null)
+        public async Task SaveLog(string _message, LogType _logType = LogType.Information, Guid? _EntiryID = null)
         {
             PubHubLog log = new()
             {
@@ -1433,7 +1457,31 @@ namespace PubHubWebServer.Services
             };
             pubHubDBContext.Receipts.Add(receipt);
         }
+        public async Task<ServiceResponse<List<ApplicationUser>>> FindUserAdminRights(string _email, string _username)
+        {
+            try
+            {
+                List<ApplicationUser> users = pubHubDBContext.Users
+                    .Where(x => x.Email.ToUpper().Contains(_email.ToUpper())
+                    && x.UserName.ToUpper().Contains(_username.ToUpper())
+                    ).ToList();
 
+
+                return new ServiceResponse<List<ApplicationUser>>
+                {
+                    Data = users
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Something went wrong when trying to get Data from the database: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<List<ApplicationUser>>
+                {
+                    ErrorMessage = "Error while getting books on user"
+                };
+            }
+        }
         #endregion
     }
 }
