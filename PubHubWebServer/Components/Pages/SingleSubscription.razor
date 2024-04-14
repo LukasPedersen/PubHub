@@ -1,135 +1,311 @@
-﻿@page "/Subscription/{ID:guid}"
+﻿@page "/SubscriptionDetail/{ID:guid}"
 @using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using System.Net.Http.Headers
+@using Blazored.LocalStorage
 
-<div class="row">
-    @* Left Side side *@
-    <div class="col-auto col-md-6 d-flex flex-column">
-        <input type="text" name="inputName" placeholder="Subscription Name" />
-        <input type="number" name="inputPrice" placeholder="Subscription Price" />
-        <input type="datetime" name="inputStateDate" placeholder="Subscription StartDate" />
-        <input type="datetime" name="inputEndData" placeholder="Subscription EndDate" />
-        <input type="text" style="height: 150px" name="Message" placeholder="Subscription message" />
-        @* Subscription book List *@
-        <div class="row" style="color:white">
-            <div class="col-3">Book name</div>
-            <div class="col-3">Book Authors</div>
-            <div class="col-3">Book Genres</div>
-            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
-        </div>
-        <div class="row" style="color:white">
-            <div class="col-3">Book name</div>
-            <div class="col-3">Book Authors</div>
-            <div class="col-3">Book Genres</div>
-            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
-        </div>
-        <div class="row" style="color:white">
-            <div class="col-3">Book name</div>
-            <div class="col-3">Book Authors</div>
-            <div class="col-3">Book Genres</div>
-            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
-        </div>
-        <div class="row" style="color:white">
-            <div class="col-3">Book name</div>
-            <div class="col-3">Book Authors</div>
-            <div class="col-3">Book Genres</div>
-            <button class="col-3" @onclick="() => RemoveBook(Guid.NewGuid())" value="bookid">Remove book</button>
-        </div>
-    </div>
-    @* Right side *@
-    <div class="col-auto col-md-6">
-        @* find books *@
-        <div class="row pb-3">
-            <input type="text" name="inputTitle" value="" class="col-3" placeholder="Title" />
-            <input type="text" name="InputAuthor" value="" class="col-3" placeholder="Author" />
-            <input type="text" name="InputGenre" value="" class="col-3" placeholder="Genre" />
-            <a @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</a>
-        </div>
-        <div class="imhidden">
-        @* Book List*@
-            <div class="imhidden">
-                <div class="row" style="color:white">
-                    <div class="col-3">Book Name</div>
-                    <div class="col-3">Book Authors</div>
-                    <div class="col-3">Book Genres</div>
-                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
-                </div>
-                <div class="row" style="color:white">
-                    <div class="col-3">Book Name</div>
-                    <div class="col-3">Book Authors</div>
-                    <div class="col-3">Book Genres</div>
-                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
-                </div>
-                <div class="row" style="color:white">
-                    <div class="col-3">Book Name</div>
-                    <div class="col-3">Book Authors</div>
-                    <div class="col-3">Book Genres</div>
-                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
-                </div>
-                <div class="row" style="color:white">
-                    <div class="col-3">Book Name</div>
-                    <div class="col-3">Book Authors</div>
-                    <div class="col-3">Book Genres</div>
-                    <button class="col-3" @onclick="() => AddBook(new())" value="bookid">Tilføj bog</button>
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@inject NavigationManager navigationManager
+@inject IPubHubServices services
+
+@rendermode InteractiveServer
+
+@if (Subscription != null)
+{
+    <AuthorizeView Roles="Publisher">
+        <Authorized>
+            @{
+                if (Owner)
+                {
+                    <div class="row position-relative" style="width: 90%; margin: auto;">
+                        <div class="col-auto h-25 m-auto">
+                            <div class="form-group">
+                                <div class="row m-3" style="height: auto;">
+                                    <div class="" style="text-align: center;">
+                                        <label for="title">Title:</label>
+                                        <textarea class="form-control" rows="auto" id="title" @bind="Subscription.Title"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row m-3" style="text-align: center;">
+                                    <label for="description">Description:</label>
+                                    <textarea class="form-control" rows="5" id="description" @bind="Subscription.Message"></textarea>
+                                </div>
+                                <div class="row m-3">
+                                    <div class="col-auto" style="text-align: center;">
+                                        <label style="width: 76px;" for="price">Pris:</label>
+                                        <input type="number" min="1" max="1000" step="any" id="price" @bind-value="@Subscription.Price" style="width: 75px;" />
+                                    </div>
+                                    <div class="col-auto" style="text-align: center;">
+                                        <label class="form-check-label" for="available">Tilgængelig</label>
+                                        <input class="form-check-input" type="checkbox" @bind="@Subscription.Active" id="available">
+                                    </div>
+                                </div>
+                                <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
+                                    @{
+                                        if (books != null)
+                                        {
+                                            <div class="row">
+                                                <h3>Disse bøger er i denne abonnement</h3>
+                                            </div>
+                                            <table class="table table-light">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Title</th>
+                                                        <th scope="col">Genre</th>
+                                                        <th scope="col">Pris</th>
+                                                        <th scope="col">Låne pris</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (PubHubEBook book in books)
+                                                    {
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <NavLink class="nav-link p-0 m-auto" href="@($"/BookDetail/{book.EBookID}")">
+                                                                    @book.Title
+                                                                </NavLink>
+                                                            </th>
+                                                            <td>@book.Genre</td>
+                                                            <td>@book.Price</td>
+                                                            <td>@book.BorrowPrice</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <h3>Der er ikke i nogle bøger i dette abonnement</h3>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div class="row" style="">
+                                    <div class="col-auto">
+                                        <button @onclick="SaveChanges" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                    <div class="dropdown col-auto">
+                                        <button class="dropdown-toggle btn btn-warning" type="button" id="dropdownHeader" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Tilføj bog til abonnement
+                                        </button>
+                                        <ul class="dropdown-menu headerDropDownMenue" aria-labelledby="dropdownHeader">
+                                            @foreach (PubHubEBook book in NewBooks)
+                                            {
+                                                <li @onclick="() => AddBookToSub(book.EBookID)">@book.Title</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row position-relative" style="width: 90%; margin: auto;">
+                        <div class="col-auto h-100 ">
+                            <div class="row" style="height: auto;">
+                                <div class="" style="text-align: center;">
+                                    <h1>@Subscription.Title</h1>
+                                </div>
+                            </div>
+                            <div class="row" style="text-align: center;">
+                                @Subscription.Message
+                            </div>
+                            <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
+                                @{
+                                    if (books != null)
+                                    {
+                                        <div class="row">
+                                            <h3>Disse bøger er i denne abonnement</h3>
+                                        </div>
+                                        <table class="table table-light">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Title</th>
+                                                    <th scope="col">Genre</th>
+                                                    <th scope="col">Pris</th>
+                                                    <th scope="col">Låne pris</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (PubHubEBook book in books)
+                                                {
+                                                    <tr>
+                                                        <th scope="row">
+                                                            <NavLink class="nav-link p-0 m-auto" href="@($"/BookDetail/{book.EBookID}")">
+                                                                @book.Title
+                                                            </NavLink>
+                                                        </th>
+                                                        <td>@book.Genre</td>
+                                                        <td>@book.Price</td>
+                                                        <td>@book.BorrowPrice</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <h3>Der er ikke i nogle bøger i dette abonnement</h3>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <div class="row" style="">
+                                <div class="col-auto">
+                                    <button class="btn btn-warning">abonnerer: @Subscription.Price Kr.</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </Authorized>
+        <NotAuthorized>
+            <div class="row position-relative" style="width: 90%; margin: auto;">
+                <div class="col-auto h-100 ">
+                    <div class="row" style="height: auto;">
+                        <div class="" style="text-align: center;">
+                            <h1>@Subscription.Title</h1>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center;">
+                        @Subscription.Message
+                    </div>
+                    <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
+                        @{
+                            if (books != null)
+                            {
+                                <div class="row">
+                                    <h3>Disse bøger er i denne abonnement</h3>
+                                </div>
+                                <table class="table table-light">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Genre</th>
+                                            <th scope="col">Pris</th>
+                                            <th scope="col">Låne pris</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (PubHubEBook book in books)
+                                        {
+                                            <tr>
+                                                <th scope="row">
+                                                    <NavLink class="nav-link p-0 m-auto" href="@($"/BookDetail/{book.EBookID}")">
+                                                        @book.Title
+                                                    </NavLink>
+                                                </th>
+                                                <td>@book.Genre</td>
+                                                <td>@book.Price</td>
+                                                <td>@book.BorrowPrice</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <h3>Der er ikke i nogle bøger i dette abonnement</h3>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="row" style="">
+                        <div class="col-auto">
+                            <button @onclick="SubscripeUserToSubscription" class="btn btn-warning">Abonnerer: @Subscription.Price Kr.</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-<div>
-    <button @onclick="SaveChanges">Save changes</button>
-    <button @onclick="CreateSubscription">Create Subsdription</button>
-</div>
-@ID
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+
 @code {
-    PubHubSubscription TheSubscription;//TODO: get the subscription onload
+    PubHubSubscription Subscription = new(); 
+    public bool Owner { get; set; } = false;
+    List<PubHubEBook>? books;
+    List<PubHubEBook> NewBooks = new();
 
     [Parameter]
     public Guid ID { get; set; }
 
-    /// <summary>
-    /// Sets the filter for the Searching
-    /// </summary>
-    /// <returns></returns>
-    private async Task SetFilter()
+    protected override async Task OnInitializedAsync()
     {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
+        ServiceResponse<PubHubSubscription> apiSubscriptionResult = await services.GetSubscriptionByID(ID) ?? new ServiceResponse<PubHubSubscription>();
+        Subscription = apiSubscriptionResult.Data;
+
+        if (user != null && Subscription != null)
+        {
+            ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnSubscription(claimsPrincipal, user.Id, Subscription.SubscriptionID) ?? new ServiceResponse<bool>();
+            Owner = apiOwnerResult.Data;
+
+
+        }
+
+        if (Subscription != null)
+        {
+            ServiceResponse<List<PubHubEBook>> apiSubResult = await services.GetAllBooksFromSubscription(claimsPrincipal, Subscription.SubscriptionID) ?? new ServiceResponse<List<PubHubEBook>>();
+            books = apiSubResult.Data;
+        }
+
+        if (Owner == true && books != null)
+        {
+            ServiceResponse<List<PubHubEBook>> apiOwnerBooksResult = await services.GetAllPublishersBooks(claimsPrincipal, user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
+            NewBooks = apiOwnerBooksResult.Data.Except(books).ToList();
+        }
+
+        StateHasChanged();
     }
 
-    /// <summary>
-    /// Removes a book from the subscription currently in
-    /// </summary>
-    /// <param name="_BookID">The Guid of the book to be removed</param>
-    /// <returns></returns>
-    private async Task RemoveBook(Guid _BookID)
-    {
-
-    }
-
-    /// <summary>
-    /// Adds a book to the Subscription
-    /// </summary>
-    /// <param name="_Book">The book that is to be added to the subscription</param>
-    /// <returns></returns>
-    private async Task AddBook(PubHubEBook _Book)
-    {
-
-    }
-
-    /// <summary>
-    /// Saves the changes for the subscription
-    /// </summary>
-    /// <returns></returns>
     private async Task SaveChanges()
     {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
+        ServiceResponse<bool> success = await services.UpdateSubscription(claimsPrincipal, user.Id, Subscription);
+        if (success.Data)
+        {
+            navigationManager.NavigateTo("#");
+        }
     }
 
-    /// <summary>
-    /// Creates a new subscription
-    /// </summary>
-    /// <returns></returns>
-    private async Task CreateSubscription()
+    private async Task SubscripeUserToSubscription()
     {
-        
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        if (!signInManager.IsSignedIn(signInManager.Context.User) || user == null)
+        {
+            navigationManager.NavigateTo($"Account/Login?returnUrl=BookDetail/{Subscription.SubscriptionID}");
+        }
+        else
+        {
+            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, Subscription.SubscriptionID);
+            navigationManager.NavigateTo("#");
+        }
+    }
+
+    private async Task AddBookToSub(Guid bookID)
+    {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        await services.AddBookToSubscription(claimsPrincipal, user.Id, Subscription.SubscriptionID, bookID);
+        navigationManager.NavigateTo("#");
     }
 }

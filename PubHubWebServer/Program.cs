@@ -1,3 +1,4 @@
+using BlazorDownloadFile;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +59,7 @@ namespace PubHubWebServer
             builder.Services.AddHttpClient();//Added HttpClient as a service
 
             builder.Services.AddBlazoredToast();
+            builder.Services.AddBlazorDownloadFile(ServiceLifetime.Scoped);
 
             var app = builder.Build();
 
