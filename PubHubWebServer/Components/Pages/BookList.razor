@@ -2,6 +2,7 @@
 @using PubHubWebServer.Services
 @using PubHubWebServer.Data.Models
 
+@inject IPubHubServices _Services
 @rendermode InteractiveServer
 
 @inject HttpClient client
@@ -11,7 +12,7 @@
     <input type="text" @bind="InputTitle" class="col-3" placeholder="Title" />
     <input type="text" @bind="InputAuthor" class="col-3" placeholder="Author" />
     <input type="text" @bind="InputGenre" class="col-3" placeholder="Genre" />
-    <button @onclick="SetFilter" class="btn btn-primary col-3">Set Filters</button>
+    <button @onclick="() => SetFilter(0)" class="btn btn-primary col-3">Set Filters</button>
 </div>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-4">
@@ -19,16 +20,26 @@
     {
         foreach (PubHubEBook eBook in bookList)
         {
-            <div class="col">
-                <div class="card overflow-auto w-auto text-dark" style=" height:300px;">
-                    @*Todo: the height should be removed once images are added*@
-                    <img src="images/BookCovers/@(eBook.FilePath + "-Cover.jpg")" class="card-img">@*Image *@
-                    <div class="card-img-overlay">
-                        <h5 class="card-title">@eBook.Title</h5>@*Title*@
-                        <p class="card-text">@eBook.Description</p>@*Content*@
+            <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1" style="min-width:235px; margin:15px">
+                <div class="card" style="min-height:100%;">
+                    <img src="images/BookCovers/@(eBook.FilePath + ".jpg")" class="card-img-top img-thumbnail" alt="..." style="max-width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">@eBook.Title</h5>
+                        <p class="card-text text-dark">@(eBook.Description.Substring(0, 100) + "...")</p>
+                    </div>
+                    <div class="card-footer text-dark">
                         <div class="row">
-                            <a href="/BookList/Book?Value=@eBook.EBookID" class="btn btn-primary col-6">Mere information</a>@*should go to the books information*@
-                            <a href="#" class="btn btn-primary col-6">Go somewhere</a>@*Todo: Should go the Edit book should only be viaable to publishers*@
+                            <div class="col-10">
+                                <p class="m-auto" style="font-size:11px;">Author's: @eBook.AuthorNames</p>
+                            </div>
+                            <div class="col-2">
+                                <NavLink class="nav-link p-0 m-auto" href="@($"/BookDetail/{eBook.EBookID}")">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="text-dark" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                    </svg>
+                                </NavLink>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -39,13 +50,10 @@
 
 <div class="d-flex align-content-center" style="background-color:darkblue">
     <div class="w-100">
-        <button class="p-2" href="#">&#8606;</button> @*Back to fist page *@
-        <button class="p-2" href="#">&#8592</button> @*Back 1 page*@
-        <button class="p-2" href="#">1</button> @*To page 1*@
-        <button class="p-2" href="#">2</button> @*To page 2*@
-        <button class="p-2" href="#">3</button> @*To page 3*@
-        <button class="p-2" href="#">&#8594</button> @*forward 1 page*@
-        <button class="p-2" href="#">&#8608;</button> @*To last page*@
+        <button class="p-2" @onclick="() => SetFilter(0)">&#8606;</button> @*Back to fist page *@
+        <button class="p-2" @onclick="() => SetFilter(AtPage - 1)">&#8592</button> @*Back 1 page*@
+
+        <button class="p-2" @onclick="() => SetFilter(AtPage + 1)">&#8594</button> @*forward 1 page*@
     </div>
 </div>
 
@@ -55,14 +63,14 @@
     private string InputTitle = "";
     private string InputAuthor = "";
     private string InputGenre = "";
-
-
+    public int AtPage { get; set; } = 0;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (bookList.Count == 0)
         {
-            var responce = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
-            + $"?skip=0&take=10");
+
+            var responce = await _Services.GetBooksByFilter();
+
             if (responce?.Data != null)
             {
                 bookList = responce.Data;
@@ -71,23 +79,44 @@
             StateHasChanged();
         }
 
-        await base.OnAfterRenderAsync(firstRender);
-    }
+        await base.OnAfterRenderAsync(firstRender);
 
+    }
 
     /// <summary>
     /// Gets first X amount of books from the inputed filter options
     /// </summary>
-    private async Task SetFilter()
+    private async Task SetFilter(int _AtPage)
     {
-        var responce = await client.GetFromJsonAsync<ServiceResponse<List<PubHubEBook>>>(navManager.Uri + "/GetBooksFilter"
-        + $"?skip=0&take=10&title={InputTitle}&author={InputAuthor}&genre={InputGenre}");
-
-        if (responce?.Data != null)
+        if (_AtPage > 0)
         {
-            bookList = responce.Data;
-        }
+            var responce = await _Services.GetBooksByFilter(InputTitle, InputAuthor, InputGenre, _AtPage);
 
-        StateHasChanged();
+            if (responce?.Data != null)
+            {
+                bookList = responce.Data;
+            }
+            StateHasChanged();
+
+            if (_AtPage > AtPage)
+            {
+                AtPage++;
+            }
+            else if (_AtPage < AtPage)
+            {
+                AtPage--;
+            }
+        }
+        else
+        {
+
+            var responce = await _Services.GetBooksByFilter(InputTitle, InputAuthor, InputGenre, 0);
+
+            if (responce?.Data != null)
+            {
+                bookList = responce.Data;
+            }
+            AtPage = 0;
+        }
     }
 }

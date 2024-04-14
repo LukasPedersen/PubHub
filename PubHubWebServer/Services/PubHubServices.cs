@@ -670,7 +670,7 @@ namespace PubHubWebServer.Services
                     {
 
                     }
-                    
+
                     if (pubHubDBContext.EBookReaders.Any(er => er.PubHubReaderReaderID == _readerID && er.PubHubEBookEBookID == _bookID) || isInSub)
                     {
                         return new ServiceResponse<bool>
@@ -1091,7 +1091,7 @@ namespace PubHubWebServer.Services
         /// <param name="_skip">The amount that should be skiped</param>
         /// <param name="_take">The amount tha should be taken</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(ClaimsPrincipal user, string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10)
         {
             try
             {
@@ -1397,7 +1397,6 @@ namespace PubHubWebServer.Services
             }
         }
 
-
         public async Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID)
         {
             try
@@ -1416,6 +1415,28 @@ namespace PubHubWebServer.Services
                 string message = "Failed to get Top subscriptions, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
                 return new ServiceResponse<int>
+                {
+                    ErrorMessage = "Error while getting top subscription. Message" + ex.Message
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<IBrowserFile>> GetBookPages(ClaimsPrincipal user, int from, int to, Guid bookid)
+        {
+            try
+            {
+
+
+                return new ServiceResponse<IBrowserFile>
+                {
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get Top subscriptions, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<IBrowserFile>
                 {
                     ErrorMessage = "Error while getting top subscription. Message" + ex.Message
                 };
@@ -1495,11 +1516,28 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_EntityID">The entity that should be looked up</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(ClaimsPrincipal user, Guid _EntityID)
+        public async Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnFilter(ClaimsPrincipal user, Guid _EntityID, DateTime _startdate, DateTime _EndDate, LogType? type)
         {
             try
             {
-                List<PubHubLog> logs = await pubHubDBContext.Logs.Where(l => l.EntityID == _EntityID).ToListAsync();
+                List<PubHubLog> logs = new();
+                if (type != null)
+                {
+                    logs = await pubHubDBContext.Logs.
+                          Where(l => l.EntityID == _EntityID
+                          && l.TimeStamp >= _startdate
+                          && l.TimeStamp <= _EndDate
+                          && l.LogType == type)
+                          .ToListAsync();
+                }
+                else
+                {
+                    logs = await pubHubDBContext.Logs.
+                        Where(l => l.EntityID == _EntityID
+                        && l.TimeStamp >= _startdate
+                        && l.TimeStamp <= _EndDate)
+                        .ToListAsync();
+                }
                 if (logs == null)
                 {
                     return new ServiceResponse<List<PubHubLog>>
@@ -1624,6 +1662,43 @@ namespace PubHubWebServer.Services
                 };
             }
         }
+
+        public async Task<ServiceResponse<List<PubHubReceipt>>> GetReceiptByFilter(ClaimsPrincipal user, Guid _EntityID, Guid _AcuiredID, DateTime _startdate, DateTime _EndDate)
+        {
+            try
+            {
+                List<PubHubReceipt> receipts = new();
+
+                receipts = pubHubDBContext.Receipts
+                    .Where(x => x.EntityID == _EntityID
+                    && x.Acquired == _AcuiredID
+                    && x.TimeStamp >= _startdate
+                    && x.TimeStamp <= _EndDate)
+                    .ToList();
+
+                if (receipts == null)
+                {
+                    return new ServiceResponse<List<PubHubReceipt>>
+                    {
+                        ErrorMessage = "receipts not found"
+                    };
+                }
+                return new ServiceResponse<List<PubHubReceipt>>
+                {
+                    Data = receipts
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get Logs on a the given EntiryID: {_EntityID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, _EntityID);//Save log
+                return new ServiceResponse<List<PubHubReceipt>>
+                {
+                    ErrorMessage = "Internal server error while trying to get all logs from entity"
+                };
+            }
+        }
+
 
         #endregion
 

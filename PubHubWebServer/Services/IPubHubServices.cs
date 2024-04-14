@@ -94,7 +94,7 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetTopBooks(ClaimsPrincipal user, int _amount, Guid? _publisher = null);
 
-        public Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(ClaimsPrincipal user, string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
+        public Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
 
 
         public Task<ServiceResponse<bool>> ReaderRentBook(ClaimsPrincipal user, Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks);
@@ -117,7 +117,7 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubLog>>> GetAllLogs(ClaimsPrincipal user);
 
-        public Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnEntityByID(ClaimsPrincipal user, Guid _EntityID);
+        public Task<ServiceResponse<List<PubHubLog>>> GetAllLogsOnFilter(ClaimsPrincipal user, Guid _EntityID, DateTime _startdate, DateTime _EndDate, LogType? type);
 
         public Task<ServiceResponse<List<PubHubLog>>> GetAllLogsForAcquired(ClaimsPrincipal user);
 
@@ -129,6 +129,8 @@ namespace PubHubWebServer.Services
         public Task<ServiceResponse<PubHubReceipt>> GetNewestReceiptFromUser(Guid _userID);
 
         public Task<ServiceResponse<double>> GetTotalFromAcquired(Guid _userID);
+
+        public Task<ServiceResponse<List<PubHubReceipt>>> GetReceiptByFilter(ClaimsPrincipal user, Guid _EntityID, Guid _AcuiredID, DateTime _startdate, DateTime _EndDate);
 
         #endregion
 

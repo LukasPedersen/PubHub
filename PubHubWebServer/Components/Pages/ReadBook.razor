@@ -34,6 +34,18 @@
     <a class="p-2" href="#">&#8608;</a> @*To last page*@
 </div>
 
+@if (_imgUrl != string.Empty)
+{
+    <iframe src="@_imgUrl" style="width:750px;height:750px;" type="application/pdf" />
+}
+
 @code {
 
+    string _imgUrl = "";
+    private async Task ViewFile()
+    {
+        var renderer = new IronPdf.ChromePdfRenderer();
+        var pdf = renderer.RenderUrlAsPdf("https://localhost:7018/fetchdata");
+        _imgUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdf.Stream.ToArray())}";
+    }
 }
