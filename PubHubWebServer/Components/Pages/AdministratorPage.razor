@@ -8,17 +8,19 @@
 @using PubHubWebServer.Data.Models
 @using PubHubWebServer.Services
 @using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 
-@inject UserManager<ApplicationUser> UserManager
-@inject IUserStore<ApplicationUser> UserStore
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IEmailSender<ApplicationUser> EmailSender
-@inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> _UserManager
+@inject IUserStore<ApplicationUser> _UserStore
+@inject SignInManager<ApplicationUser> _SignInManager
+@inject IEmailSender<ApplicationUser> _EmailSender
+@inject NavigationManager _NavigationManager
 @inject RoleManager<IdentityRole> _roleManager
-@inject IPubHubServices Services
+@inject IPubHubServices _Services
 
 @rendermode InteractiveServer
-@* @attribute [Authorize(Roles = "Admin")] TODO: Incomment this when system is ready *@
+
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="row h-100">
     @*Left side*@
@@ -68,7 +70,7 @@
         <div class="row">
             <input type="text" name="FinderEmail" placeholder="Email@Email.dk eller dele af emailen" @bind="_InputEmail" />
             <input type="text" name="FinderName" placeholder="Username" @bind="_InputUserName" />
-            <button onclick="@FindUser">Find person</button>
+            <button @onclick="FindUser">Find person</button>
         </div>
         <div class="row">
             @foreach (ApplicationUser user in _UserToDiable.Take(10))//Takes the first 10 elements
@@ -108,21 +110,24 @@
 
     private IEnumerable<IdentityError>? identityErrors;
 
-    ApplicationUser userID;
+    ClaimsPrincipal claims;
+    ApplicationUser user;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
 
     private bool IsAdmin { get; set; }
 
-    public string _InputEmail { get; set; }
-    public string _InputUserName { get; set; }
+    public string _InputEmail { get; set; } = "";
+    public string _InputUserName { get; set; } = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        userID = await UserManager.GetUserAsync(SignInManager.Context.User);
-        await base.OnAfterRenderAsync(firstRender);
+        claims = _SignInManager.Context.User;
+        user = _UserManager.GetUserAsync(claims).Result;
+        base.OnInitialized();
     }
+
 
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
@@ -151,10 +156,10 @@
     {
         var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        await _UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-        var result = await UserManager.CreateAsync(user, Input.Password);
+        var result = await _UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
         {
@@ -166,13 +171,13 @@
 
         if (IsAdmin)
         {
-            await UserManager.AddToRoleAsync(user, "Admin");
+            await _UserManager.AddToRoleAsync(user, "Admin");
         }
         else
         {
-            await UserManager.AddToRoleAsync(user, "Publisher");
+            await _UserManager.AddToRoleAsync(user, "Publisher");
             Guid publisherID = Guid.NewGuid();
-            await Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
+            await _Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
                 {
                     PublisherID = publisherID,
                     Name = Input.PublisherName,
@@ -184,11 +189,11 @@
 
 
         }
-        await Services.UpdateEntity<ApplicationUser>(user);
+        await _Services.UpdateEntity<ApplicationUser>(user);
 
 
         //Save a log of what just happend
-        Services.SaveLog($"Create a new User with wit the id of {user.Id}", LogType.Information, Guid.Parse(userID.Id));
+        _Services.SaveLog($"Create a new User with wit the id of {user.Id}", LogType.Information, Guid.Parse(user.Id));
 
     }
     private ApplicationUser CreateUser()
@@ -205,11 +210,11 @@
     }
     private IUserEmailStore<ApplicationUser> GetEmailStore()
     {
-        if (!UserManager.SupportsUserEmail)
+        if (!_UserManager.SupportsUserEmail)
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-        return (IUserEmailStore<ApplicationUser>)UserStore;
+        return (IUserEmailStore<ApplicationUser>)_UserStore;
     }
 
     /// <summary>
@@ -218,7 +223,7 @@
     /// <returns></returns>
     private async Task FindUser()
     {
-        var result = await Services.FindUserAdminRights(_InputEmail, _InputUserName);
+        var result = await _Services.FindUserAdminRights(_InputEmail, _InputUserName);
         _UserToDiable = result.Data;
     }
 
@@ -229,12 +234,12 @@
     /// <returns></returns>
     private async Task DisableUser(ApplicationUser _user)
     {
-        if (_user.Id != userID.Id)
+        if (_user.Id != user.Id)
         {
             _user.Active = false;
-            Services.UpdateEntity<ApplicationUser>(_user);
+            _Services.UpdateEntity<ApplicationUser>(_user);
 
-            Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(userID.Id));
+            _Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(user.Id));
         }
     }
 
@@ -246,7 +251,7 @@
     private async Task ActivateUser(ApplicationUser _user)
     {
         _user.Active = true;
-        Services.UpdateEntity<ApplicationUser>(_user);
-        Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(userID.Id));
+        _Services.UpdateEntity<ApplicationUser>(_user);
+        _Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(user.Id));
     }
 }

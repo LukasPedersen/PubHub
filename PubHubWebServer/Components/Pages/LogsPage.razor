@@ -15,35 +15,51 @@
 <div class="m-1">
 
     <div class="row">
-        <input class="col-auto col-md-4" type="datetime" name="LogsFrom" placeholder="DD-MM-YYYY:HH-MM" value="" />
-        <input class="col-auto col-md-4" type="datetime" name="LogsTo" placeholder="DD-MM-YYYY:HH-MM" value="" />
-        <input class="col-auto col-md-3" type="text" name="LogsLevel" placeholder="Info, Warning, Crit" value="" />
-        <button class="col-1" @onclick="FindLogs">Find logs</button>
+        <input class="col-auto col-md-3" type="datetime" name="LogsFrom" placeholder="DD-MM-YYYY:HH-MM" @bind="InputStarDate" />
+        <input class="col-auto col-md-3" type="datetime" name="LogsTo" placeholder="DD-MM-YYYY:HH-MM" @bind="InputEndDate" />
+        <input class="col-auto col-md-3" type="text" placeholder="EntityID" @bind="EntityID" />
+        <Select class="col-auto col-md-2" @bind="@InputLogType">
+            <option value="null">Alle</option>
+            @foreach (var item in Enum.GetValues(typeof(LogType)))
+            {
+                <option value="@item">@item</option>
+            }
+        </Select>
+        <button class="col-1 btn btn-primary" @onclick="FindLogs">Find logs</button>
     </div>
     @*List of Logs*@
-    <div class="row border border-info" style="color:white;">
-        <div class="col-auto col-md-2">LogID: 1234</div>
-        <div class="col-auto col-md-2">EntityID: 1234</div>
-        <div class="col-auto col-md-2">Timestamp @DateTime.Now</div>
-        <div class="col-auto col-md-1">Level: info </div>
-        <div class="col-auto col-md-7">Message: this isthe message of the item that should be something about it.</div>
-    </div>
+    @foreach (var item in PubHubLogs)
+    {
+        <div class="row border border-info" style="color:white;">
+            <div>
+                <div class="col-auto col-md-3">LogID: @item.LogID</div>
+                <div class="col-auto col-md-3">EntityID: @item.EntityID</div>
+                <div class="col-auto col-md-3">Timestamp @item.TimeStamp</div>
+                <div class="col-auto col-md-3">Level: @item.LogType </div>
+            </div>
+            <div class="col-auto col-md-12">Message: @item.Message</div>
+        </div>
+    }
 </div>
 
 @code {
     List<PubHubLog> PubHubLogs = new();
 
-    ClaimsPrincipal claimsPrincipal;
+    ClaimsPrincipal claims;
     ApplicationUser user;
 
-    public string MyProperty { get; set; }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        claimsPrincipal = _SignInManager.Context.User;
+    public DateTime InputStarDate { get; set; } = DateTime.MinValue;
+    public DateTime InputEndDate { get; set; } = DateTime.MaxValue;
+    public LogType? InputLogType { get; set; } = null;
+    public string EntityID { get; set; } = "";
 
-        user = await _UserManager.GetUserAsync(claimsPrincipal);
-        await base.OnAfterRenderAsync(firstRender);
+    protected override void OnInitialized()
+    {
+        claims = _SignInManager.Context.User;
+        user = _UserManager.GetUserAsync(claims).Result;
+        base.OnInitialized();
     }
+
     /// <summary>
     /// Finds the logs that match the search
     /// </summary>
@@ -51,7 +67,9 @@
     private async Task FindLogs()
     {
         PubHubLogs = new();
+        var responce = await Service.GetAllLogsOnFilter(claims, Guid.Parse(EntityID), InputStarDate, InputEndDate, InputLogType);
+        PubHubLogs = responce.Data;
 
-
+        StateHasChanged();
     }
 }
