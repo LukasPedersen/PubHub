@@ -1,99 +1,87 @@
 ﻿@page "/SubscriptionList"
+
 @using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using System.Net.Http.Headers
+@using Blazored.LocalStorage
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-4">
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card" style="width: 18rem; background-color:lawngreen; height:300px">
-            <div class="card-header">Subscription name</div>
-            <div class="card-body">
-                <p>1234.56 DKK</p>
-                <p>Start Date</p>
-                <p>End Date</p>
-                <p>Message</p>
-                <button @onclick="() => Subscribe(new())">Subscribe</button>
-                <button @onclick="() => EditSubscription(new())">Edit subscription</button>
-            </div>
-        </div>
-    </div>
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@inject NavigationManager navigationManager
+@inject IPubHubServices services
 
+@rendermode InteractiveServer
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-4 text-dark">
+    @foreach (PubHubSubscription subscription in Subscriptions)
+    {
+        <div class="col">
+            <div class="card" style="width: 18rem; height:270px">
+                <div class="card-header">@subscription.Title</div>
+                <div class="card-body">
+                    <p>@subscription.Price DKK</p>
+                    <p>@subscription.StartDate</p>
+                    <p>@subscription.EndDate</p>
+                    <button class="btn btn-success" @onclick="() => Subscribe(subscription.SubscriptionID)">Abonnerer</button>
+                    <NavLink href=@($"/SubscriptionDetail/{subscription.SubscriptionID}")>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="text-dark" class="bi bi-info-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                        </svg>
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 @code {
     List<PubHubSubscription> Subscriptions = new();//TODO: Get the list onload
 
 
-    /// <summary>
-    /// Subscribe a user to a subscription
-    /// </summary>
-    /// <param name="_book">The book that is to be added to the user</param>
-    /// <returns></returns>
-    private async Task Subscribe(PubHubEBook _book)
+    protected override async Task OnInitializedAsync()
     {
+        ServiceResponse<List<PubHubSubscription>> apiSubscriptionsResult = await services.GetAllSubscriptions() ?? new ServiceResponse<List<PubHubSubscription>>();
+        Subscriptions = apiSubscriptionsResult.Data;
 
+        StateHasChanged();
+    }
+
+    private async Task<bool> IsOwner(Guid _subscriptionID)
+    {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        if (user != null)
+        {
+            ServiceResponse<bool> isOwner = await services.DoesPublisherOwnSubscription(claimsPrincipal, user.Id, _subscriptionID);
+            return isOwner.Data;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Subscripe a user to a subscription
+    /// </summary>
+    /// <param name="_subscriptionID"></param>
+    /// <returns></returns>
+    private async Task Subscribe(Guid _subscriptionID)
+    {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        if (!signInManager.IsSignedIn(claimsPrincipal) || user == null)
+        {
+            navigationManager.NavigateTo("Account/Login?returnUrl=SubscriptionList");
+        }
+
+        if (user != null)
+        {
+            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, _subscriptionID);
+            navigationManager.NavigateTo("#");
+        }
     }
 
     /// <summary>

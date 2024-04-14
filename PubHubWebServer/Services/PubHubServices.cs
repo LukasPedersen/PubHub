@@ -24,6 +24,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.SignalR;
 using System.Globalization;
+using Microsoft.VisualBasic;
 using IronPdf.Editing;
 
 namespace PubHubWebServer.Services
@@ -451,34 +452,28 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_PublisherID">The publisher to be looked at</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllPublishersBooks(ClaimsPrincipal user, Guid _PublisherID)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllPublishersBooks(ClaimsPrincipal user, string _userID)
         {
             try
             {
-                PubHubPublisher publisher = await pubHubDBContext.Publishers.Include(p => p.EBooks).ThenInclude(sp => sp.PubHubEBookEBookID).FirstAsync(p => p.PublisherID == _PublisherID);
-                if (publisher == null)
-                {
-                    return new ServiceResponse<List<PubHubEBook>>
-                    {
-                        ErrorMessage = "Publisher not found"
-                    };
-                }
+                Guid publisherID = await pubHubDBContext.Publishers.Where(p => p.ApplicationUserId == _userID).Select(p => p.PublisherID).FirstAsync();
 
-                List<PubHubEBook> eBooks = new();
-                foreach (PubHubEBookPubHubPublisher item in publisher.EBooks)
-                {
-                    eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
-                }
+                List<Guid> BookIDs = await pubHubDBContext.EBookPublishers.Where(ep => ep.PubHubPublisherPublisherID == publisherID).Select(ep => ep.PubHubEBookEBookID).ToListAsync();
 
+                List<PubHubEBook> books = new();
+                foreach (Guid bookID in BookIDs)
+                {
+                    books.Add(await pubHubDBContext.EBooks.Where(b => b.EBookID == bookID).FirstAsync());
+                }
                 return new ServiceResponse<List<PubHubEBook>>
                 {
-                    Data = eBooks,
+                    Data = books,
                 };
             }
             catch (Exception ex)
             {
-                string message = $"Failed to get Publisher books on publisherID: {_PublisherID}, with the following Error message: " + ex.Message;
-                SaveLog(message, LogType.Error, _PublisherID);//Save log
+                string message = $"Failed to get Publisher books on publisherID: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
                 return new ServiceResponse<List<PubHubEBook>>
                 {
                     ErrorMessage = "Error getting publishers books"
@@ -526,6 +521,28 @@ namespace PubHubWebServer.Services
             {
                 Guid publisherID = await pubHubDBContext.Publishers.Where(p => p.ApplicationUserId == _userID).Select(p => p.PublisherID).FirstAsync();
                 bool isOwner = await pubHubDBContext.EBookPublishers.AnyAsync(bp => bp.PubHubPublisherPublisherID == publisherID && bp.PubHubEBookEBookID == _bookID);
+                return new ServiceResponse<bool>
+                {
+                    Data = isOwner
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get information on the user: {_userID}, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error on tjek if publisher is owner of book"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> DoesPublisherOwnSubscription(ClaimsPrincipal user, string _userID, Guid _SubscriptionID)
+        {
+            try
+            {
+                Guid publisherID = await pubHubDBContext.Publishers.Where(p => p.ApplicationUserId == _userID).Select(p => p.PublisherID).FirstAsync();
+                bool isOwner = await pubHubDBContext.SubscriptionPublishers.AnyAsync(bp => bp.PubHubPublisherPublisherID == publisherID && bp.PubHubSubscriptionSubscriptionID == _SubscriptionID);
                 return new ServiceResponse<bool>
                 {
                     Data = isOwner
@@ -604,28 +621,42 @@ namespace PubHubWebServer.Services
 
         #region Reader Endpoints
 
-        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(ClaimsPrincipal user, Guid _readerID)
+        /// <summary>
+        /// Gets all <see href="PubHubSubscriptions"/> from a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_userID"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(ClaimsPrincipal user, string _userID)
         {
             try
             {
-                PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.ReaderID == _readerID);
-                if (reader == null)
+                if (user is not null && user.Identity.IsAuthenticated)
                 {
+                    List<PubHubSubscription> mySubscriptions = new();
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(r => r.ReaderID).FirstAsync();
+                    List<Guid> subscriptionIDs = await pubHubDBContext.SubscriptionReaders.Where(sr => sr.PubHubReaderReaderID == readerID).Select(sr => sr.PubHubSubscriptionSubscriptionID).ToListAsync();
+
+                    foreach (Guid subscriptionID in subscriptionIDs)
+                    {
+                        mySubscriptions.Add(await pubHubDBContext.Subscriptions.Where(s => s.SubscriptionID == subscriptionID).FirstAsync());
+                    }
+
                     return new ServiceResponse<List<PubHubSubscription>>
                     {
-                        ErrorMessage = "Reader not found"
+                        Data = mySubscriptions,
                     };
                 }
-                List<Guid> subscriptionReaders = reader.Subscriptions.Where(sr => sr.PubHubReaderReaderID == _readerID).Select(s => s.PubHubSubscriptionSubscriptionID).ToList();
+                await SaveLog("Someone who is either not Authenticated or the owner of this book and tired to read it", LogType.Warning);
                 return new ServiceResponse<List<PubHubSubscription>>
                 {
-                    Data = GetMultipleEntitiesByIDs<PubHubSubscription>(subscriptionReaders).Result.Data,
+                    ErrorMessage = "User is either not Authenticated or ownes this book",
                 };
             }
             catch (Exception ex)
             {
-                string message = $"Failed to get Reader Subscription on ReaderID: {_readerID}, with the following Error message: " + ex.Message;
-                SaveLog(message, LogType.Error);//Save log
+                string message = $"Failed to get Reader Subscription on ReaderID: {_userID}, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error, Guid.Parse(_userID));
                 return new ServiceResponse<List<PubHubSubscription>>
                 {
                     ErrorMessage = "Internal server error while trying to get all subscriptions from reader"
@@ -634,38 +665,92 @@ namespace PubHubWebServer.Services
         }
 
         /// <summary>
-        /// Finds all books that a user have bought and have the right to download
+        /// Gets all <see href="PubHubEBook"/> from a users <see href="PubHubSubscription"/>
         /// </summary>
-        /// <param name="_readerID">The GUID of the reader that should be looked up</param>
+        /// <param name="user"></param>
+        /// <param name="_userID"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, Guid _readerID)
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromAllReaderSubscriptions(ClaimsPrincipal user, string _userID)
         {
             try
             {
-                PubHubReader reader = await pubHubDBContext.Readers.Include(p => p.Subscriptions).ThenInclude(sp => sp.PubHubSubscriptionSubscriptionID).FirstAsync(p => p.ReaderID == _readerID);
-                if (reader == null)
+                if (user is not null && user.Identity.IsAuthenticated)
                 {
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(r => r.ReaderID).FirstAsync();
+                    List<PubHubEBook> myBooks = new();
+                    List<Guid> subscriptionIDs = await pubHubDBContext.SubscriptionReaders.Where(br => br.PubHubReaderReaderID == readerID).Select(b => b.PubHubSubscriptionSubscriptionID).ToListAsync();
+                    List<Guid> subscriptionsBooksIDs = new();
+                    foreach (Guid subscriptionID in subscriptionIDs)
+                    {
+                        subscriptionsBooksIDs.Add(await pubHubDBContext.EBookSubscriptions.Where(sr => sr.PubHubSubscriptionSubscriptionID == subscriptionID).Select(b => b.PubHubEBookEBookID).FirstAsync());
+                    }
+
+                    foreach (Guid bookID in subscriptionsBooksIDs)
+                    {
+                        PubHubEBook tempBook = await pubHubDBContext.EBooks.Where(b => b.EBookID == bookID).FirstAsync();
+                        if (!myBooks.Any(b => b.EBookID == tempBook.EBookID))
+                        {
+                            myBooks.Add(tempBook);
+
+                        }
+                    }
                     return new ServiceResponse<List<PubHubEBook>>
                     {
-                        ErrorMessage = "Reader not found"
+                        Data = myBooks
                     };
                 }
-
-                List<PubHubEBook> eBooks = new();
-                foreach (PubHubEBookPubHubReader item in reader.EBooks)
-                {
-                    eBooks.Add(pubHubDBContext.EBooks.Where(x => x.EBookID == item.PubHubEBookEBookID).First());
-                }
-
+                await SaveLog("Someone who is either not Authenticated or the owner of this book and tired to read it", LogType.Warning);
                 return new ServiceResponse<List<PubHubEBook>>
                 {
-                    Data = eBooks
+                    ErrorMessage = "User is either not Authenticated or ownes this book",
                 };
             }
             catch (Exception ex)
             {
-                string message = $"Failed to get Book on a ReaderID: {_readerID}, with the following Error message: " + ex.Message;
-                SaveLog(message, LogType.Error, _readerID);//Save log
+                string message = $"Failed to get Book on a userID: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
+                return new ServiceResponse<List<PubHubEBook>>
+                {
+                    ErrorMessage = "Internal server error while trying to get all Ebooks from reader"
+                };
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Finds all books that a user have bought and have the right to download
+        /// </summary>
+        /// <param name="_readerID">The GUID of the reader that should be looked up</param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, string _userID)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(r => r.ReaderID).FirstAsync();
+
+                    List<Guid> bookIDs = await pubHubDBContext.EBookReaders.Where(br => br.PubHubReaderReaderID == readerID).Select(b => b.PubHubEBookEBookID).ToListAsync();
+                    List<PubHubEBook> myBooks = new();
+                    foreach (Guid bookID in bookIDs)
+                    {
+                        myBooks.Add(await pubHubDBContext.EBooks.Where(b => b.EBookID == bookID).FirstAsync());
+                    }
+                    return new ServiceResponse<List<PubHubEBook>>
+                    {
+                        Data = myBooks
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated or the owner of this book and tired to read it", LogType.Warning);
+                return new ServiceResponse<List<PubHubEBook>>
+                {
+                    ErrorMessage = "User is either not Authenticated or ownes this book",
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get Book on a userID: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error, Guid.Parse(_userID));//Save log
                 return new ServiceResponse<List<PubHubEBook>>
                 {
                     ErrorMessage = "Internal server error while trying to get all Ebooks from reader"
@@ -678,7 +763,7 @@ namespace PubHubWebServer.Services
         /// </summary>
         /// <param name="_userID">The user that should be looked up</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<double>> GetTotalSpendings(ClaimsPrincipal user, Guid _userID)
+        public async Task<ServiceResponse<double>> GetTotalSpendings(ClaimsPrincipal user, string _userID)
         {
             //TODO: Do later
             throw new NotImplementedException();
@@ -693,6 +778,13 @@ namespace PubHubWebServer.Services
             }
         }
 
+        /// <summary>
+        /// Simple check to see if reader owens a <see href="PubHubEBook"/>
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_readerID"></param>
+        /// <param name="_bookID"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<bool>> DoesReaderOwnBook(ClaimsPrincipal user, Guid _readerID, Guid _bookID)
         {
             try
@@ -755,49 +847,38 @@ namespace PubHubWebServer.Services
         /// <param name="_bookID">The EbookID of the book that should be added</param>
         /// <param name="_subscriptionID">The ID of the subscription that the EBook should be added to</param>
         /// <returns></returns>
-        public async Task<ServiceResponse<bool>> AddBookToSubscription(ClaimsPrincipal user, Guid _bookID, Guid _subscriptionID)
+        public async Task<ServiceResponse<bool>> AddBookToSubscription(ClaimsPrincipal user, string _userID, Guid _bookID, Guid _subscriptionID)
         {
             try
             {
-                // Find the subscription by ID
-                PubHubSubscription subscription = await pubHubDBContext.Subscriptions.FindAsync(_subscriptionID);
-                if (subscription == null)
+                Guid readerID = await pubHubDBContext.Publishers.Where(r => r.ApplicationUserId == _userID).Select(r => r.PublisherID).FirstAsync();
+                ServiceResponse<bool> subR = await DoesPublisherOwnSubscription(user, _userID, _subscriptionID);
+                bool ownSub = subR.Data;
+                ServiceResponse<bool> bookR = await DoesPublisherOwnBook(user, _userID, _bookID);
+                bool ownBook = bookR.Data;
+                if (user is not null && user.Identity.IsAuthenticated && ownSub && ownBook)
                 {
+                    var EBookSubscription = new PubHubEBookPubHubSubscription
+                    {
+                        PubHubEBookEBookID = _bookID,
+                        PubHubSubscriptionSubscriptionID = _subscriptionID
+                    };
+
+                    pubHubDBContext.EBookSubscriptions.Add(EBookSubscription);
+
+                    await pubHubDBContext.SaveChangesAsync();
+
                     return new ServiceResponse<bool>
                     {
-                        ErrorMessage = "Subscription not found",
-                        Data = false
+                        Data = true
                     };
                 }
-
-                // Find the book by ID
-                PubHubEBook book = await pubHubDBContext.EBooks.FindAsync(_bookID);
-                if (book == null)
-                {
-                    return new ServiceResponse<bool>
-                    {
-                        ErrorMessage = "Book not found",
-                        Data = false
-                    };
-                }
-
-                // Create a new entry in the join table
-                var joinEntry = new PubHubEBookPubHubSubscription
-                {
-                    PubHubEBookEBookID = book.EBookID,
-                    PubHubSubscriptionSubscriptionID = subscription.SubscriptionID
-                };
-
-                // Add the join entry to the context
-                pubHubDBContext.EBookSubscriptions.Add(joinEntry);
-
-                // Save changes to the database
-                await pubHubDBContext.SaveChangesAsync();
-
+                await SaveLog("Someone who is either not Authenticated or the owner of this book and tired to read it", LogType.Warning);
                 return new ServiceResponse<bool>
                 {
-                    Data = true
+                    ErrorMessage = "User is either not Authenticated or ownes this subscription",
                 };
+                
             }
             catch (Exception ex)
             {
@@ -874,6 +955,163 @@ namespace PubHubWebServer.Services
         }
 
         /// <summary>
+        /// Subscripe a reader to a subscription
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_userID"></param>
+        /// <param name="_SubscriptionID"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<bool>> ReaderSubscripeToBook(ClaimsPrincipal user, string _userID, Guid _SubscriptionID)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(b => b.ReaderID).FirstAsync();
+                    if (await pubHubDBContext.EBookReaders.AnyAsync(er => er.PubHubReaderReaderID == readerID && er.PubHubEBookEBookID == _SubscriptionID))
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            ErrorMessage = "User allready subscriped this subscription so cant subscripe to it again",
+                            Data = false
+                        };
+                    }
+
+                    PubHubSubscriptionPubHubReader subscriptionReader = new PubHubSubscriptionPubHubReader
+                    {
+                        ID = Guid.NewGuid(),
+                        PubHubReaderReaderID = readerID,
+                        PubHubSubscriptionSubscriptionID = _SubscriptionID
+                    };
+
+                    await AddSingleEntity<PubHubSubscriptionPubHubReader>(subscriptionReader);
+                    await SaveBookReceipt(readerID, _SubscriptionID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is not loged in and therefor cant buy a book",
+                    Data = false
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to subscripte to: {_SubscriptionID} for user: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
+            }
+        }
+
+        /// <summary>
+        /// Get the subscription with the given ID
+        /// </summary>
+        /// <param name="_subscriptionID"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<PubHubSubscription>> GetSubscriptionByID(Guid _subscriptionID)
+        {
+            try
+            {
+                return new ServiceResponse<PubHubSubscription>
+                {
+                    //Finds the books
+                    Data = await pubHubDBContext.Subscriptions.Where(b => b.SubscriptionID == _subscriptionID).FirstAsync()
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to get book by ID, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<PubHubSubscription>
+                {
+                    ErrorMessage = "Error while getting book by ID"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateSubscription(ClaimsPrincipal user, string _publisherID, PubHubSubscription _subscription)
+        {
+            try
+            {
+                ServiceResponse<bool> serviceResponse = await DoesPublisherOwnSubscription(user, _publisherID, _subscription.SubscriptionID);
+                if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
+                {
+                    await UpdateEntity<PubHubSubscription>(_subscription);
+                    await SaveLog($"This subscription has been updated by Publisher:{_publisherID}", LogType.Information, _subscription.SubscriptionID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated, A Publisher or the owner of this subscription tired to update it", LogType.Warning);
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Publisher or the owner of this subscription",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to update subscription: {_subscription.SubscriptionID}, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error while updating subscription",
+                    Data = false
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UnSubFromSubscription(ClaimsPrincipal user, string _userID, Guid _subscriptioID)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(b => b.ReaderID).FirstAsync();
+                    if (!await pubHubDBContext.SubscriptionReaders.AnyAsync(er => er.PubHubReaderReaderID == readerID && er.PubHubSubscriptionSubscriptionID == _subscriptioID))
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            ErrorMessage = "User is not subscripted to this subscription so cant unsub",
+                            Data = false
+                        };
+                    }
+                    PubHubSubscriptionPubHubReader subscriptionReader = await pubHubDBContext.SubscriptionReaders.Where(s => s.PubHubSubscriptionSubscriptionID == _subscriptioID).FirstAsync();
+                    await DeleteEntity<PubHubSubscriptionPubHubReader>(subscriptionReader);
+                    await SaveLog($"User:{_userID} has unsubed to subscription:{_subscriptioID}", LogType.Error);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is not loged in and therefor cant buy a book",
+                    Data = false
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to subscripte to: {_subscriptioID} for user: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
+            }
+        }
+
+        /// <summary>
         /// Gets all the books on a given subscription
         /// </summary>
         /// <param name="_subscriptionID">The subscriptonID of the subscription that should retrive all books</param>
@@ -898,9 +1136,16 @@ namespace PubHubWebServer.Services
                     .Select(es => es.PubHubEBookEBookID)
                     .ToListAsync();
 
+                List<PubHubEBook> books = new();
+
+                foreach (Guid bookID in bookIDs)
+                {
+                    books.Add(await pubHubDBContext.EBooks.Where(b  => b.EBookID == bookID).FirstAsync());
+                }
+
                 return new ServiceResponse<List<PubHubEBook>>
                 {
-                    Data = GetMultipleEntitiesByIDs<PubHubEBook>(bookIDs).Result.Data
+                    Data = books
                 };
             }
             catch (Exception ex)
@@ -967,6 +1212,29 @@ namespace PubHubWebServer.Services
                 return new ServiceResponse<List<PubHubSubscription>>
                 {
                     ErrorMessage = "Error while getting top subscription. Message" + ex.Message
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptions()
+        {
+            try
+            {
+                List<PubHubSubscription> subscriptions = await pubHubDBContext.Subscriptions.ToListAsync();
+
+                return new ServiceResponse<List<PubHubSubscription>>
+                {
+                    Data = subscriptions
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to get all subscriptions, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<List<PubHubSubscription>>
+                {
+                    ErrorMessage = "Error Getting all subscriptions",
                 };
             }
         }
@@ -1105,6 +1373,13 @@ namespace PubHubWebServer.Services
                 };
             }
         }
+
+        /// <summary>
+        /// Get a book by its ID
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<PubHubEBook>> GetBookByID(ClaimsPrincipal user, Guid ID)
         {
             try
@@ -1117,11 +1392,11 @@ namespace PubHubWebServer.Services
             }
             catch (Exception ex)
             {
-                string message = "Failed to get top books, with the following Error message: " + ex.Message;
+                string message = "Failed to get book by ID, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
                 return new ServiceResponse<PubHubEBook>
                 {
-                    ErrorMessage = "Error while getting top books"
+                    ErrorMessage = "Error while getting book by ID"
                 };
             }
         }
@@ -1276,6 +1551,12 @@ namespace PubHubWebServer.Services
             }
         }
 
+        /// <summary>
+        /// Get all <see href="PubHubSubscriptions"/> from book with id <paramref name="_bookID"/>
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="_bookID"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(ClaimsPrincipal user, Guid _bookID)
         {
             try

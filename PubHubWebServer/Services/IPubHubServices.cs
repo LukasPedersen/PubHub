@@ -46,38 +46,53 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubSubscription>>> GetAllPublishersSubscriptions(ClaimsPrincipal user, Guid _readerID);
 
-        public Task<ServiceResponse<List<PubHubEBook>>> GetAllPublishersBooks(ClaimsPrincipal user, Guid _readerID);
+        public Task<ServiceResponse<List<PubHubEBook>>> GetAllPublishersBooks(ClaimsPrincipal user, string _userID);
 
         public Task<ServiceResponse<double>> GetTotalEarnings(ClaimsPrincipal user, Guid _userID);
 
         public Task<ServiceResponse<bool>> DoesPublisherOwnBook(ClaimsPrincipal user, string _publisherID, Guid _bookID);
 
+        public Task<ServiceResponse<bool>> DoesPublisherOwnSubscription(ClaimsPrincipal user, string _userID, Guid _SubscriptionID);
+      
         public Task<ServiceResponse<bool>> CreateBook(ClaimsPrincipal user, string _userID, PubHubEBook Thebook);
+      
         #endregion
 
         #region Reader Endpoints
 
-        public Task<ServiceResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(ClaimsPrincipal user, Guid _readerID);
+        public Task<ServiceResponse<List<PubHubSubscription>>> GetAllReadersSubscriptions(ClaimsPrincipal user, string _userID);
 
-        public Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, Guid _readerID);
+        public Task<ServiceResponse<bool>> UnSubFromSubscription(ClaimsPrincipal user, string _userID, Guid _subscriptioID);
 
-        public Task<ServiceResponse<double>> GetTotalSpendings(ClaimsPrincipal user, Guid _userID);
+        public Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromAllReaderSubscriptions(ClaimsPrincipal user, string _userID);
+
+        public Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, string _userID);
+
+        public Task<ServiceResponse<double>> GetTotalSpendings(ClaimsPrincipal user, string _userID);
 
         #endregion
 
         #region Subscription Endpoints
 
-        public Task<ServiceResponse<bool>> AddBookToSubscription(ClaimsPrincipal user, Guid _bookID, Guid _subscriptionID);
+        public Task<ServiceResponse<bool>> AddBookToSubscription(ClaimsPrincipal user, string _userID, Guid _bookID, Guid _subscriptionID);
 
         public Task<ServiceResponse<bool>> RemoveBookFromSubscription(ClaimsPrincipal user, Guid _bookID, Guid _subscriptionID);
+
+        public Task<ServiceResponse<bool>> ReaderSubscripeToBook(ClaimsPrincipal user, string _userID, Guid _SubscriptionID);
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromSubscription(ClaimsPrincipal user, Guid _subscriptionID);
 
         public Task<ServiceResponse<List<PubHubSubscription>>> GetSubscriptionByFilter(ClaimsPrincipal user, DateTime startDate, DateTime endDate, string _title = "", int _skip = 0, int _take = 10);
 
+        public Task<ServiceResponse<PubHubSubscription>> GetSubscriptionByID(Guid _subscriptionID);
+
         public Task<ServiceResponse<double>> GetTotalErningsFromSubscription(ClaimsPrincipal user, Guid _subscriptionID);
 
+        public Task<ServiceResponse<bool>> UpdateSubscription(ClaimsPrincipal user, string _publisherID, PubHubSubscription _subscription);
+
         public Task<ServiceResponse<List<PubHubSubscription>>> GetTopSubscriptions(int _amount, Guid? _publiser = null);
+
+        public Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptions();
 
         public Task<ServiceResponse<List<PubHubSubscription>>> GetAllSubscriptionsWithBook(ClaimsPrincipal user, Guid _bookID);
 

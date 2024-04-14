@@ -19,7 +19,7 @@
 
 <PageTitle>Home</PageTitle>
 <div class="w-100 text" style="text-align: center;">
-    <h1>Top 10 bøger</h1>
+    <h1>Anbefalede bøger</h1>
 </div>
 <div class="row flex-wrap">
     <div class="col-auto">
@@ -55,45 +55,14 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-6 p-1 w-100">
-        
-    </div>
-    
-</div>
-<div class="w-100 text" style="text-align: center;">
-    <h1>Top 10 abonnementer</h1>
-</div>
-<div class="row">
-    <div class="col-6 p-1" style="height:100%; min-height:50px; background-color:green">
-        @foreach (PubHubSubscription subscription in _topSubscriptions)
-        {
-            <div class="card" style="width: 18rem;">
-                <div class="card-img-overlay">
-                    <h5 class="card-title">@subscription.Title</h5>@*Title*@
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>@*Content*@
-                    <div class="row">
-                        <a href="#" class="btn btn-primary col-6">Go somewhere</a>
-                        <a href="#" class="btn btn-primary col-6">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
-
 
 @code {
     // The list of books
     public List<PubHubEBook> _topBooks { get; set; } = new List<PubHubEBook>();
-    public List<PubHubSubscription> _topSubscriptions { get; set; } = new List<PubHubSubscription>();
 
     protected override async Task OnInitializedAsync()
     {
         ServiceResponse<List<PubHubEBook>> apiBookResult = await services.GetTopBooks(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
-
-        ServiceResponse<List<PubHubSubscription>> apiSubscriptionResult = await services.GetTopSubscriptions(10) ?? new ServiceResponse<List<PubHubSubscription>>();
-        _topSubscriptions = apiSubscriptionResult.Data ?? new List<PubHubSubscription>();
     }
 }

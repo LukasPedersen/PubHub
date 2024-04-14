@@ -78,7 +78,11 @@
                                                     @foreach (PubHubSubscription subscription in subscriptions)
                                                     {
                                                         <tr>
-                                                            <th scope="row">@subscription.Title</th>
+                                                            <th scope="row">
+                                                                <NavLink class="nav-link p-0 m-auto" href="@($"/SubscriptionDetail/{subscription.SubscriptionID}")">
+                                                                    @subscription.Title
+                                                                </NavLink>
+                                                            </th>
                                                             <td>@subscription.Message</td>
                                                             <td>@subscription.StartDate</td>
                                                             <td>@subscription.EndDate</td>
@@ -153,7 +157,11 @@
                                                 @foreach (PubHubSubscription subscription in subscriptions)
                                                 {
                                                     <tr>
-                                                        <th scope="row">@subscription.Title</th>
+                                                        <th scope="row">
+                                                            <NavLink class="nav-link p-0 m-auto" href="@($"/SubscriptionDetail/{subscription.SubscriptionID}")">
+                                                                @subscription.Title
+                                                            </NavLink>
+                                                        </th>
                                                         <td>@subscription.Message</td>
                                                         <td>@subscription.StartDate</td>
                                                         <td>@subscription.EndDate</td>
@@ -215,7 +223,11 @@
                                         @foreach (PubHubSubscription subscription in subscriptions)
                                         {
                                             <tr>
-                                                <th scope="row">@subscription.Title</th>
+                                                <th scope="row">
+                                                    <NavLink class="nav-link p-0 m-auto" href="@($"/SubscriptionDetail/{subscription.SubscriptionID}")">
+                                                        @subscription.Title
+                                                    </NavLink>
+                                                </th>
                                                 <td>@subscription.Message</td>
                                                 <td>@subscription.StartDate</td>
                                                 <td>@subscription.EndDate</td>
