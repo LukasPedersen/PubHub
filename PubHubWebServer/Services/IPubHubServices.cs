@@ -52,6 +52,7 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<bool>> DoesPublisherOwnBook(ClaimsPrincipal user, string _publisherID, Guid _bookID);
 
+        public Task<ServiceResponse<bool>> CreateBook(ClaimsPrincipal user, string _userID, PubHubEBook Thebook);
         #endregion
 
         #region Reader Endpoints
@@ -107,7 +108,7 @@ namespace PubHubWebServer.Services
         public Task<ServiceResponse<bool>> UpdateBookImage(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file);
         public Task<ServiceResponse<bool>> UpdateBookFile(ClaimsPrincipal user, string _publisherID, Guid _bookID, IBrowserFile _file);
 
-
+        public Task<ServiceResponse<List<PdfDocument>>> GetBookPages(ClaimsPrincipal user, int _FirstPage, int _SecondPage, Guid _bookid);
         //public Task<ApiResponse<List<byte[]>>> GetBookImage(string _path);
         public Task<ServiceResponse<int>> GetAmountOfSubscriberOnBook(ClaimsPrincipal user, Guid _BookID);
 

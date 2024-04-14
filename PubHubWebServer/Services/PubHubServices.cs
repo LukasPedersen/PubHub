@@ -24,6 +24,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.SignalR;
 using System.Globalization;
+using IronPdf.Editing;
 
 namespace PubHubWebServer.Services
 {
@@ -56,7 +57,7 @@ namespace PubHubWebServer.Services
                     };
                 }
                 await pubHubDBContext.AddAsync(_entity);
-                pubHubDBContext.SaveChangesAsync();
+                await pubHubDBContext.SaveChangesAsync();
                 return new ServiceResponse<bool>
                 {
                     Data = true
@@ -554,6 +555,49 @@ namespace PubHubWebServer.Services
                 };
             }
             return null;
+        }
+
+        public async Task<ServiceResponse<bool>> CreateBook(ClaimsPrincipal user, string _userID, PubHubEBook Thebook)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid PublisherID = await pubHubDBContext.Publishers.Where(r => r.ApplicationUserId == _userID).Select(b => b.PublisherID).FirstAsync();
+                    
+
+                    PubHubEBookPubHubPublisher EBookPublisher = new PubHubEBookPubHubPublisher
+                    {
+                        ID = Guid.NewGuid(),
+                        PubHubPublisherPublisherID = PublisherID,
+                        PubHubEBookEBookID = Thebook.EBookID
+                    };
+                    await AddSingleEntity< PubHubEBook>(Thebook);
+
+                    await AddSingleEntity<PubHubEBookPubHubPublisher>(EBookPublisher);
+
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is not loged in and therefor cant buy a book",
+                    Data = false
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to Create book: {Thebook.EBookID} for user: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
+            }
         }
 
         #endregion
@@ -1307,14 +1351,22 @@ namespace PubHubWebServer.Services
                 if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
                 {
                     PubHubEBook book = await pubHubDBContext.EBooks.Where(b => b.EBookID == _bookID).FirstAsync();
-
-                    File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{_file.Name}");
-                    File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg");
+                    
+                        File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{_file.Name}");
+                        File.Delete($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg");
+                  
 
                     string newFilePath = _file.Name;
                     newFilePath = newFilePath.Remove((newFilePath.Length - 4));
+                    try
+                    {
+                        File.Move($"../PubHubWebServer/EBooks/{book.FilePath}.pdf", $"../PubHubWebServer/EBooks/{newFilePath}.pdf");
 
-                    File.Move($"../PubHubWebServer/EBooks/{book.FilePath}.pdf", $"../PubHubWebServer/EBooks/{newFilePath}.pdf");
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
 
                     book.FilePath = newFilePath;
 
@@ -1356,14 +1408,28 @@ namespace PubHubWebServer.Services
                 if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
                 {
                     PubHubEBook book = await pubHubDBContext.EBooks.Where(b => b.EBookID == _bookID).FirstAsync();
-
-                    File.Delete($"../PubHubWebServer/EBooks/{_file.Name}");
-                    File.Delete($"../PubHubWebServer/EBooks/{book.FilePath}.pdf");
+                    try
+                    {
+                        File.Delete($"../PubHubWebServer/EBooks/{_file.Name}");
+                        File.Delete($"../PubHubWebServer/EBooks/{book.FilePath}.pdf");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
 
                     string newFilePath = _file.Name;
                     newFilePath = newFilePath.Remove((newFilePath.Length - 4));
 
-                    File.Move($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg", $"../PubHubWebServer/wwwroot/images/BookCovers/{newFilePath}.jpg");
+                    try
+                    {
+                        File.Move($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg", $"../PubHubWebServer/wwwroot/images/BookCovers/{newFilePath}.jpg");
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
 
                     book.FilePath = newFilePath;
 
@@ -1421,28 +1487,40 @@ namespace PubHubWebServer.Services
             }
         }
 
-        public async Task<ServiceResponse<IBrowserFile>> GetBookPages(ClaimsPrincipal user, int from, int to, Guid bookid)
+        public async Task<ServiceResponse<List<PdfDocument>>> GetBookPages(ClaimsPrincipal user, int _FirstPage, int _SecondPage, Guid _bookid)
         {
             try
             {
 
+                PubHubEBook book = pubHubDBContext.EBooks
+                    .First(x => x.EBookID == _bookid);
+                List<PdfDocument> result = new();
 
-                return new ServiceResponse<IBrowserFile>
+                PdfDocument pdf = new PdfDocument($"../PubHubWebServer/EBooks/{book.FilePath}.pdf");
+
+                PdfDocument first = pdf.CopyPage(_FirstPage);
+                first.ApplyWatermark("<H1>Pubhub INC<h1>",50,VerticalAlignment.Bottom,HorizontalAlignment.Right);
+                result.Add(first);
+                PdfDocument second = pdf.CopyPage(_SecondPage);
+                second.ApplyWatermark("<H1>Pubhub INC<h1>", 50, VerticalAlignment.Bottom, HorizontalAlignment.Right);
+                result.Add(second);
+
+                return new ServiceResponse<List<PdfDocument>>
                 {
-                    Data = null
+                    Data = result
+
                 };
             }
             catch (Exception ex)
             {
                 string message = "Failed to get Top subscriptions, with the following Error message: " + ex.Message;
                 SaveLog(message, LogType.Error);//Save log
-                return new ServiceResponse<IBrowserFile>
+                return new ServiceResponse<List<PdfDocument>>
                 {
                     ErrorMessage = "Error while getting top subscription. Message" + ex.Message
                 };
             }
         }
-
         #endregion
 
         #region Logs Endpoints

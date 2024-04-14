@@ -87,7 +87,8 @@ namespace PubHubWebServer
 
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();
-
+            //IRON PDF Free License KEY
+            License.LicenseKey = "IRONSUITE.JENSNEERGAARD.HOTMAIL.COM.26630-85752B27F8-BAL5DW3-TWGHGKOQEP7A-TI6O53WFPWQ5-M4E3K6XUNHUH-SRMTWV5GFC5K-2PB4LXGAYKGS-LO4N4OFUWEEL-M4OYJD-TFSZ3JBS65WMEA-DEPLOYMENT.TRIAL-NO3QE4.TRIAL.EXPIRES.14.MAY.2024";
             app.Run();
         }
     }
