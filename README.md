@@ -8,19 +8,16 @@
     <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/8d04f225-243b-415d-8749-9b0067861de4" alt="Logo" width="420" height="250">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">PubHub Readme</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Online library
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/LukasPedersen/PubHub/tree/Development">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/LukasPedersen/PubHub/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/LukasPedersen/PubHub/issues">Request Feature</a>
   </p>
 </div>
 
@@ -288,9 +285,9 @@ See the [open issues](https://github.com/LukasPedersen/PubHub/issues) for a full
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Your Name - [Lukas Pedersen](https://github.com/LukasPedersen) - lukas3302@hotmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [Jens Anker](https://github.com/ColdSwordX)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -302,7 +299,6 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 Here is a list of resources we found helpful and would like to give credit to.
 
 
-* [GitHub Pages](https://pages.github.com)
 * [Font Awesome](https://fontawesome.com)
 * [BootStrap icons](https://icons.getbootstrap.com/?q=log#install)
 
