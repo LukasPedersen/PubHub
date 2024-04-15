@@ -55,7 +55,9 @@ namespace PubHubWebServer.Services
         public Task<ServiceResponse<bool>> DoesPublisherOwnSubscription(ClaimsPrincipal user, string _userID, Guid _SubscriptionID);
       
         public Task<ServiceResponse<bool>> CreateBook(ClaimsPrincipal user, string _userID, PubHubEBook Thebook);
-      
+
+        public Task<ServiceResponse<bool>> CreateSubscription(ClaimsPrincipal user, string _userID, PubHubSubscription subscription);
+
         #endregion
 
         #region Reader Endpoints

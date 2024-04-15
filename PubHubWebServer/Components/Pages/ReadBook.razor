@@ -17,12 +17,13 @@
 
 
 
-<div class="d-flex h-100">
+<div class="row d-flex h-100">
     @*Odd page*@
-    <div class="col-6 h-100 p-1 bg-white">
-        <button class=" float-start" style="background-color:blue; height:100%; width:50px;" @onclick="() => GetData(AtPage - 2)">
+    <div class="col-auto col-md-6 bg-white">
+        <button class="float-start btn bg-light bg-gradient h-100 text-dark" @onclick="() => GetData(AtPage - 2)">
+            &#60;
         </button>
-        <div class="w-100 h-100 align-content-center">
+        <div class="align-content-center">
             @if (_pdfBitmaps.Count > 0)
             {
                 @((MarkupString)_pdfBitmaps[0])
@@ -31,9 +32,10 @@
     </div>
 
     @*Even page*@
-    <div class="col-6 h-100 p-1 bg-white">
+    <div class="col-auto col-md-6 bg-white">
 
-        <button class=" float-end" style="background-color:blue; height:100%; width:50px;" @onclick="() => GetData(AtPage + 2)">
+        <button class="float-end btn bg-light bg-gradient h-100 text-dark" @onclick="() => GetData(AtPage + 2)">
+            &#62;
         </button>
         <div class="align-content-center">
             @if (_pdfBitmaps.Count > 0)
@@ -93,9 +95,12 @@
             var result = await _Service.GetBookPages(claimsPrincipal, fromPage, fromPage + 1, ID);
 
             _pdfBitmaps.Clear();
-            foreach (PdfDocument item in result.Data)
+            if (result.Data != null)
             {
-                _pdfBitmaps.Add(item.ToHtmlString());
+                foreach (PdfDocument item in result.Data)
+                {
+                    _pdfBitmaps.Add(item.ToHtmlString());
+                }
             }
 
             AtPage = fromPage;

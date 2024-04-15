@@ -1273,6 +1273,49 @@ namespace PubHubWebServer.Services
             }
         }
 
+        public async Task<ServiceResponse<bool>> CreateSubscription(ClaimsPrincipal user, string _userID, PubHubSubscription subscription)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid PublisherID = await pubHubDBContext.Publishers.Where(r => r.ApplicationUserId == _userID).Select(b => b.PublisherID).FirstAsync();
+
+
+                    PubHubSupscriptionPubHubPublisher EBookPublisher = new PubHubSupscriptionPubHubPublisher
+                    {
+                        ID = Guid.NewGuid(),
+                        PubHubPublisherPublisherID = PublisherID,
+                        PubHubSubscriptionSubscriptionID = subscription.SubscriptionID
+                    };
+                    await AddSingleEntity<PubHubSubscription>(subscription);
+
+                    await AddSingleEntity<PubHubSupscriptionPubHubPublisher>(EBookPublisher);
+
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is not loged in and therefor cant create subscription",
+                    Data = false
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to Create subscription: {subscription.SubscriptionID} for user: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
+            }
+        }
+
         #endregion
 
         #region Ebook Endpoints
