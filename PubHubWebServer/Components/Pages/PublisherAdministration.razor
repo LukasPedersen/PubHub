@@ -133,7 +133,7 @@
                 </div>
             }
             <div class="pull-right bottom-right">
-                <a class="btn border btn-primary" href="/BookDetail">
+                <a class="btn border btn-primary" href="/BookDetail/@Guid.Empty">
                     New Book
                 </a>
             </div>
@@ -225,9 +225,8 @@
             }
         }
 
-        StateHasChanged();
 
-        ServiceResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 5, user.MyPubHubAccount);
+        ServiceResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 50, user.MyPubHubAccount);
         Ebooks = apiBooks.Data;
 
         ServiceResponse<double> ApiTopFromBook = await Service.GetTotalFromAcquired(Ebooks.OrderByDescending(x => x.DownloadCount).First().EBookID);
@@ -246,6 +245,7 @@
                 TotalSubsOnBooks = SubsfromBook.Data;
             }
         }
+        StateHasChanged();
     }
 
     /// <summary>

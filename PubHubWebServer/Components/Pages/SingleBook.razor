@@ -1,5 +1,6 @@
 ﻿@page "/BookDetail/{id:guid}"
 
+@using PubHubWebServer.Data.Models.Relationships
 @using PubHubWebServer.Data.Models
 @using PubHubWebServer.Services
 @using Microsoft.AspNetCore.Authentication
@@ -99,11 +100,22 @@
                                     }
                                 </div>
                                 <div class="row" style="">
+                                    @{
+                                        if (ID != Guid.Empty)
+                                        {
+                                            <div class="col-auto">
+                                                <button @onclick="SaveChanges" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-auto">
+                                                <button @onclick="CreateBook" class="btn btn-primary">New bog</button>
+                                            </div>
+                                        }
+                                    }
                                     <div class="col-auto">
-                                        <button @onclick="SaveChanges" class="btn btn-primary">Save changes</button>
-                                    </div>
-                                    <div class="col-auto">
-                                        <InputFile OnChange="UpdateFrontPage" multiple/>
+                                        <InputFile OnChange="UpdateFrontPage" multiple />
                                     </div>
                                     <div class="col-auto">
                                         <InputFile OnChange="UpdateBook" multiple />
@@ -178,7 +190,7 @@
                     </div>
                 }
             }
-            
+
         </Authorized>
         <NotAuthorized>
             <div class="row position-relative" style="width: 90%; margin: auto;">
@@ -244,7 +256,7 @@
             </div>
         </NotAuthorized>
     </AuthorizeView>
-    
+    <a href="/Book/Read/@EBook.EBookID">Read Book</a>
 }
 
 
@@ -270,8 +282,6 @@
             ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnBook(claimsPrincipal, user.Id, EBook.EBookID) ?? new ServiceResponse<bool>();
             Owner = apiOwnerResult.Data;
 
-            // ServiceResponse<bool> apiOwnedResult = await services.DoesReaderOwnBook(claimsPrincipal, user.Id, EBook.EBookID) ?? new ServiceResponse<bool>();
-            // OwnedByMe = apiOwnedResult.Data;
         }
 
         if (EBook != null)
@@ -279,8 +289,29 @@
             ServiceResponse<List<PubHubSubscription>> apiSubResult = await services.GetAllSubscriptionsWithBook(claimsPrincipal, EBook.EBookID) ?? new ServiceResponse<List<PubHubSubscription>>();
             subscriptions = apiSubResult.Data;
         }
+        else
+        {
+            EBook = new();
+            Owner = true;
+        }
 
         StateHasChanged();
+    }
+
+    private async Task CreateBook()
+    {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
+        EBook.EBookID = Guid.NewGuid();
+        EBook.FilePath = EBook.Title.Replace(" ", "-");
+
+        ServiceResponse<bool> success = await services.CreateBook(claimsPrincipal,user.Id, EBook);
+
+        if (success.Data)
+        {
+            navigationManager.NavigateTo("#");
+        }
     }
 
     private async Task SaveChanges()
@@ -292,14 +323,13 @@
         if (success.Data)
         {
             navigationManager.NavigateTo("#");
-        } 
+        }
     }
 
     private async Task UpdateFrontPage(InputFileChangeEventArgs e)
     {
         var claimsPrincipal = signInManager.Context.User;
         ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
-
 
 
         try
