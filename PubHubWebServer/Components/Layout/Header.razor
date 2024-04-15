@@ -20,9 +20,19 @@
                                                 <button class="headerDropDownBtn dropdown-toggle" type="button" id="dropdownHeader" data-bs-toggle="dropdown" aria-expanded="false">
                                                 </button>
                                                 <ul class="dropdown-menu headerDropDownMenue" aria-labelledby="dropdownHeader">
+                                                    <AuthorizeView Roles="Publisher">
+                                                        <Authorized>
+                                                            <li><a class="dropdown-item headerDropdown-item" href="publisheradministration">Forlag side</a></li>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                    <AuthorizeView Roles="Reader">
+                                                        <li><a class="dropdown-item headerDropdown-item" href="ReaderPage">Læsere Side</a></li>
+                                                    </AuthorizeView>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <li><a class="dropdown-item headerDropdown-item" href="adminpage">Admin side</a></li>
+                                                    </AuthorizeView>
                                                     <li><a class="dropdown-item headerDropdown-item" href="booklist">Find bøger</a></li>
-                                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                                    <li><a class="dropdown-item headerDropdown-item" href="subscriptionList">Find abonnementer</a></li>
                                                 </ul>
                                             </div>
                                         </div>

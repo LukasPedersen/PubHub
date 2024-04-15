@@ -1,25 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Mono.TextTemplating;
 using PubHubWebServer.Data;
 using PubHubWebServer.Data.Models;
 using PubHubWebServer.Data.Models.Relationships;
-using IronPdf;
-using IronSoftware.Drawing;
-
-
-//using YamlDotNet.Core.Tokens;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Security.Policy;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.SignalR;
