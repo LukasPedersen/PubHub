@@ -1,37 +1,11 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/LukasPedersen/PubHub">
+    <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/8d04f225-243b-415d-8749-9b0067861de4" alt="Logo" width="420" height="250">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
@@ -84,18 +58,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+Der bliver udgivet flere og flere e-bøger, så der skal oprettes et system der kan håndtere dette. Hidtil har forlagene selv stået for at distribuere bøgerne, men nu ønsker man en løsning hvor forlag har mulighed for at kunne administrere deres indhold, som kunderne let kan tilgå, samt på længere sigt streaming af podcasts. Denne hub skal samtidigt generere statistik og afregning af indholdsleverandørerne, så det bliver lettere for dem at holde styr på deres oversigt og lettere at distribuere deres indhold.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -105,14 +69,11 @@ Use the `BLANK_README.md` to get started.
 
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [ASP.Net Core](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0)
+* [Blazor Server in .NET 8](https://learn.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-8.0)
+* [C#](https://learn.microsoft.com/en-us/dotnet/csharp/)
+* [Identity](https://learn.microsoft.com/en-us/entra/identity-platform/)
+* [Bootstrap](https://getbootstrap.com)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -166,18 +127,70 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 
 <!-- ROADMAP -->
-## Roadmap
+## Functionality Roadmap
+<details>
+  <summary>Roadmap</summary>   
+  
+### Reader Roadmap  
+---  
+  
+- [ ] Reader functionality
+  - [ ] Subscriptions
+    - [ ] Create Custom subscriptions
+    - [ ] View Custom subscriptions
+    - [ ] Edit Custom subscriptions
+    - [ ] Delete Custom subscriptions
+    - [X] Subscribe to subscriptions
+    - [x] View subscribed subscriptions
+    - [X] Unsubscribe from subscriptions
+  - [x] Ebooks
+    - [x] Buy Ebook
+    - [x] Download Ebook
+    - [x] Read Ebook online
+  - [x] Management
+    - [x] Overview over owend Ebooks
+    - [x] Overview over owend Subscriptions
+    - [x] Overview over Ebooks from Subscriptions
+  - [x] Profile Management
+    - [x] Update Email
+    - [x] Update Password
+    - [x] 2FA Management
+    - [x] Delete profile
+### Publisher Roadmap  
+---  
+- [x] Publisher functionality
+  - [ ] Subscriptions
+    - [ ] Create Subscriptions
+    - [x] View Subscriptions
+    - [x] Edit Subscriptions
+    - [x] Add Ebook to Subscriptions
+    - [x] Remove Ebook from Subscriptions
+  - [x] Ebooks
+    - [x] Create Ebooks
+    - [x] Edit Ebooks
+    - [x] View Ebooks
+    - [x] Deactivate Ebooks
+  - [x] Management
+    - [x] Overview over owend Ebooks
+    - [x] Overview over owend Subscriptions
+    - [x] Overview over Ebooks from Subscriptions
+    - [x] Overview over statistics
+  - [x] Profile Management
+    - [x] Update Email
+    - [x] Update Password
+    - [x] 2FA Management
+    - [x] Delete profile
+### Publisher Roadmap  
+---  
+- [ ] Admin functionality
+  - [x] Overview over logs
+  - [x] Overview over receipts
+  - [x] Overview over users
+  - [x] Creation of publishers
+  - [x] Creation of admins
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
-
+See the [open issues](https://github.com/LukasPedersen/PubHub/issues) for a full list of proposed features (and known issues).
+</details>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- API Endpoints documentation -->
