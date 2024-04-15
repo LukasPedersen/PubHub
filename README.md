@@ -196,75 +196,103 @@ See the [open issues](https://github.com/LukasPedersen/PubHub/issues) for a full
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- API Endpoints documentation -->
-## API documentation
+## Services documentation
 <details>
-  <summary>Api Endpoints</summary>
-  ### Generic EndPoints
+  <summary>Services Endpoints</summary>   
+     
+  ### Generic Services   
   
-  | Endpoint                   | Parameters              | Returns                  | Description                                  |
-  |----------------------------|-------------------------|--------------------------|----------------------------------------------|
-  | AddSingleEntity\<T>        | _entity: T              | ApiResponse\<string>     | Adds a single entity to the database.        |
-  | AddMultipleEntities\<T>    | _entities: T            | ApiResponse\<string>     | Adds multiple entities to the database.      |
-  | UpdateEntity\<T>           | _entity: T              | ApiResponse\<string>     | Updates a single entity in the database.     |
-  | UpdateMultipleEntities\<T> | _entities: T            | ApiResponse\<string>     | Updates multiple entities in the database.   |
-  | GetEntityByID\<T>          | _entityID: Guid         | ApiResponse\<T>          | Retrieves an entity by its ID.               |
-  | DeleteEntity\<T>           | _entity: T              | ApiResponse\<string>     | Deletes a single entity from the database.   |
-  | DeleteMultipleEntities\<T> | _entity: T              | ApiResponse\<string>     | Deletes multiple entities from the database. |
+| Service                                   | Parameters                                  | Returns                                 | Description                                             |
+|-------------------------------------------|---------------------------------------------|-----------------------------------------|---------------------------------------------------------|
+| AddSingleEntity<T>(_entity)               | _entity: T                                  | Task\<ServiceResponse\<bool>>            | Adds a single entity to the database.                   |
+| AddMultipleEntities<T>(_entities)         | _entities: List\<T>                          | Task\<ServiceResponse\<bool>>            | Adds multiple entities to the database.                 |
+| UpdateEntity<T>(_entity)                  | _entity: T                                  | Task\<ServiceResponse\<bool>>            | Updates a single entity in the database.                |
+| UpdateMultipleEntities<T>(_entities)      | _entities: List\<T>                          | Task\<ServiceResponse\<bool>>            | Updates multiple entities in the database.              |
+| GetEntityByID<T>(_entityID)              | _entityID: Guid                             | Task\<ServiceResponse\<T>>               | Retrieves an entity by its ID from the database.        |
+| GetMultipleEntitiesByIDs<T>(_entityID)   | _entityID: List\<Guid>                       | Task\<ServiceResponse\<List<T>>>          | Retrieves multiple entities by their IDs.              |
+| DeleteEntity<T>(_entity)                 | _entity: T                                  | Task\<ServiceResponse\<bool>>            | Deletes a single entity from the database.             |
+| DeleteMultipleEntities<T>(_entity)       | _entity: List\<T>                            | Task\<ServiceResponse\<bool>>            | Deletes multiple entities from the database.           |
   
-  ### User Endpoints
+  ### User Services
   
-  | Endpoint           | Parameters       | Returns                  | Description                             |
-  |--------------------|------------------|--------------------------|-----------------------------------------|
-  | GetUserRoles       | _userID: string  | ApiResponse\<IdentityRole> | Retrieves roles associated with a user. |
-  | DeactivateUser     | _userID: string  | ApiResponse\<string>      | Deactivates a user.                     |
+| Service                           | Parameters                  | Returns                          | Description                                        |
+|-----------------------------------|-----------------------------|----------------------------------|----------------------------------------------------|
+| GetUserRoles(user, _userID)      | user: ClaimsPrincipal, <br> _userID: string   | Task\<ServiceResponse\<IdentityRole>> | Retrieves the roles of a user from the database.   |
+| DeactivateUser(user, _userID)    | user: ClaimsPrincipal, <br> _userID: string   | Task\<ServiceResponse\<bool>>     | Deactivates a user in the database.               |
   
-  ### Publisher Endpoints
+  ### Publisher Services
   
-  | Endpoint                        | Parameters           | Returns                           | Description                                   |
-  |---------------------------------|----------------------|-----------------------------------|-----------------------------------------------|
-  | GetAllPublishersSubscriptions   | _readerID: Guid      | ApiResponse\<List\<PubHubSubscription>> | Retrieves all subscriptions for a publisher. |
-  | GetAllPublishersBooks           | _readerID: Guid      | ApiResponse\<List\<PubHubEBook>>        | Retrieves all books published by a publisher.|
-  | GetTotalEarnings                | _userID: Guid        | ApiResponse\<double>                | Retrieves the total earnings for a user.    |
+| Service                                          | Parameters                               | Returns                               | Description                                                     |
+|--------------------------------------------------|------------------------------------------|---------------------------------------|-----------------------------------------------------------------|
+| GetAllPublishersSubscriptions(user, _readerID)   | user: ClaimsPrincipal, <br> _readerID: Guid | Task\<ServiceResponse<List\<PubHubSubscription>>> | Retrieves all subscriptions belonging to a publisher.          |
+| GetAllPublishersBooks(user, _userID)            | user: ClaimsPrincipal, <br> _userID: string | Task\<ServiceResponse\<List\<PubHubEBook>>>        | Retrieves all books belonging to a publisher.                 |
+| GetTotalEarnings(user, _userID)                 | user: ClaimsPrincipal, <br> _userID: Guid   | Task\<ServiceResponse\<double>>                | Retrieves the total earnings of a publisher.                 |
+| DoesPublisherOwnBook(user, _publisherID, _bookID) | user: ClaimsPrincipal, <br> _publisherID: string, <br> _bookID: Guid | Task\<ServiceResponse\<bool>>      | Checks if a publisher owns a specific book.                   |
+| DoesPublisherOwnSubscription(user, _userID, _SubscriptionID) | user: ClaimsPrincipal, <br> _userID: string, <br> _SubscriptionID: Guid | Task\<ServiceResponse\<bool>> | Checks if a publisher owns a specific subscription.          |
+| CreateBook(user, _userID, Thebook)             | user: ClaimsPrincipal, <br> _userID: string, <br> Thebook: PubHubEBook | Task\<ServiceResponse\<bool>>                | Creates a new book for a publisher.                           |
+| CreateSubscription(user, _userID, subscription) | user: ClaimsPrincipal, <br> _userID: string, <br> subscription: PubHubSubscription | Task\<ServiceResponse\<bool>>    | Creates a new subscription for a publisher.                  |
   
-  ### Reader Endpoints
+  ### Reader Services
   
-  | Endpoint                     | Parameters           | Returns                          | Description                               |
-  |------------------------------|----------------------|----------------------------------|-------------------------------------------|
-  | GetAllReadersSubscriptions   | _readerID: Guid      | ApiResponse\<List\<PubHubSubscription>> | Retrieves all subscriptions for a reader. |
-  | GetAllReadersBooks           | _readerID: Guid      | ApiResponse\<List\<PubHubEBook>>        | Retrieves all books read by a reader.     |
-  | GetTotalSpendings            | _userID: Guid        | ApiResponse\<double>                | Retrieves the total spendings for a user.|
+| Service                                               | Parameters                                     | Returns                                          | Description                                                     |
+|-------------------------------------------------------|------------------------------------------------|--------------------------------------------------|-----------------------------------------------------------------|
+| GetAllReadersSubscriptions(user, _userID)             | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<List\<PubHubSubscription>>> | Retrieves all subscriptions belonging to a reader.               |
+| UnSubFromSubscription(user, _userID, _subscriptioID)  | user: ClaimsPrincipal, <br> _userID: string, <br> _subscriptioID: Guid | Task\<ServiceResponse\<bool>>         | Unsubscribes a reader from a specific subscription.             |
+| GetAllBooksFromAllReaderSubscriptions(user, _userID)  | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<List\<PubHubEBook>>>       | Retrieves all books from all subscriptions of a reader.          |
+| GetAllReadersBooks(user, _userID)                    | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<List\<PubHubEBook>>>       | Retrieves all books owned by a reader.                          |
+| GetTotalSpendings(user, _userID)                     | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<double>>                  | Retrieves the total spendings of a reader.                      |
   
-  ### Subscription Endpoints
+  ### Subscription Services
   
-  | Endpoint                          | Parameters                | Returns                             | Description                                 |
-  |-----------------------------------|---------------------------|-------------------------------------|---------------------------------------------|
-  | AddBookToSubscription             | _bookID: Guid, _subscriptionID: Guid | ApiResponse\<string>           | Adds a book to a subscription.                |
-  | RemoveBookFromSubscription        | _bookID: Guid, _subscriptionID: Guid | ApiResponse\<string>           | Removes a book from a subscription.           |
-  | GetAllBooksFromSubscription      | _subscriptionID: Guid    | ApiResponse\<List\<PubHubEBook>>      | Retrieves all books from a subscription.      |
-  | GetTotalErningsFromSubscription  | _subscriptionID: Guid    | ApiResponse\<double>                  | Retrieves the total earnings from a subscription.|
+| Service                                               | Parameters                                     | Returns                                          | Description                                                     |
+|-------------------------------------------------------|------------------------------------------------|--------------------------------------------------|-----------------------------------------------------------------|
+| GetAllReadersSubscriptions(user, _userID)             | user: ClaimsPrincipal, <br> _userID: string    | Task<ServiceResponse\<List\<PubHubSubscription>>> | Retrieves all subscriptions belonging to a reader.               |
+| UnSubFromSubscription(user, _userID, _subscriptioID)  | user: ClaimsPrincipal, <br> _userID: string, <br> _subscriptioID: Guid | Task\<ServiceResponse\<bool>>         | Unsubscribes a reader from a specific subscription.             |
+| GetAllBooksFromAllReaderSubscriptions(user, _userID)  | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<List\<PubHubEBook>>>       | Retrieves all books from all subscriptions of a reader.          |
+| GetAllReadersBooks(user, _userID)                    | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<List\<PubHubEBook>>>       | Retrieves all books owned by a reader.                          |
+| GetTotalSpendings(user, _userID)                     | user: ClaimsPrincipal, <br> _userID: string    | Task\<ServiceResponse\<double>>                  | Retrieves the total spendings of a reader.                      |
   
-  ### Ebook Endpoints
+  ### Ebook Services
   
-  | Endpoint                        | Parameters               | Returns                          | Description                                   |
-  |---------------------------------|--------------------------|----------------------------------|-----------------------------------------------|
-  | GetAllBooksFromUserByID         | _userID: string          | ApiResponse\<List\<PubHubEBook>> | Retrieves all books associated with a user.  |
-  | GetAllEarningsFromBookByID      | _bookID: Guid            | ApiResponse\<double>              | Retrieves the total earnings from a specific book.|
+| Service                                                | Parameters                                                       | Returns                                             | Description                                                     |
+|--------------------------------------------------------|------------------------------------------------------------------|-----------------------------------------------------|-----------------------------------------------------------------|
+| GetAllBooksFromUserByID(user, _userID)                 | user: ClaimsPrincipal, <br> _userID: string                      | Task\<ServiceResponse\<List\<PubHubEBook>>>          | Retrieves all books belonging to a user by ID.                   |
+| GetAllEarningsFromBookByID(user, _bookID)              | user: ClaimsPrincipal, <br> _bookID: Guid                        | Task\<ServiceResponse\<double>>                     | Retrieves all earnings from a book by ID.                        |
+| GetTopBooks(user, _amount, _publisher)                 | user: ClaimsPrincipal, <br> _amount: int, <br> _publisher: Guid? | Task\<ServiceResponse\<List\<PubHubEBook>>>          | Retrieves the top books by amount, optionally filtered by publisher. |
+| GetBooksByFilter(_title, _author, _genre, _skip, _take)| _title: string = "", <br> _author: string = "", <br> _genre: string = "", <br> _skip: int = 0, <br> _take: int = 10 | Task\<ServiceResponse\<List\<PubHubEBook>>>    | Retrieves books based on specified filters.                       |
+| ReaderRentBook(user, _reader, _newsubscription, _RentedBoks)| user: ClaimsPrincipal, <br> _reader: Guid, <br> _newsubscription: PubHubSubscription, <br> _RentedBoks: List\<PubHubEBook> | Task\<ServiceResponse\<bool>>           | Rents books to a reader.                                         |
+| ReaderBuyBook(user, _readerID, _bookID)               | user: ClaimsPrincipal, <br> _readerID: string, <br> _bookID: Guid | Task\<ServiceResponse\<bool>>                       | Allows a reader to buy a book.                                   |
+| GetBookByID(user, ID)                                 | user: ClaimsPrincipal, <br> ID: Guid                             | Task\<ServiceResponse\<PubHubEBook>>                 | Retrieves a book by its ID.                                      |
+| UpdateBook(user, _publisherID, book)                   | user: ClaimsPrincipal, <br> _publisherID: string, <br> book: PubHubEBook | Task\<ServiceResponse\<bool>>                  | Updates a book.                                                  |
+| UpdateBookImage(user, _publisherID, _bookID, _file)   | user: ClaimsPrincipal, <br> _publisherID: string, <br> _bookID: Guid, <br> _file: IBrowserFile | Task\<ServiceResponse\<bool>>                | Updates a book's image.                                          |
+| UpdateBookFile(user, _publisherID, _bookID, _file)     | user: ClaimsPrincipal, <br> _publisherID: string, <br> _bookID: Guid, <br> _file: IBrowserFile | Task\<ServiceResponse\<bool>>                | Updates a book's file.                                           |
+| GetBookPages(user, _FirstPage, _SecondPage, _bookid)   | user: ClaimsPrincipal, <br> _FirstPage: int, <br> _SecondPage: int, <br> _bookid: Guid | Task\<ServiceResponse\<List\<PdfDocument>>>   | Retrieves pages of a book.                                       |
+| GetAmountOfSubscriberOnBook(user, _BookID)            | user: ClaimsPrincipal, <br> _BookID: Guid                        | Task\<ServiceResponse\<int>>                        | Retrieves the amount of subscribers on a book.                   |
   
-  ### Logs Endpoints
+  ### Logs Services
   
-  | Endpoint                       | Parameters                | Returns                           | Description                                 |
-  |--------------------------------|---------------------------|-----------------------------------|---------------------------------------------|
-  | GetLogByID                     | _logID: Guid              | ApiResponse\<PubHubLog>           | Retrieves a log entry by its ID.            |
-  | GetAllLogs                     |                           | ApiResponse\<List\<PubHubLog>>    | Retrieves all log entries.                  |
-  | GetAllLogsOnEntityByID         | _EntityID: Guid           | ApiResponse\<List\<PubHubLog>>    | Retrieves all log entries for a specific entity.|
-  | GetAllLogsForAcquired          |                           | ApiResponse\<List\<PubHubLog>>    | Retrieves all log entries for acquired entities.|
+
+| Service                                       | Parameters                                                                                      | Returns                                    | Description                                       |
+|-----------------------------------------------|-------------------------------------------------------------------------------------------------|--------------------------------------------|---------------------------------------------------|
+| GetAllLogs(user)                              | user: ClaimsPrincipal                                                                          | Task\<ServiceResponse\<List\<PubHubLog>>>   | Retrieves all logs.                              |
+| GetAllLogsOnFilter(user, _EntityID, _startdate, _EndDate, type)| user: ClaimsPrincipal, <br> _EntityID: Guid, <br> _startdate: DateTime, <br> _EndDate: DateTime, <br> type: LogType? | Task\<ServiceResponse\<List\<PubHubLog>>> | Retrieves logs based on a filter.                |
+| GetAllLogsForAcquired(user)                   | user: ClaimsPrincipal                                                                          | Task\<ServiceResponse\<List\<PubHubLog>>>   | Retrieves all logs for acquired entities.        |
   
   ### Receipt Endpoints
   
-  | Endpoint                            | Parameters                 | Returns                             | Description                                   |
-  |-------------------------------------|----------------------------|-------------------------------------|-----------------------------------------------|
-  | GetNewestReceiptFromUser            | _userID: Guid              | ApiResponse\<PubHubReceipt>         | Retrieves the newest receipt associated with a user.|
-  | GetTotalFromAcquired                | _userID: Guid              | ApiResponse\<double>                | Retrieves the total from acquired entities for a user.|
+| Service                                       | Parameters                                                                                      | Returns                                    | Description                                       |
+|-----------------------------------------------|-------------------------------------------------------------------------------------------------|--------------------------------------------|---------------------------------------------------|
+| GetNewestReceiptFromUser(_userID)             | _userID: Guid                                                                                  | Task\<ServiceResponse\<PubHubReceipt>>     | Retrieves the newest receipt for a user.         |
+| GetTotalFromAcquired(_userID)                 | _userID: Guid                                                                                  | Task\<ServiceResponse\<double>>            | Retrieves the total from acquired items.         |
+| GetReceiptByFilter(user, _EntityID, _AcuiredID, _startdate, _EndDate)| user: ClaimsPrincipal, <br> _EntityID: Guid, <br> _AcuiredID: Guid, <br> _startdate: DateTime, <br> _EndDate: DateTime | Task\<ServiceResponse\<List\<PubHubReceipt>>> | Retrieves receipts based on a filter.           |
+
+  ### Other Services
+| Service                            | Parameters                               | Returns                               | Description                                               |
+|------------------------------------|------------------------------------------|---------------------------------------|-----------------------------------------------------------|
+| SaveLog(_message, _logType, _EntiryID) | _message: string, <br> _logType: LogType = LogType.Information, <br> _EntiryID: Guid? | Task                                      | Saves a log with a message, log type, and optional entity ID. |
+| FindUserAdminRights(_email, _username) | _email: string, <br> _username: string | Task\<ServiceResponse\<List\<ApplicationUser>>> | Finds user admin rights based on email and username.        |
+| SaveBookReceipt(_Entiry, _Acquired) | _Entiry: Guid, <br> _Acquired: Guid | Task | Saves a book receipt with the provided entity and acquired IDs. |
+
 </details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
