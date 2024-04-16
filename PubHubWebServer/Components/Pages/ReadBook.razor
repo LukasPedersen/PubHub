@@ -50,11 +50,11 @@
 
 @*Pagination*@
 
-<div class="d-flex align-content-center" style="background-color:darkblue">
-    <button class="p-2" @onclick="() => GetData(0)" >Firste side</button> @*Back to fist page *@
+<div class="d-flex align-content-center" style="margin-top:5px;">
+    <button class="p-2 btn btn-light" @onclick="() => GetData(0)" >Firste side</button> @*Back to fist page *@
     <input type="number" placeholder="Page number 123" @bind-value="GotoPage" />
-    <button class ="p-2" @onclick="() => GetData(GotoPage)">Go to Page</button>
-    <button class="p-2" @onclick="() => GetData(pagecount - 2)">Sidste side</button> @*To last page*@
+    <button class="p-2 btn btn-light" @onclick="() => GetData(GotoPage)">Go to Page</button>
+    <button class="p-2 btn btn-light" @onclick="() => GetData(pagecount - 2)">Sidste side</button> @*To last page*@
 </div>
 
 
