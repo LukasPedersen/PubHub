@@ -8,7 +8,7 @@
     <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/8d04f225-243b-415d-8749-9b0067861de4" alt="Logo" width="420" height="250">
   </a>
 
-  <h3 align="center">PubHub Readme</h3>
+  <h3 align="center">PubHub(POC) Readme</h3>
 
   <p align="center">
     Online library
@@ -115,19 +115,6 @@ _Below is an example of how you can instruct your audience on installing and set
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- ROADMAP -->
 ## Functionality Roadmap
 <details>
@@ -161,8 +148,8 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 ### Publisher Roadmap  
 ---  
 - [x] Publisher functionality
-  - [ ] Subscriptions
-    - [ ] Create Subscriptions
+  - [x] Subscriptions
+    - [x] Create Subscriptions
     - [x] View Subscriptions
     - [x] Edit Subscriptions
     - [x] Add Ebook to Subscriptions
@@ -184,7 +171,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
     - [x] Delete profile
 ### Publisher Roadmap  
 ---  
-- [ ] Admin functionality
+- [x] Admin functionality
   - [x] Overview over logs
   - [x] Overview over receipts
   - [x] Overview over users
@@ -315,7 +302,7 @@ See the [open issues](https://github.com/LukasPedersen/PubHub/issues) for a full
 
 Your Name - [Lukas Pedersen](https://github.com/LukasPedersen) - lukas3302@hotmail.com
 
-Project Link: [Jens Anker](https://github.com/ColdSwordX)
+Project Link: [Jens NeerGaard](https://github.com/ColdSwordX) - jensneergaard@hotmail.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
