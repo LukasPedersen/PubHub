@@ -114,6 +114,7 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetBooksByFilter(string _title = "", string _author = "", string _genre = "", int _skip = 0, int _take = 10);
 
+        public Task<ServiceResponse<bool>> IncreaseBookDownloadCount(ClaimsPrincipal user, string _userID, string _bookName);
 
         public Task<ServiceResponse<bool>> ReaderRentBook(ClaimsPrincipal user, Guid _reader, PubHubSubscription _newsubscription, List<PubHubEBook> _RentedBoks);
 
