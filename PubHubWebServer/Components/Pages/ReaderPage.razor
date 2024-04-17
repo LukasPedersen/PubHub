@@ -23,7 +23,7 @@
 
 <div class="row text-white">
     @{
-        if ((Subscriptions != null || Subscriptions.Count() > 0) && (BooksFromSubscriptions != null || BooksFromSubscriptions.Count() > 0))
+        if (Subscriptions.Count() > 0 || BooksFromSubscriptions.Count() > 0)
         {
             <div class="col-6">
                 @if (Subscriptions.Count() > 0)
@@ -270,6 +270,9 @@
 
     private async Task DownloadBook(string _bookName)
     {
+        var claimsPrincipal = signInManager.Context.User;
+        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+
         try
         {
             var fileStream = GetFileStream(_bookName);
@@ -278,6 +281,7 @@
             using var streamRef = new DotNetStreamReference(stream: fileStream);
 
             await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            await services.IncreaseBookDownloadCount(claimsPrincipal, user.Id, _bookName);
         }
         catch (Exception)
         {

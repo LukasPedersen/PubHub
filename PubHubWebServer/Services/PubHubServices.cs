@@ -1610,6 +1610,43 @@ namespace PubHubWebServer.Services
             }
         }
 
+        public async Task<ServiceResponse<bool>> IncreaseBookDownloadCount(ClaimsPrincipal user, string _userID, string _bookName)
+        {
+            try
+            {
+                Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(r => r.ReaderID).FirstAsync();
+                PubHubEBook EBook = await pubHubDBContext.EBooks.Where(b => b.FilePath == _bookName).FirstAsync();
+                ServiceResponse<bool> serviceResponse = await DoesReaderOwnBook(user, readerID, EBook.EBookID);
+                if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Reader") && serviceResponse.Data)
+                {
+                    EBook.DownloadCount++;
+
+                    await UpdateEntity<PubHubEBook>(EBook);
+                    await SaveLog($"This book has been downloaded by Reader:{_userID}", LogType.Information, EBook.EBookID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                await SaveLog("Someone who is either not Authenticated, A Reader or the owner of this book tired to increase the download count", LogType.Warning);
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is either not Authenticated, A Reader or the owner of this book",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to increase book download count, with the following Error message: " + ex.Message;
+                await SaveLog(message, LogType.Error);//Save log
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error while trying to increase book download count",
+                    Data = false
+                };
+            }
+        }
+
         /// <summary>
         /// Update a book in db
         /// </summary>

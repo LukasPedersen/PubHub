@@ -48,12 +48,12 @@
     }
 </div>
 
-<div class="d-flex align-content-center" style="background-color:darkblue">
+<div class="d-flex align-content-center">
     <div class="w-100">
-        <button class="p-2" @onclick="() => SetFilter(0)">&#8606;</button> @*Back to fist page *@
-        <button class="p-2" @onclick="() => SetFilter(AtPage - 1)">&#8592</button> @*Back 1 page*@
+        <button class="p-2 btn btn-primary" @onclick="() => SetFilter(0)">&#8606;</button> @*Back to fist page *@
+        <button class="p-2 btn btn-primary" @onclick="() => SetFilter(AtPage - 1)">&#8592</button> @*Back 1 page*@
 
-        <button class="p-2" @onclick="() => SetFilter(AtPage + 1)">&#8594</button> @*forward 1 page*@
+        <button class="p-2 btn btn-primary" @onclick="() => SetFilter(AtPage + 1)">&#8594</button> @*forward 1 page*@
     </div>
 </div>
 
