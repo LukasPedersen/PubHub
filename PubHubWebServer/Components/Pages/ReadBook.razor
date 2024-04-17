@@ -1,0 +1,110 @@
+﻿@page "/Book/Read/{id:guid}"
+
+@using IronSoftware.Drawing
+@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data
+@using PubHubWebServer.Services
+@using PubHubWebServer.Data.Models
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+
+@inject NavigationManager navigationManager
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> SigninManager
+@inject IPubHubServices _Service
+
+@rendermode InteractiveServer
+
+
+
+<div class="row d-flex h-100">
+    @*Odd page*@
+    <div class="col-auto col-md-6 bg-white">
+        <button class="float-start btn bg-light bg-gradient h-100 text-dark" @onclick="() => GetData(AtPage - 2)">
+            &#60;
+        </button>
+        <div class="align-content-center">
+            @if (_pdfBitmaps.Count > 0)
+            {
+                @((MarkupString)_pdfBitmaps[0])
+            }
+        </div>
+    </div>
+
+    @*Even page*@
+    <div class="col-auto col-md-6 bg-white">
+
+        <button class="float-end btn bg-light bg-gradient h-100 text-dark" @onclick="() => GetData(AtPage + 2)">
+            &#62;
+        </button>
+        <div class="align-content-center">
+            @if (_pdfBitmaps.Count > 0)
+            {
+                @((MarkupString)_pdfBitmaps[1])
+
+            }
+
+        </div>
+    </div>
+</div>
+
+@*Pagination*@
+
+<div class="d-flex align-content-center" style="margin-top:5px;">
+    <button class="p-2 btn btn-light" @onclick="() => GetData(0)" >Firste side</button> @*Back to fist page *@
+    <input type="number" placeholder="Page number 123" @bind-value="GotoPage" />
+    <button class="p-2 btn btn-light" @onclick="() => GetData(GotoPage)">Go to Page</button>
+    <button class="p-2 btn btn-light" @onclick="() => GetData(pagecount - 2)">Sidste side</button> @*To last page*@
+</div>
+
+
+
+@code {
+    ClaimsPrincipal claimsPrincipal;
+    ApplicationUser user;
+
+    [Parameter]
+    public Guid ID { get; set; }
+
+    List<string> _pdfBitmaps = new();
+
+    public int AtPage { get; set; } = 0;
+
+    public int pagecount { get; set; } = 0;
+
+    public int GotoPage { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        claimsPrincipal = SigninManager.Context.User;
+
+        user = await userManager.GetUserAsync(claimsPrincipal);
+        if (_pdfBitmaps.Count == 0)
+        {
+            GetData(AtPage);
+
+            var responce = await _Service.GetBookByID(claimsPrincipal, ID);
+            pagecount = responce.Data.PageCount;
+        }
+        await base.OnInitializedAsync();
+    }
+    private async Task GetData(int fromPage)
+    {
+        if (fromPage >= 0 || fromPage <= pagecount)
+        {
+            var result = await _Service.GetBookPages(claimsPrincipal, fromPage, fromPage + 1, ID);
+
+            _pdfBitmaps.Clear();
+            if (result.Data != null)
+            {
+                foreach (PdfDocument item in result.Data)
+                {
+                    _pdfBitmaps.Add(item.ToHtmlString());
+                }
+            }
+
+            AtPage = fromPage;
+            StateHasChanged();
+        }
+    }
+}

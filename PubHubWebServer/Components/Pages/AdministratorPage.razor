@@ -1,0 +1,248 @@
+﻿@page "/AdminPage"
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using PubHubWebServer.Data
+@using PubHubWebServer.Data.Models
+@using PubHubWebServer.Services
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+
+@inject UserManager<ApplicationUser> _UserManager
+@inject IUserStore<ApplicationUser> _UserStore
+@inject SignInManager<ApplicationUser> _SignInManager
+@inject IEmailSender<ApplicationUser> _EmailSender
+@inject NavigationManager _NavigationManager
+@inject RoleManager<IdentityRole> _roleManager
+@inject IPubHubServices _Services
+
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="row h-100">
+    @*Left side*@
+    <div class="col-auto col-lg-6">
+        <div class="row">
+            @*User creation*@
+            <div class="col-auto">
+                <StatusMessage Message="@Message" />
+                <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
+                    <DataAnnotationsValidator />
+                    <h2>Create a new account.</h2>
+                    <hr />
+                    <ValidationSummary class="text-danger" role="alert" />
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label for="email">Email</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <label for="password">Password</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <label for="confirm-password">Confirm Password</label>
+                        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                    </div>
+                    @IsAdmin
+                    <div class="form-floating mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" @bind="IsAdmin" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Is user an Admin?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="text" @bind-Value="Input.PublisherName" class="form-control" placeholder="publisher name" />
+                        @*TODO: add information about what this is*@
+                    </div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                </EditForm>
+            </div>
+        </div>
+        @*finding user to disable*@
+        <div class="row">
+            <input type="text" name="FinderEmail" placeholder="Email@Email.dk eller dele af emailen" @bind="_InputEmail" />
+            <input type="text" name="FinderName" placeholder="Username" @bind="_InputUserName" />
+            <button @onclick="FindUser">Find person</button>
+        </div>
+        <div class="row">
+            @foreach (ApplicationUser user in _UserToDiable.Take(10))//Takes the first 10 elements
+            {
+                <div class="col-3" style="color:white">@user.Email</div>
+                <div class="col-3" style="color:white">@user.UserName</div>
+                <button @onclick="() => DisableUser(user)" class="col-3">Disable User</button>
+                <button @onclick="() => ActivateUser(user)" class="col-3">Activate User</button>
+            }
+        </div>
+    </div>
+
+    @*Right side*@
+    <div class="col-auto col-lg-6">
+        <div class="row h-50">
+            <LogsPage />
+        </div>
+        <div class="row h-50">
+            <ReceiptPage />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    //Ths list of users that should match the search filter for when wanting to disable a user
+    private List<ApplicationUser> _UserToDiable = new();
+
+    private IEnumerable<IdentityError>? identityErrors;
+
+    ClaimsPrincipal claims;
+    ApplicationUser user;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    private bool IsAdmin { get; set; }
+
+    public string _InputEmail { get; set; } = "";
+    public string _InputUserName { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        claims = _SignInManager.Context.User;
+        user = _UserManager.GetUserAsync(claims).Result;
+        base.OnInitialized();
+    }
+
+
+
+    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+
+
+        public string PublisherName { get; set; } = "";
+    }
+    public async Task RegisterUser(EditContext editContext)
+    {
+        var user = CreateUser();
+
+        await _UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        var emailStore = GetEmailStore();
+        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        var result = await _UserManager.CreateAsync(user, Input.Password);
+
+        if (!result.Succeeded)
+        {
+            identityErrors = result.Errors;
+            return;
+        }
+
+        user.EmailConfirmed = true;
+
+        if (IsAdmin)
+        {
+            await _UserManager.AddToRoleAsync(user, "Admin");
+        }
+        else
+        {
+            await _UserManager.AddToRoleAsync(user, "Publisher");
+            Guid publisherID = Guid.NewGuid();
+            await _Services.AddSingleEntity<PubHubPublisher>(new PubHubPublisher
+                {
+                    PublisherID = publisherID,
+                    Name = Input.PublisherName,
+                    ApplicationUser = user
+                });
+
+            user.MyPubHubAccount = publisherID;
+            user.EmailConfirmed = true;
+
+
+        }
+        await _Services.UpdateEntity<ApplicationUser>(user);
+
+
+        //Save a log of what just happend
+        _Services.SaveLog($"Create a new User with wit the id of {user.Id}", LogType.Information, Guid.Parse(user.Id));
+
+    }
+    private ApplicationUser CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<ApplicationUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!_UserManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<ApplicationUser>)_UserStore;
+    }
+
+    /// <summary>
+    /// Finds the user(s) that match the search filter
+    /// </summary>
+    /// <returns></returns>
+    private async Task FindUser()
+    {
+        var result = await _Services.FindUserAdminRights(_InputEmail, _InputUserName);
+        _UserToDiable = result.Data;
+    }
+
+    /// <summary>
+    /// Disable a user
+    /// </summary>
+    /// <param name="_user">The user that should be disabled</param>
+    /// <returns></returns>
+    private async Task DisableUser(ApplicationUser _user)
+    {
+        if (_user.Id != user.Id)
+        {
+            _user.Active = false;
+            _Services.UpdateEntity<ApplicationUser>(_user);
+
+            _Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(user.Id));
+        }
+    }
+
+    /// <summary>
+    /// Activates a user
+    /// </summary>
+    /// <param name="_user">The user that should be activated</param>
+    /// <returns></returns>
+    private async Task ActivateUser(ApplicationUser _user)
+    {
+        _user.Active = true;
+        _Services.UpdateEntity<ApplicationUser>(_user);
+        _Services.SaveLog($"Changed active state for: {_user}", LogType.Information, Guid.Parse(user.Id));
+    }
+}

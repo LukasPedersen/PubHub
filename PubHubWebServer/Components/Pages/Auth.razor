@@ -1,0 +1,22 @@
+﻿@page "/auth"
+
+@using Microsoft.AspNetCore.Authorization
+@* 
+@attribute [Authorize(Roles = "Reader")] *@
+
+<PageTitle>Auth</PageTitle>
+
+<h1>You are authenticated</h1>
+<button @onclick="Something" class="btn btn-primary">PRESS ME</button>
+@count
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+</AuthorizeView>
+@code {
+    public int count { get; set; }
+
+    private void Something()
+    {
+        count++;
+    }
+}

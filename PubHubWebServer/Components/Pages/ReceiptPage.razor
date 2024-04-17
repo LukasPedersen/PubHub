@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PubHubWebServer.Data.Models
+@using PubHubWebServer.Data
+@using PubHubWebServer.Services
+@using System.Security.Claims
+
+@inject IPubHubServices Service
+@inject UserManager<ApplicationUser> _UserManager
+@inject SignInManager<ApplicationUser> _SignInManager
+
+@rendermode InteractiveServer
+
+@*Search*@
+<div class="m-1">
+
+    <div class="row">
+        <input class="col-auto col-md-3" type="text" name="ReceiptEntiry" placeholder="@Guid.NewGuid()" @bind="_ReceiptEntiry" />
+        <input class="col-auto col-md-3" type="text" name="ReceiptAcquired" placeholder="@Guid.NewGuid()" @bind="_ReceiptAcquired" />
+        <input class="col-auto col-md-2" type="datetime" name="LogsFrom" placeholder="DD-MM-YYYY:HH-MM" @bind="_InputStartDate"/>
+        <input class="col-auto col-md-2" type="datetime" name="LogsTo" placeholder="DD-MM-YYYY:HH-MM" @bind="_InputEndDate" />
+        <button class="col-auto col-md-2" @onclick="FindReceipt">Find logs</button>
+    </div>
+    @*List of Receipts*@
+    @foreach (PubHubReceipt item in Receipts)
+    {
+        <div class="row border border-info">
+            <div class="col-auto col-md-2">ReceiptID ID: @item.ReceiptID</div>
+            <div class="col-auto col-md-2">EntrityID: @item.EntityID</div>
+            <div class="col-auto col-md-2">AcquiredID: @item.Acquired</div>
+            <div class="col-auto col-md-2">Price: @item.Price DKK</div>
+            <div class="col-auto col-md-2">Timestamp @item.TimeStamp</div>
+        </div>
+    }
+</div>
+@code {
+    public List<PubHubReceipt> Receipts { get; set; } = new();
+
+    public DateTime _InputStartDate { get; set; } = DateTime.MinValue;
+    public DateTime _InputEndDate { get; set; } = DateTime.MaxValue;
+    public string _ReceiptEntiry { get; set; }
+    public string _ReceiptAcquired { get; set; }
+
+    ClaimsPrincipal claims;
+    ApplicationUser user;
+
+    protected override void OnInitialized()
+    {
+        claims = _SignInManager.Context.User;
+        user = _UserManager.GetUserAsync(claims).Result;
+        base.OnInitialized();
+    }
+
+    private async Task FindReceipt()
+    {
+        var responce = await Service.GetReceiptByFilter(claims, Guid.Parse(_ReceiptEntiry), Guid.Parse(_ReceiptAcquired), _InputStartDate, _InputEndDate);
+        Receipts = responce.Data;
+    }
+}
