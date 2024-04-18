@@ -8,7 +8,9 @@
     <img src="https://github.com/LukasPedersen/PubHub/assets/61869988/8d04f225-243b-415d-8749-9b0067861de4" alt="Logo" width="420" height="250">
   </a>
 
+
   <h3 align="center">PubHub(POC) Readme</h3>
+
 
   <p align="center">
     Online library
@@ -122,7 +124,6 @@ _Below is an example of how you can instruct your audience on installing and set
   
 ### Reader Roadmap  
 ---  
-  
 - [ ] Reader functionality
   - [ ] Subscriptions
     - [ ] Create Custom subscriptions
