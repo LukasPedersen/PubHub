@@ -227,11 +227,12 @@
     public List<PubHubEBook> BooksFromSubscriptions { get; set; } = new();
 
     public double TotalSpendings { get; set; }
+    ApplicationUser user;
 
     protected override async Task OnInitializedAsync()
     {
         var claimsPrincipal = signInManager.Context.User;
-        ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
+        user = await userManager.GetUserAsync(claimsPrincipal);
 
         if (claimsPrincipal != null && user != null)
         {
@@ -262,8 +263,11 @@
 
     private Stream GetFileStream(string _bookName)
     {
+        PdfDocument pdf = new PdfDocument(("EBooks/" + _bookName + ".pdf"));
 
-        var fileStream = new MemoryStream(File.ReadAllBytes(("EBooks/" + _bookName + ".pdf")));
+        pdf.ApplyWatermark($"<H1>{user.Email}</H1>",, 50, VerticalAlignment.Bottom, HorizontalAlignment.Right);
+
+        var fileStream = pdf.Stream;
 
         return fileStream;
     }
