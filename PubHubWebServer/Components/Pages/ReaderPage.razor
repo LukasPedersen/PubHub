@@ -227,11 +227,14 @@
     public List<PubHubEBook> BooksFromSubscriptions { get; set; } = new();
 
     public double TotalSpendings { get; set; }
+
     ApplicationUser user;
+
 
     protected override async Task OnInitializedAsync()
     {
         var claimsPrincipal = signInManager.Context.User;
+
         user = await userManager.GetUserAsync(claimsPrincipal);
 
         if (claimsPrincipal != null && user != null)
