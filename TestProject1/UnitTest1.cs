@@ -138,7 +138,7 @@ namespace TestProject1
 
             List<IronPdf.PdfDocument> pages = result.Data;
 
-            Assert.True(pages.count  == 2);
+            Assert.True(pages.Count  == 2);
         }
 
         [Fact]
