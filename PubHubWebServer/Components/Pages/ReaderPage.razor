@@ -10,6 +10,7 @@
 @using Blazored.LocalStorage
 @using System.Net
 @using BlazorDownloadFile;
+@using IronPdf.Editing;
 
 @inject UserManager<ApplicationUser> userManager
 @inject SignInManager<ApplicationUser> signInManager
@@ -268,7 +269,7 @@
     {
         PdfDocument pdf = new PdfDocument(("EBooks/" + _bookName + ".pdf"));
 
-        pdf.ApplyWatermark($"<H1>{user.Email}</H1>",, 50, VerticalAlignment.Bottom, HorizontalAlignment.Right);
+        pdf.ApplyWatermark($"<H1>{user.Email}</H1>", 50, VerticalAlignment.Bottom, HorizontalAlignment.Right);
 
         var fileStream = pdf.Stream;
 
