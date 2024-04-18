@@ -274,19 +274,19 @@
         var claimsPrincipal = signInManager.Context.User;
         ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-        ServiceResponse<PubHubEBook> apiBookResult = await services.GetBookByID(claimsPrincipal, ID) ?? new ServiceResponse<PubHubEBook>();
+        ServiceResponse<PubHubEBook> apiBookResult = await services.GetBookByID(/* claimsPrincipal, */ ID) ?? new ServiceResponse<PubHubEBook>();
         EBook = apiBookResult.Data;
 
         if (user != null && EBook != null)
         {
-            ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnBook(claimsPrincipal, user.Id, EBook.EBookID) ?? new ServiceResponse<bool>();
+            ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnBook(/* claimsPrincipal, */ user.Id, EBook.EBookID) ?? new ServiceResponse<bool>();
             Owner = apiOwnerResult.Data;
 
         }
 
         if (EBook != null)
         {
-            ServiceResponse<List<PubHubSubscription>> apiSubResult = await services.GetAllSubscriptionsWithBook(claimsPrincipal, EBook.EBookID) ?? new ServiceResponse<List<PubHubSubscription>>();
+            ServiceResponse<List<PubHubSubscription>> apiSubResult = await services.GetAllSubscriptionsWithBook(/* claimsPrincipal, */ EBook.EBookID) ?? new ServiceResponse<List<PubHubSubscription>>();
             subscriptions = apiSubResult.Data;
         }
         else
@@ -306,7 +306,7 @@
         EBook.EBookID = Guid.NewGuid();
         EBook.FilePath = EBook.Title.Replace(" ", "-");
 
-        ServiceResponse<bool> success = await services.CreateBook(claimsPrincipal,user.Id, EBook);
+        ServiceResponse<bool> success = await services.CreateBook(/* claimsPrincipal, */user.Id, EBook);
 
         if (success.Data)
         {
@@ -319,7 +319,7 @@
         var claimsPrincipal = signInManager.Context.User;
         ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-        ServiceResponse<bool> success = await services.UpdateBook(claimsPrincipal, user.Id, EBook);
+        ServiceResponse<bool> success = await services.UpdateBook(/* claimsPrincipal, */ user.Id, EBook);
         if (success.Data)
         {
             navigationManager.NavigateTo("#");
@@ -336,7 +336,7 @@
         {
             foreach (var file in e.GetMultipleFiles(1))
             {
-                await services.UpdateBookImage(claimsPrincipal, user.Id, EBook.EBookID, file);
+                await services.UpdateBookImage(/* claimsPrincipal, */ user.Id, EBook.EBookID, file);
             }
         }
         catch (Exception ex)
@@ -354,7 +354,7 @@
         {
             foreach (var file in e.GetMultipleFiles(1))
             {
-                await services.UpdateBookFile(claimsPrincipal, user.Id, EBook.EBookID, file);
+                await services.UpdateBookFile(/* claimsPrincipal, */ user.Id, EBook.EBookID, file);
             }
         }
         catch (Exception ex)
@@ -376,7 +376,7 @@
 
         if (user != null)
         {
-            await services.ReaderBuyBook(claimsPrincipal, user.Id, EBook.EBookID);
+            await services.ReaderBuyBook(/* claimsPrincipal, */ user.Id, EBook.EBookID);
             navigationManager.NavigateTo("#");
         }
     }

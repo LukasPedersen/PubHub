@@ -62,7 +62,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ServiceResponse<List<PubHubEBook>> apiBookResult = await services.GetTopBooks(SignInManager.Context.User, 10) ?? new ServiceResponse<List<PubHubEBook>>();
+        ServiceResponse<List<PubHubEBook>> apiBookResult = await services.GetTopBooks(/* SignInManager.Context.User, */ 10) ?? new ServiceResponse<List<PubHubEBook>>();
         _topBooks = apiBookResult.Data ?? new List<PubHubEBook>();
     }
 }

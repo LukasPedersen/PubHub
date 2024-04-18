@@ -45,8 +45,8 @@
 
         @foreach (PubHubSubscription subscription in _FilterSubs)
         {
-            ServiceResponse<double> IncomeFromTopSub = Service.GetTotalErningsFromSubscription(claimsPrincipal, subscription.SubscriptionID).Result;
-            ServiceResponse<int> TotalFromSubs = Service.GetTotalSubscrbersOnSubscription(claimsPrincipal, subscription.SubscriptionID).Result;
+            ServiceResponse<double> IncomeFromTopSub = Service.GetTotalErningsFromSubscription(@* claimsPrincipal, *@ subscription.SubscriptionID).Result;
+            ServiceResponse<int> TotalFromSubs = Service.GetTotalSubscrbersOnSubscription(@* claimsPrincipal, *@ subscription.SubscriptionID).Result;
 
             <div class="border">
                 <div class="d-flex align-content-center m-1 align-items-center">
@@ -201,7 +201,7 @@
     private async void GetData(ClaimsPrincipal claimsPrincipal, ApplicationUser user)
     {
         //All subscriptions on the publisher
-        ServiceResponse<List<PubHubSubscription>> ApiSubs = await Service.GetAllPublishersSubscriptions(claimsPrincipal, user.MyPubHubAccount);
+        ServiceResponse<List<PubHubSubscription>> ApiSubs = await Service.GetAllPublishersSubscriptions(/* claimsPrincipal, */ user.MyPubHubAccount);
         Subscriptions = ApiSubs.Data;
 
         //The top subscription
@@ -211,8 +211,8 @@
         //Getting income and subs count
         foreach (PubHubSubscription item in Subscriptions)
         {
-            ServiceResponse<double> IncomeFromTopSub = await Service.GetTotalErningsFromSubscription(claimsPrincipal, item.SubscriptionID);
-            ServiceResponse<int> TotalFromSubs = await Service.GetTotalSubscrbersOnSubscription(claimsPrincipal, item.SubscriptionID);
+            ServiceResponse<double> IncomeFromTopSub = await Service.GetTotalErningsFromSubscription(/* claimsPrincipal, */ item.SubscriptionID);
+            ServiceResponse<int> TotalFromSubs = await Service.GetTotalSubscrbersOnSubscription(/* claimsPrincipal, */ item.SubscriptionID);
 
             TotalIncomeOnSubscripstion += IncomeFromTopSub.Data;
             TotalSubsOnSubscripstion += TotalFromSubs.Data;
@@ -226,7 +226,7 @@
         }
 
 
-        ServiceResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(claimsPrincipal, 50, user.MyPubHubAccount);
+        ServiceResponse<List<PubHubEBook>> apiBooks = await Service.GetTopBooks(/* claimsPrincipal, */ 50, user.MyPubHubAccount);
         Ebooks = apiBooks.Data;
 
         ServiceResponse<double> ApiTopFromBook = await Service.GetTotalFromAcquired(Ebooks.OrderByDescending(x => x.DownloadCount).First().EBookID);
@@ -235,9 +235,9 @@
         foreach (PubHubEBook book in Ebooks)
         {
             //Total income from books
-            ServiceResponse<double> IncomeFromBook = await Service.GetAllEarningsFromBookByID(claimsPrincipal, book.EBookID);
+            ServiceResponse<double> IncomeFromBook = await Service.GetAllEarningsFromBookByID(/* claimsPrincipal, */ book.EBookID);
             //total subs from book
-            ServiceResponse<int> SubsfromBook = await Service.GetAmountOfSubscriberOnBook(claimsPrincipal, book.EBookID);
+            ServiceResponse<int> SubsfromBook = await Service.GetAmountOfSubscriberOnBook(/* claimsPrincipal, */ book.EBookID);
 
             if (TotalIncomeOnBooks < IncomeFromBook.Data)
             {

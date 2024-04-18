@@ -83,7 +83,7 @@
         {
             GetData(AtPage);
 
-            var responce = await _Service.GetBookByID(claimsPrincipal, ID);
+            var responce = await _Service.GetBookByID(/* claimsPrincipal, */ ID);
             pagecount = responce.Data.PageCount;
         }
         await base.OnInitializedAsync();
@@ -92,7 +92,7 @@
     {
         if (fromPage >= 0 || fromPage <= pagecount)
         {
-            var result = await _Service.GetBookPages(claimsPrincipal, fromPage, fromPage + 1, ID);
+            var result = await _Service.GetBookPages(/* claimsPrincipal, */ fromPage, fromPage + 1, ID);
 
             _pdfBitmaps.Clear();
             if (result.Data != null)

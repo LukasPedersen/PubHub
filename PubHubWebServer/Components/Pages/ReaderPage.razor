@@ -241,19 +241,19 @@
 
         if (claimsPrincipal != null && user != null)
         {
-            ServiceResponse<List<PubHubEBook>> apiPurchasedBooksResult = await services.GetAllReadersBooks(claimsPrincipal, user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
+            ServiceResponse<List<PubHubEBook>> apiPurchasedBooksResult = await services.GetAllReadersBooks(/* claimsPrincipal, */ user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
             if (apiPurchasedBooksResult != null)
             {
                 PurchasedBooks = apiPurchasedBooksResult.Data;
             }
 
-            ServiceResponse<List<PubHubSubscription>> apiSubscriptionsResult = await services.GetAllReadersSubscriptions(claimsPrincipal, user.Id) ?? new ServiceResponse<List<PubHubSubscription>>();
+            ServiceResponse<List<PubHubSubscription>> apiSubscriptionsResult = await services.GetAllReadersSubscriptions(/* claimsPrincipal, */ user.Id) ?? new ServiceResponse<List<PubHubSubscription>>();
             if (apiSubscriptionsResult != null)
             {
                 Subscriptions = apiSubscriptionsResult.Data;
             }
 
-            ServiceResponse<List<PubHubEBook>> apiBooksFromSubscriptionsResult = await services.GetAllBooksFromAllReaderSubscriptions(claimsPrincipal, user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
+            ServiceResponse<List<PubHubEBook>> apiBooksFromSubscriptionsResult = await services.GetAllBooksFromAllReaderSubscriptions(/* claimsPrincipal, */ user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
             if (apiBooksFromSubscriptionsResult.Data != null)
             {
                 BooksFromSubscriptions = apiBooksFromSubscriptionsResult.Data;
@@ -302,7 +302,7 @@
 
         if (claimsPrincipal != null && user != null)
         {
-            await services.UnSubFromSubscription(claimsPrincipal, user.Id, _subID);
+            await services.UnSubFromSubscription(/* claimsPrincipal, */ user.Id, _subID);
             navigationManager.NavigateTo("#");
         }
     }

@@ -67,7 +67,7 @@
     private async Task FindLogs()
     {
         PubHubLogs = new();
-        var responce = await Service.GetAllLogsOnFilter(claims, Guid.Parse(EntityID), InputStarDate, InputEndDate, InputLogType);
+        var responce = await Service.GetAllLogsOnFilter(/* claims, */ Guid.Parse(EntityID), InputStarDate, InputEndDate, InputLogType);
         PubHubLogs = responce.Data;
 
         StateHasChanged();

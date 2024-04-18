@@ -56,7 +56,7 @@
 
         if (user != null)
         {
-            ServiceResponse<bool> isOwner = await services.DoesPublisherOwnSubscription(claimsPrincipal, user.Id, _subscriptionID);
+            ServiceResponse<bool> isOwner = await services.DoesPublisherOwnSubscription(/* claimsPrincipal, */ user.Id, _subscriptionID);
             return isOwner.Data;
         }
         return false;
@@ -79,7 +79,7 @@
 
         if (user != null)
         {
-            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, _subscriptionID);
+            await services.ReaderSubscripeToBook(/* claimsPrincipal, */ user.Id, _subscriptionID);
             navigationManager.NavigateTo("#");
         }
     }

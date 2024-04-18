@@ -277,7 +277,7 @@
 
         if (user != null && ID != Guid.Empty)
         {
-            ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnSubscription(claimsPrincipal, user.Id, Subscription.SubscriptionID) ?? new ServiceResponse<bool>();
+            ServiceResponse<bool> apiOwnerResult = await services.DoesPublisherOwnSubscription(/* claimsPrincipal, */ user.Id, Subscription.SubscriptionID) ?? new ServiceResponse<bool>();
             Owner = apiOwnerResult.Data;
         }
         else if(user != null && ID == Guid.Empty)
@@ -287,13 +287,13 @@
 
         if (ID != Guid.Empty && Subscription.EBooks?.Count > 0)
         {
-            ServiceResponse<List<PubHubEBook>> apiSubResult = await services.GetAllBooksFromSubscription(claimsPrincipal, Subscription.SubscriptionID) ?? new ServiceResponse<List<PubHubEBook>>();
+            ServiceResponse<List<PubHubEBook>> apiSubResult = await services.GetAllBooksFromSubscription(/* claimsPrincipal, */ Subscription.SubscriptionID) ?? new ServiceResponse<List<PubHubEBook>>();
             books = apiSubResult.Data;
         }
 
         if (Owner == true )
         {
-            ServiceResponse<List<PubHubEBook>> apiOwnerBooksResult = await services.GetAllPublishersBooks(claimsPrincipal, user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
+            ServiceResponse<List<PubHubEBook>> apiOwnerBooksResult = await services.GetAllPublishersBooks(/* claimsPrincipal, */ user.Id) ?? new ServiceResponse<List<PubHubEBook>>();
             if (books != null)
             {
                 NewBooks = apiOwnerBooksResult.Data.Except(books).ToList();
@@ -312,7 +312,7 @@
         var claimsPrincipal = signInManager.Context.User;
         ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-        ServiceResponse<bool> success = await services.UpdateSubscription(claimsPrincipal, user.Id, Subscription);
+        ServiceResponse<bool> success = await services.UpdateSubscription(/* claimsPrincipal, */ user.Id, Subscription);
         if (success.Data)
         {
             navigationManager.NavigateTo("#");
@@ -330,7 +330,7 @@
         }
         else
         {
-            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, Subscription.SubscriptionID);
+            await services.ReaderSubscripeToBook(/* claimsPrincipal, */ user.Id, Subscription.SubscriptionID);
             navigationManager.NavigateTo("#");
         }
     }
@@ -340,7 +340,7 @@
         var claimsPrincipal = signInManager.Context.User;
         ApplicationUser user = await userManager.GetUserAsync(claimsPrincipal);
 
-        await services.AddBookToSubscription(claimsPrincipal, user.Id, Subscription.SubscriptionID, bookID);
+        await services.AddBookToSubscription(/* claimsPrincipal, */ user.Id, Subscription.SubscriptionID, bookID);
         navigationManager.NavigateTo("#");
     }
     private async Task CreateSub()
@@ -350,6 +350,6 @@
 
         Subscription.SubscriptionID = Guid.NewGuid();
 
-        services.CreateSubscription(claimsPrincipal, user.Id, Subscription);
+        services.CreateSubscription(/* claimsPrincipal, */ user.Id, Subscription);
     }
 }
