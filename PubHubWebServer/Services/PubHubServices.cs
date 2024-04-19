@@ -1945,20 +1945,41 @@ namespace PubHubWebServer.Services
                 List<PubHubLog> logs = new();
                 if (type != null)
                 {
-                    logs = await pubHubDBContext.Logs.
-                          Where(l => l.EntityID == _EntityID
-                          && l.TimeStamp >= _startdate
-                          && l.TimeStamp <= _EndDate
-                          && l.LogType == type)
-                          .ToListAsync();
+                    if (_EntityID != Guid.Empty)
+                    {
+                        logs = await pubHubDBContext.Logs.
+                              Where(l => (_EntityID != Guid.Empty && l.EntityID == _EntityID)
+                              && l.TimeStamp > _startdate
+                              && l.TimeStamp < _EndDate
+                              && l.LogType == type)
+                              .ToListAsync();
+                    }
+                    else
+                    {
+                        logs = await pubHubDBContext.Logs.
+                              Where(l => l.TimeStamp > _startdate
+                              && l.TimeStamp < _EndDate
+                              && l.LogType == type)
+                              .ToListAsync();
+                    }
                 }
                 else
                 {
-                    logs = await pubHubDBContext.Logs.
-                        Where(l => l.EntityID == _EntityID
-                        && l.TimeStamp >= _startdate
-                        && l.TimeStamp <= _EndDate)
-                        .ToListAsync();
+                    if (_EntityID == Guid.Empty)
+                    {
+                        logs = await pubHubDBContext.Logs.
+                            Where(l => l.TimeStamp > _startdate
+                            && l.TimeStamp < _EndDate)
+                            .ToListAsync();
+                    }
+                    else
+                    {
+                        logs = await pubHubDBContext.Logs.
+                            Where(l => l.EntityID == _EntityID
+                            && l.TimeStamp > _startdate
+                            && l.TimeStamp < _EndDate)
+                            .ToListAsync();
+                    }
                 }
                 if (logs == null)
                 {
@@ -2091,12 +2112,39 @@ namespace PubHubWebServer.Services
             {
                 List<PubHubReceipt> receipts = new();
 
-                receipts = pubHubDBContext.Receipts
-                    .Where(x => x.EntityID == _EntityID
-                    && x.Acquired == _AcuiredID
-                    && x.TimeStamp >= _startdate
-                    && x.TimeStamp <= _EndDate)
-                    .ToList();
+                if (_EntityID == Guid.Empty && _AcuiredID == Guid.Empty)
+                {
+
+                    receipts = pubHubDBContext.Receipts
+                        .Where(x =>  x.TimeStamp > _startdate
+                        && x.TimeStamp < _EndDate)
+                        .ToList();
+                }
+                else if (_EntityID == Guid.Empty)
+                {
+                    receipts = pubHubDBContext.Receipts
+                        .Where(x =>  x.Acquired == _AcuiredID
+                        && x.TimeStamp > _startdate
+                        && x.TimeStamp < _EndDate)
+                        .ToList();
+                }
+                else if (_AcuiredID == Guid.Empty)
+                {
+                    receipts = pubHubDBContext.Receipts
+                        .Where(x =>  x.EntityID == _EntityID
+                        && x.TimeStamp > _startdate
+                        && x.TimeStamp < _EndDate)
+                        .ToList();
+                }
+                else
+                {
+                    receipts = pubHubDBContext.Receipts
+                        .Where(x =>  x.EntityID == _EntityID
+                        &&  x.Acquired == _AcuiredID
+                        && x.TimeStamp > _startdate
+                        && x.TimeStamp < _EndDate)
+                        .ToList();
+                }
 
                 if (receipts == null)
                 {
