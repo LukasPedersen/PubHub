@@ -285,7 +285,7 @@
             Owner = true;
         }
 
-        if (ID != Guid.Empty && Subscription.EBooks?.Count > 0)
+        if (ID != Guid.Empty)
         {
             ServiceResponse<List<PubHubEBook>> apiSubResult = await services.GetAllBooksFromSubscription(claimsPrincipal, Subscription.SubscriptionID) ?? new ServiceResponse<List<PubHubEBook>>();
             books = apiSubResult.Data;

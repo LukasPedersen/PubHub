@@ -66,6 +66,8 @@ namespace PubHubWebServer.Services
 
         public Task<ServiceResponse<bool>> UnSubFromSubscription(ClaimsPrincipal user, string _userID, Guid _subscriptioID);
 
+        public Task<ServiceResponse<bool>> SubscripteReaderToSubscription(ClaimsPrincipal user, string _userID, Guid _subscriptionID);
+
         public Task<ServiceResponse<List<PubHubEBook>>> GetAllBooksFromAllReaderSubscriptions(ClaimsPrincipal user, string _userID);
 
         public Task<ServiceResponse<List<PubHubEBook>>> GetAllReadersBooks(ClaimsPrincipal user, string _userID);

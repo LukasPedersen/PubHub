@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Globalization;
 using Microsoft.VisualBasic;
 using IronPdf.Editing;
+using System.Collections.Generic;
 
 namespace PubHubWebServer.Services
 {
@@ -663,9 +664,11 @@ namespace PubHubWebServer.Services
                     List<PubHubEBook> myBooks = new();
                     List<Guid> subscriptionIDs = await pubHubDBContext.SubscriptionReaders.Where(br => br.PubHubReaderReaderID == readerID).Select(b => b.PubHubSubscriptionSubscriptionID).ToListAsync();
                     List<Guid> subscriptionsBooksIDs = new();
+
+
                     foreach (Guid subscriptionID in subscriptionIDs)
                     {
-                        subscriptionsBooksIDs.Add(await pubHubDBContext.EBookSubscriptions.Where(sr => sr.PubHubSubscriptionSubscriptionID == subscriptionID).Select(b => b.PubHubEBookEBookID).FirstAsync());
+                        subscriptionsBooksIDs.AddRange(await pubHubDBContext.EBookSubscriptions.Where(bs => bs.PubHubSubscriptionSubscriptionID == subscriptionID).Select(b => b.PubHubEBookEBookID).ToListAsync());
                     }
 
                     foreach (Guid bookID in subscriptionsBooksIDs)
@@ -697,6 +700,55 @@ namespace PubHubWebServer.Services
                     ErrorMessage = "Internal server error while trying to get all Ebooks from reader"
                 };
                 throw;
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> SubscripteReaderToSubscription(ClaimsPrincipal user, string _userID, Guid _subscriptionID)
+        {
+            try
+            {
+                if (user is not null && user.Identity.IsAuthenticated)
+                {
+                    Guid readerID = await pubHubDBContext.Readers.Where(r => r.ApplicationUserId == _userID).Select(b => b.ReaderID).FirstAsync();
+                    if (await pubHubDBContext.SubscriptionReaders.AnyAsync(er => er.PubHubReaderReaderID == readerID && er.PubHubSubscriptionSubscriptionID == _subscriptionID))
+                    {
+                        return new ServiceResponse<bool>
+                        {
+                            ErrorMessage = "User allready subscriped to this subscription so cant subscripe to it again",
+                            Data = false
+                        };
+                    }
+
+                    PubHubSubscriptionPubHubReader subscriptionReader = new PubHubSubscriptionPubHubReader
+                    {
+                        ID = Guid.NewGuid(),
+                        PubHubReaderReaderID = readerID,
+                        PubHubSubscriptionSubscriptionID = _subscriptionID
+                    };
+
+                    await AddSingleEntity<PubHubSubscriptionPubHubReader>(subscriptionReader);
+                    await SaveBookReceipt(readerID, _subscriptionID);
+                    return new ServiceResponse<bool>
+                    {
+                        Data = true
+                    };
+                }
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "User is not loged in and therefor cant buy a book",
+                    Data = false
+                };
+            }
+            catch (Exception ex)
+            {
+                string message = $"Failed to subscripte to: {_subscriptionID} for user: {_userID}, with the following Error message: " + ex.Message;
+                SaveLog(message, LogType.Error);//Save log
+
+                return new ServiceResponse<bool>
+                {
+                    ErrorMessage = "Error adding entity",
+                    Data = false
+                };
             }
         }
 
@@ -1661,6 +1713,15 @@ namespace PubHubWebServer.Services
                 ServiceResponse<bool> serviceResponse = await DoesPublisherOwnBook(user, _publisherID, book.EBookID);
                 if (user is not null && user.Identity.IsAuthenticated && user.IsInRole("Publisher") && serviceResponse.Data)
                 {
+                    if (book.FilePath.Length == 0 || string.IsNullOrWhiteSpace(book.FilePath) || string.IsNullOrEmpty(book.FilePath))
+                    {
+                        book.FilePath = book.Title;
+                    }
+
+                    if (book.FilePath.Contains(" "))
+                    {
+                        book.FilePath = book.FilePath.Replace(" ", "-");
+                    }
                     await UpdateEntity<PubHubEBook>(book);
                     await SaveLog($"This book has been updated by Publisher:{_publisherID}", LogType.Information, book.EBookID);
                     return new ServiceResponse<bool>
@@ -1701,6 +1762,10 @@ namespace PubHubWebServer.Services
                   
 
                     string newFilePath = _file.Name;
+                    if (newFilePath.Contains(" "))
+                    {
+                        newFilePath = newFilePath.Replace(" ", "-");
+                    }
                     newFilePath = newFilePath.Remove((newFilePath.Length - 4));
                     try
                     {
@@ -1714,8 +1779,9 @@ namespace PubHubWebServer.Services
 
                     book.FilePath = newFilePath;
 
+                    
 
-                    await using FileStream fs = new($"../PubHubWebServer/wwwroot/images/BookCovers/{_file.Name}", FileMode.Create);
+                    await using FileStream fs = new($"../PubHubWebServer/wwwroot/images/BookCovers/{newFilePath}.jpg", FileMode.Create);
                     await _file.OpenReadStream(maxAllowedSize: 1024 * 10000).CopyToAsync(fs);
 
                     await UpdateEntity<PubHubEBook>(book);
@@ -1765,6 +1831,11 @@ namespace PubHubWebServer.Services
                     string newFilePath = _file.Name;
                     newFilePath = newFilePath.Remove((newFilePath.Length - 4));
 
+                    if (newFilePath.Contains(" "))
+                    {
+                        newFilePath = newFilePath.Replace(" ", "-");
+                    }
+
                     try
                     {
                         File.Move($"../PubHubWebServer/wwwroot/images/BookCovers/{book.FilePath}.jpg", $"../PubHubWebServer/wwwroot/images/BookCovers/{newFilePath}.jpg");
@@ -1774,11 +1845,11 @@ namespace PubHubWebServer.Services
                     {
 
                     }
-
                     book.FilePath = newFilePath;
 
 
-                    await using FileStream fs = new($"../PubHubWebServer/EBooks/{_file.Name}", FileMode.Create);
+
+                    await using FileStream fs = new($"../PubHubWebServer/EBooks/{newFilePath}.pdf", FileMode.Create);
                     await _file.OpenReadStream(maxAllowedSize: 1024 * 10000).CopyToAsync(fs);
 
                     await UpdateEntity<PubHubEBook>(book);
