@@ -31,7 +31,7 @@
     @foreach (var item in PubHubLogs)
     {
         <div class="row border border-info" style="color:white;">
-            <div>
+            <div class="d-flex p-1">
                 <div class="col-auto col-md-3">LogID: @item.LogID</div>
                 <div class="col-auto col-md-3">EntityID: @item.EntityID</div>
                 <div class="col-auto col-md-3">Timestamp @item.TimeStamp</div>
@@ -51,7 +51,7 @@
     public DateTime InputStarDate { get; set; } = DateTime.MinValue;
     public DateTime InputEndDate { get; set; } = DateTime.MaxValue;
     public LogType? InputLogType { get; set; } = null;
-    public string EntityID { get; set; } = "";
+    public string EntityID { get; set; }
 
     protected override void OnInitialized()
     {
@@ -66,9 +66,20 @@
     /// <returns></returns>
     private async Task FindLogs()
     {
-        PubHubLogs = new();
-        var responce = await Service.GetAllLogsOnFilter(claims, Guid.Parse(EntityID), InputStarDate, InputEndDate, InputLogType);
-        PubHubLogs = responce.Data;
+        try
+        {
+
+            PubHubLogs = new();
+            Guid Entity = EntityID != null ? Guid.Parse(EntityID) : Guid.Empty;
+
+            var responce = await Service.GetAllLogsOnFilter(claims, Entity, InputStarDate, InputEndDate, InputLogType);
+            PubHubLogs = responce.Data;
+        }
+        catch (Exception ex)
+        {
+            
+            throw;
+        }
 
         StateHasChanged();
     }
