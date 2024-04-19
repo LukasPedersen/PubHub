@@ -2163,6 +2163,7 @@ namespace PubHubWebServer.Services
                 TimeStamp = DateTime.UtcNow,
             };
             pubHubDBContext.Receipts.Add(receipt);
+            await pubHubDBContext.SaveChangesAsync();
         }
         public async Task<ServiceResponse<List<ApplicationUser>>> FindUserAdminRights(string _email, string _username)
         {
