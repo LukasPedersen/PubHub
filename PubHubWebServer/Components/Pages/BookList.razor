@@ -25,7 +25,21 @@
                     <img src="images/BookCovers/@(eBook.FilePath + ".jpg")" class="card-img-top img-thumbnail" alt="..." style="max-width: 100%;">
                     <div class="card-body">
                         <h5 class="card-title text-dark">@eBook.Title</h5>
-                        <p class="card-text text-dark">@(eBook.Description.Substring(0, 100) + "...")</p>
+                        @{
+                            if (eBook.Description.Length >= 100)
+                            {
+                                <p class="card-text text-dark">@(eBook.Description.Substring(0, 100) + "...")</p>
+                            }
+                            else if (eBook.Description.Length >= 50)
+                            {
+                                <p class="card-text text-dark">@(eBook.Description.Substring(0, 50) + "...")</p>
+                            }
+                            else
+                            {
+                                <p class="card-text text-dark">@(eBook.Description)</p>
+                            }
+                        }
+                        
                     </div>
                     <div class="card-footer text-dark">
                         <div class="row">
