@@ -182,9 +182,9 @@
                                 <div class="col-auto">
                                     <button class="btn btn-success">Køb: @EBook.Price Kr.</button>
                                 </div>
-                                <div class="col-auto">
-                                    <button class="btn btn-warning">Lån: @EBook.BorrowPrice Kr.</button>
-                                </div>
+                                // <div class="col-auto">
+                                //     <button class="btn btn-warning">Lån: @EBook.BorrowPrice Kr.</button>
+                                // </div>
                             </div>
                         </div>
                     </div>
@@ -205,7 +205,7 @@
                     </div>
                     <div class="row text-white m-auto" style="text-align: center; margin-top: 20px !important">
                         @{
-                            if (subscriptions != null)
+                            if (subscriptions != null && subscriptions.Count() > 0)
                             {
                                 <div class="row">
                                     <h3>Denne bog er i disse abonnementer</h3>
@@ -248,9 +248,9 @@
                         <div class="col-auto">
                             <button @onclick="BuyBook" class="btn btn-success">Køb: @EBook.Price Kr.</button>
                         </div>
-                        <div class="col-auto">
+                        @* <div class="col-auto">
                             <button @onclick="BorrowBook" class="btn btn-warning">Lån: @EBook.BorrowPrice Kr.</button>
-                        </div>
+                        </div> *@
                     </div>
                 </div>
             </div>
@@ -387,6 +387,11 @@
         if (!signInManager.IsSignedIn(signInManager.Context.User))
         {
             navigationManager.NavigateTo($"Account/Login?returnUrl=BookDetail/{EBook.EBookID}");
+        }
+        if (user != null)
+        {
+            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, EBook.EBookID);
+            navigationManager.NavigateTo("#");
         }
     }
 }
