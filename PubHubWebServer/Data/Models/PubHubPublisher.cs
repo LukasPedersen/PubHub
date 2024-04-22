@@ -13,6 +13,7 @@ namespace PubHubWebServer.Data.Models
         [Required]
         public string Name { get; set; }
 
+        [AllowNull]
         public string ApplicationUserId { get; set; } = Guid.NewGuid().ToString();
 
         //Relationships

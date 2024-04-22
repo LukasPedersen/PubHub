@@ -79,7 +79,7 @@
 
         if (user != null)
         {
-            await services.ReaderSubscripeToBook(claimsPrincipal, user.Id, _subscriptionID);
+            await services.SubscripteReaderToSubscription(claimsPrincipal, user.Id, _subscriptionID);
             navigationManager.NavigateTo("#");
         }
     }
